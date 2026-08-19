@@ -12,6 +12,7 @@ Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor 
 - Jede Verzweigung mit klarer Wenn-Dann-Bedingung und Ziel (→ Pfeile)
 - Sonstiges-Fallback (PHASE 1X) vorhanden
 - Jeder Pfad endet in Kontaktdaten-Erfassung oder Verabschiedung — kein toter Ast
+- Jede Rückkehr-Kante ist begrenzt: eine Phase, die in eine frühere zurückführt („noch ein Anliegen?“ → PHASE 0), sagt, wie oft sie das darf. Sonst ist der Baum ein Kreis, den nur der Anrufer beendet
 - Definierte Verabschiedung
 
 ### 1.2 Fundamentale Regeln
