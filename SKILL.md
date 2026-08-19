@@ -27,6 +27,21 @@ Details und die vollständigen Checklisten stehen in `regeln.md` — hier nur da
 10. **Ein Ausstieg endet über seinen Abschluss — fehlt der, über einen Tool-Aufruf.** Zwei Fälle, und sie zu verwechseln kostet Runden: Ein Ausstieg mit natürlichem Gesprächsabschluss (Verabschiedung) beendet den Anruf von selbst, dort genügt die Abschlussanweisung. Ein Ausstieg ohne Abschluss, der sofort gegen die Phasenstruktur feuern muss (Notruf-Ansage), braucht den expliziten Aufruf — sonst *sagt* das Modell „ich beende jetzt das Gespräch", tut es nicht und fällt in die Verabschiedungsphase zurück, weil nur die ein Gesprächsende kennt. Vier Umformulierungen scheiterten daran, ein Aufruf am Zweig löste es in einer. Dritter Fall, der wie der zweite aussieht: Der Ausstieg *hat* eine Verabschiedung, aber der Zweig darüber gibt einen eigenen Inhalt vor — dann muss die Reihenfolge dastehen, sonst gewinnt der Zweig-Inhalt und die Verabschiedung fällt weg. Prüfsignal ist `disconnectReason`: `agent_hangup` heißt es griff, `user_hangup` heißt der Anrufer hat die Schleife beendet. Details: regeln.md §1.3.
 11. **Eine Weiterleitung ist ein Einwegtor.** Zurück kommt der Anruf nur, wenn das Ziel ihn *aktiv ablehnt* — eine Mailbox gilt als angenommen und beendet das Gespräch, eine unterdrückte Rufnummer lässt sich gar nicht verbinden. Also Erreichbarkeit des Ziels vor dem Bau klären, sonst ist der Pfad eine Sackgasse. Und die Bedingung gehört auf zwei Stellen mit getrennten Rollen: Weiche in den Prompt (eine Zeile, endend auf `tool_call <name>`), Auslöser-Details ins Bedingungsfeld des Tools. Nur im Tool geführt, feuert sie mal und mal nicht. Details: regeln.md §1.3.
 
+## Daten
+
+Je Kunde **eine** Spreadsheet-Datei, drei Tabs: `Fälle` · `Läufe` · `Auswertung`. Aufbau und Spalten: `aalbeek-ops/sops/voice-agent-evals.md`.
+
+**Lesen — ohne MCP, ohne Token.** Die Datei ist per Link freigegeben, damit liefert Google jeden Tab als CSV:
+
+```
+curl -sL "https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=F%C3%A4lle"
+curl -sL "https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=L%C3%A4ufe"
+```
+
+Tabname URL-kodiert; hilft das nicht, stattdessen `&gid=<Tab-ID aus der URL>`. Antwortet Google mit HTML statt `text/csv`, ist die Datei nicht freigegeben — das melden, nicht umgehen.
+
+**Schreiben.** Die Läufe schreibt der Grader-Workflow in n8n. Was der Skill schreibt — neue Fälle, gefüllte `📄 Referenzlösung` — gibt er als CSV-Block aus, den der Nutzer einfügt. Kein Schreibzugriff, kein OAuth-Client: bei zwei Dutzend Zeilen je Runde ist Einfügen billiger als die Berechtigungskette.
+
 ## Fälle
 
 Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensdatenbank, Stammdaten des Kunden. Ausgabe: Zeilen für den Tab `Fälle`, Spalten nach `sops/voice-agent-evals.md`.
