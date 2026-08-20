@@ -31,16 +31,19 @@ Details und die vollständigen Checklisten stehen in `regeln.md` — hier nur da
 
 Je Kunde **eine** Spreadsheet-Datei, drei Tabs: `Fälle` · `Läufe` · `Auswertung`. Aufbau und Spalten: `aalbeek-ops/sops/voice-agent-evals.md`.
 
-**Lesen — ohne MCP, ohne Token.** Die Datei ist per Link freigegeben, damit liefert Google jeden Tab als CSV:
+**Lesen.** Der offizielle Sheets-MCP ist an das Google Workspace Developer Preview Program gebunden und lehnt ohne Freischaltung jeden Datenzugriff ab (`tools/list` antwortet trotzdem — daran ist es nicht zu erkennen). Zwei Wege, die immer gehen:
 
 ```
+# ohne jede Anmeldung, solange die Datei per Link freigegeben ist
 curl -sL "https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=F%C3%A4lle"
-curl -sL "https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=L%C3%A4ufe"
+
+# mit dem Token aus dem MCP-Login, auch fuer geschlossene Dateien und zum Schreiben
+https://sheets.googleapis.com/v4/spreadsheets/<ID>/values/<Bereich>
 ```
 
-Tabname URL-kodiert; hilft das nicht, stattdessen `&gid=<Tab-ID aus der URL>`. Antwortet Google mit HTML statt `text/csv`, ist die Datei nicht freigegeben — das melden, nicht umgehen.
+**Schreiben.** Die Läufe schreibt der Grader. Was der Skill beiträgt — neue Fälle, gefüllte `📄 Referenzlösung` — geht über die Sheets-REST-API oder als CSV-Block zum Einfügen.
 
-**Schreiben.** Die Läufe schreibt der Grader-Workflow in n8n. Was der Skill schreibt — neue Fälle, gefüllte `📄 Referenzlösung` — gibt er als CSV-Block aus, den der Nutzer einfügt. Kein Schreibzugriff, kein OAuth-Client: bei zwei Dutzend Zeilen je Runde ist Einfügen billiger als die Berechtigungskette.
+**Zwei Fallen der API**, beide kosten sonst eine Stunde: Zellformeln folgen der **Locale der Datei** (bei `de_DE` Semikolon statt Komma, sonst `#ERROR!` in jeder Zelle), und `CUSTOM_FORMULA` in bedingten Formatierungen lehnt Kommas mit HTTP 400 ab — trennzeichenfrei schreiben, etwa `=($A2<>"")*($D2=FALSE())`.
 
 ## Fälle
 
