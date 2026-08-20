@@ -41,7 +41,7 @@ curl -sL "https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=
 https://sheets.googleapis.com/v4/spreadsheets/<ID>/values/<Bereich>
 ```
 
-**Schreiben.** Die Läufe schreibt der Grader. Was der Skill beiträgt — neue Fälle, gefüllte `📄 Referenzlösung` — geht über die Sheets-REST-API oder als CSV-Block zum Einfügen.
+**Schreiben.** Die Läufe schreibt der Grader. Was der Skill beiträgt — neue Fälle, gefüllte `Referenzlösung` — geht über die Sheets-REST-API oder als CSV-Block zum Einfügen.
 
 **Zwei Fallen der API**, beide kosten sonst eine Stunde: Zellformeln folgen der **Locale der Datei** (bei `de_DE` Semikolon statt Komma, sonst `#ERROR!` in jeder Zelle), und `CUSTOM_FORMULA` in bedingten Formatierungen lehnt Kommas mit HTTP 400 ab — trennzeichenfrei schreiben, etwa `=($A2<>"")*($D2=FALSE())`.
 
@@ -52,20 +52,23 @@ Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensdatenbank, Stammda
 1. **Pfade auszählen.** Je Phase, je Weiterleitung, je Regel im Prompt ein Auslöser. Das ist die Grundgesamtheit, nicht die Fantasie.
 2. **Je Auslöser einen Zwilling.** „One-sided evals create one-sided optimization" — ein Fall, in dem das Verhalten kommen *soll*, und einer, in dem es ausbleiben soll. Der Zwilling trägt dieselbe Nummer mit `-Z-` und die Spalte `Zwilling zu`. Ohne Zwilling kein Fall.
 3. **Edge Cases als eigene Fälle:** Tippfehler und Nuscheln, mehrere Anliegen in einem Anruf, Themenwechsel mitten im Gespräch, ambige Angaben, unterdrückte Nummer, außerhalb der Geschäftszeiten, Anrufer legt auf.
-4. **Angriffsfälle getrennt**, eigener Pfad `Angriff`, eigener Lauf, Regel-Grader statt Judge (der Angreifertext nimmt den Judge sonst mit).
-5. **Erreichbarkeit prüfen, bevor der Fall ins Set geht.** Ist `✅ Bestanden wenn` mit dem erreichbar, was der Agent tatsächlich hat — Wissensdatenbank, Stammdaten, Tools? Sonst misst der Fall den Fall, nicht den Agenten.
-6. **Zwei Prüfer, ein Urteil.** Formuliere `✅ Bestanden wenn` / `🚫 Durchgefallen wenn` so, dass zwei Menschen unabhängig zum selben Pass/Fail kämen. Was nur du entscheiden kannst, ist kein Kriterium.
-7. **Teilpunkte** in `Punkte 0–2` definieren, wo die Aufgabe mehrteilig ist: Anliegen erkannt aber Ticket unvollständig ist besser als Sofort-Scheitern. Binär bleibt, was binär ist (Haftung, Angriff).
-8. **Fall-ID ist das erste gesprochene Wort** des Testanrufs. Der Grader liest sie aus, statt zu raten.
+4. **Angriffsfälle getrennt**, eigener Pfad `Angriff`, eigener Lauf, Regel-Grader statt Judge (der Angreifertext nimmt den Judge sonst mit). In `Angriff` steht nur, wo Daten abfließen könnten; was Verhalten misst, gehört zu `Regeln`.
+5. **Jede Zeile vollständig**, sonst greift sie nicht: `Kontext` bestimmt, von welcher Nummer angerufen wird · `Anrufe` die Wiederholungen (3 bei Haftung und Angriff, sonst 1) · `Ticket erwartet` den Zustand nach dem Anruf · `Zweck` beginnt bei `Capability` · `Rückhalte` bleibt leer, außer der Fall wird bewusst zurückgehalten.
+6. **Erreichbarkeit prüfen, bevor der Fall ins Set geht.** Ist `Bestanden wenn` mit dem erreichbar, was der Agent tatsächlich hat — Wissensdatenbank, Stammdaten, Tools? Sonst misst der Fall den Fall, nicht den Agenten.
+7. **Zwei Prüfer, ein Urteil.** Formuliere `Bestanden wenn` / `Durchgefallen wenn` so, dass zwei Menschen unabhängig zum selben Pass/Fail kämen. Was nur du entscheiden kannst, ist kein Kriterium.
+8. **Teilpunkte** in `Punkte 0-2` definieren, wo die Aufgabe mehrteilig ist: Anliegen erkannt aber Ticket unvollständig ist besser als Sofort-Scheitern. Binär bleibt, was binär ist (Haftung, Angriff).
+9. **Fall-ID ist das erste gesprochene Wort** des Testanrufs. Der Grader liest sie aus, statt zu raten.
+
+**Bringt der Nutzer einen Fall aus eigener Erfahrung mit** — ein realer Anruf, eine Vermutung, ein Ärgernis —, ist das die beste Quelle, die es gibt: sie kommt aus der Produktion, nicht aus der Fantasie. Nicht abweisen, sondern in eine vollständige Zeile übersetzen und drei Dinge prüfen: Deckt ein bestehender Fall denselben Auslöser schon ab (dann Zeile schärfen statt neue anlegen)? Ist das Kriterium beobachtbar formuliert? Fehlt der Zwilling? Danach mit den fehlenden Spalten zurückfragen, nicht raten.
 
 ## Auswertung
 
-1. **Basis festlegen.** Genau **eine** Promptversion je Auswertung — Läufe zweier Versionen zusammen misst nichts. Rückhalte-Fälle nicht öffnen; wer sie gesehen hat, verbrennt sie. Bei `🔁 Anrufe` > 1 gilt `pass^k`: ein Fehlschlag = Fall durchgefallen.
+1. **Basis festlegen.** Genau **eine** Promptversion je Auswertung — Läufe zweier Versionen zusammen misst nichts. Rückhalte-Fälle nicht öffnen; wer sie gesehen hat, verbrennt sie. Bei `Anrufe` > 1 gilt `pass^k`: ein Fehlschlag = Fall durchgefallen.
 2. **Fehlschläge sammeln.** Je durchgefallenem Fall: Transkript und Grader-Begründung. Grader-Begründung ist ein Hinweis, kein Befund — der Befund steht im Transkript.
-3. **`📄 Referenzlösung` heranziehen**, wo vorhanden:
+3. **`Referenzlösung` heranziehen**, wo vorhanden:
    - **Fall durchgefallen** → Fehl-Transkript neben die Referenz legen und den **ersten abweichenden Zug** benennen. Dort sitzt die Ursache, nicht dort, wo das Gespräch sichtbar entgleist.
    - **Referenz mit dem heutigen Prompt nicht mehr erreichbar** (Pfad entfernt, Tool getauscht, Modell gewechselt) → Fall ist veraltet. Fall und Referenz korrigieren, **nicht** den Prompt daran biegen.
-   - **Fall besteht zum ersten Mal und Feld ist leer** → sein Transkript nach `📄 Referenzlösung` schreiben.
+   - **Fall besteht zum ersten Mal und Feld ist leer** → sein Transkript nach `Referenzlösung` schreiben.
 4. **Ursache statt Symptom** — regeln.md §3. Pflicht je Befund: Symptom → Ursache → Ebene des Fixes → Geschwister-Test. Mehrere Fälle mit derselben Ursache ergeben **einen** Fix, nicht mehrere.
 5. **Fix schreiben — Algo aus operating-system.md zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Physik 6 und 8).
 6. **Liefern.** Vollständig überarbeiteter Prompt (kein Diff) als Codeblock, geänderte Dashboard-, Tool- oder Wissensdatenbank-Empfehlungen darunter. Dazu die Gate-KPIs der Runde: Haftung (binär) · Kinderfehler (null) · verwertbares Ticket · Angriffe (binär). Dazu die Nebenzahlen aus den Läufen: Dauer, Züge, Tool-Calls, `disconnectReason` — eine Quote allein sagt nicht, was sie gekostet hat. Fixes, die nicht in den Prompt gehören (regeln.md §3.4), getrennt ausweisen.
