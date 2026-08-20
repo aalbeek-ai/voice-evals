@@ -7,7 +7,7 @@ description: fonio.ai Voice-Agent-Prompts gegen ein Eval-Set messen und verbesse
 
 Zwei Aufgaben, beide gegen dasselbe Set: **Fälle schreiben** (§ Fälle) und **Runde auswerten** (§ Auswertung). Dem Nutzer in einem Satz sagen, welche läuft.
 
-Methodik: `aalbeek-ops/playbooks/evals.md` · System und Tabellenaufbau: `aalbeek-ops/sops/voice-agent-evals.md` · Betrieb je Kunde: `aalbeek-ops/sops/<kunde>-evals.md` (Spreadsheet-ID, Testnummern, Rückhalte-Liste, Gate).
+Methodik: `aalbeek-ops/playbooks/evals.md` · Ablauf und Tabellenaufbau: `aalbeek-ops/sops/voice-agent-evals.md`. Alle Kundenwerte — Promptversion, Testnummern, Workflow-IDs, offene Punkte — stehen im Tab `Setup` des Spreadsheets, nirgends sonst.
 
 Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe aus dem Spreadsheet › eingefügte Transkripte › nur die Audit-Checkliste. Je dünner die Lage, desto mehr Befunde stammen aus regeln.md §1 statt aus Beobachtung — das im Ergebnis kennzeichnen.
 
@@ -29,7 +29,7 @@ Details und die vollständigen Checklisten stehen in `regeln.md` — hier nur da
 
 ## Daten
 
-Je Kunde **eine** Spreadsheet-Datei, drei Tabs: `Fälle` · `Läufe` · `Auswertung`. Aufbau und Spalten: `aalbeek-ops/sops/voice-agent-evals.md`.
+Je Kunde **eine** Spreadsheet-Datei, fünf Tabs: `Setup` · `Fälle` · `Läufe` · `Auswertung` · `Systemtests`. Spalten: `aalbeek-ops/sops/voice-agent-evals.md`.
 
 **Lesen.** Der offizielle Sheets-MCP ist an das Google Workspace Developer Preview Program gebunden und lehnt ohne Freischaltung jeden Datenzugriff ab (`tools/list` antwortet trotzdem — daran ist es nicht zu erkennen). Zwei Wege, die immer gehen:
 
