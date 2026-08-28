@@ -5,7 +5,7 @@
 Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor Lieferung prüfen. Bewertung ✅ vorhanden · ⚠️ fehlt oder fehlerhaft · ❌ kritisch.
 
 ### 1.1 Struktur
-Blockfolge: `prompt-template.md`.
+Blockfolge: `template.md`.
 
 - Identität (Name, Rolle, Unternehmen) und Ansprechform definiert, Ansprechform durchgehend gehalten
 - Markdown mit Überschriften; Phasenbaum PHASE 0 (Anliegenerkennung) → 1A–1X → 2 (Kontaktdaten) → 3 (Verabschiedung)

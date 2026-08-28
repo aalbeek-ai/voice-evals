@@ -13,7 +13,7 @@ Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe au
 
 ## Warum die Regeln existieren
 
-Die Checklisten stehen in `regeln.md`, das Gerüst in `prompt-template.md`. Hier nur das Warum, damit Fixes auf die Ursache zielen statt die Symptomliste abzuarbeiten. Die §-Verweise zeigen in `regeln.md`.
+Die Checklisten stehen in `regeln.md`, das Gerüst in `template.md`. Hier nur das Warum, damit Fixes auf die Ursache zielen statt die Symptomliste abzuarbeiten. Die §-Verweise zeigen in `regeln.md`.
 
 1. **STT und TTS haben getrennte Fehlermodi → spiegelverkehrte Regeln.** TTS liest vor (Ausgabefehler: Aussprache), STT hört zu (Eingabefehler: Erkennung) — dieselbe Sache, Namen und Zahlen, braucht entgegengesetzte Behandlung. Die Aussprache-Seite gilt für jeden Text, den die Engine vorliest, nicht nur für den Prompt. §1.2, §1.6
 2. **Instruktionsdichte senkt Befolgung.** Jede Regel genau einmal, Details in den Wissensspeicher statt in den Prompt. 800 Wörter ohne Doppelung schlagen 400 mit. §1.4, §1.5
@@ -48,13 +48,15 @@ Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensspeicher, Stammdat
 
 ## Auswertung
 
-1. **Basis festlegen.** Genau **eine** Promptversion je Auswertung — Läufe zweier Versionen zusammen misst nichts. Rückhalte-Fälle nicht öffnen; wer sie gesehen hat, verbrennt sie. Bei `Anrufe` > 1 gilt `pass^k`: ein Fehlschlag = Fall durchgefallen.
+1. **Basis festlegen.** Genau **eine** Promptversion je Auswertung — Läufe zweier Versionen zusammen misst nichts. Rückhalte-Fälle nicht öffnen; wer sie gesehen hat, verbrennt sie. **Wie mehrere Anrufe zusammengerechnet werden, hängt am Pfad, nicht an der Anrufzahl.** Haftung (`Notfall`, `Notdienst`) und `Angriff` sind binär und gelten `pass^k`: ein Fehlschlag unter drei Anrufen heißt Fall durchgefallen und Gate gerissen — dort ist die Quote 100 % oder nichts. Die übrigen Fälle haben Teilpunkte; ein schwächerer Lauf senkt die Punkte, kippt den Fall aber nicht. Die Untergrenze ist ein Lauf mit null Punkten. Bei mehreren Anrufen zählt dort die Streuung: 2/1/2 ist ein anderer Befund als 2/2/2 und gehört benannt.
 2. **Fehlschläge sammeln.** Je durchgefallenem Fall: Transkript und Grader-Begründung. Grader-Begründung ist ein Hinweis, kein Befund — der Befund steht im Transkript.
 3. **`Referenzlösung` heranziehen**, wo vorhanden:
    - **Fall durchgefallen** → Fehl-Transkript neben die Referenz legen und den **ersten abweichenden Zug** benennen. Dort sitzt die Ursache, nicht dort, wo das Gespräch sichtbar entgleist.
    - **Referenz mit dem heutigen Prompt nicht mehr erreichbar** (Pfad entfernt, Tool getauscht, Modell gewechselt) → Fall ist veraltet. Fall und Referenz korrigieren, **nicht** den Prompt daran biegen.
    - **Fall besteht zum ersten Mal und Feld ist leer** → sein Transkript nach `Referenzlösung` schreiben.
 4. **Ursache statt Symptom** — regeln.md §3. Pflicht je Befund: Symptom → Ursache → Ebene des Fixes → Geschwister-Test. Mehrere Fälle mit derselben Ursache ergeben **einen** Fix, nicht mehrere.
-5. **Fix schreiben — Algo aus regeln.md §3 zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Warum 2 und 3).
-6. **Liefern.** Vollständig überarbeiteter Prompt (kein Diff) als Codeblock, Aufbau nach `references/prompt-template.md`, geänderte Plattform-, Tool- oder Wissensspeicher-Empfehlungen darunter. Dazu das Gate: die KPIs stehen im Tab `01-Setup`, der Stand im Tab `05-Auswertung`. Von dort die vier Quoten übernehmen — Pass-Quote, Δ zur Vorversion, Regression, Rückhalte. Δ ist die Zahl, die über Weitermachen oder Aufhören entscheidet. Dazu die Nebenzahlen aus den Läufen: Dauer, Züge, Tool-Calls, Trennungsgrund (Spalte `disconnectReason`) — eine Quote allein sagt nicht, was sie gekostet hat. Fixes, die nicht in den Prompt gehören (regeln.md §3.4), getrennt ausweisen.
+5. **Fix schreiben — Algo aus regeln.md §3 zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen oder optimieren — hier meist optimieren: dieselbe Regel auf eine höhere Ebene heben, statt eine zweite danebenzustellen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Warum 2 und 3).
+6. **Erst Vorschläge, dann Artefakte.** Liefere die Befunde und je Fix eine Zeile: Ebene · was sich ändert · was dafür rausfliegt. Dazu zwei bis drei Sätze Stand — Version, Richtung gegen die Vorversion, Weitermachen oder Gate. Quoten und Nebenzahlen stehen im Tab `05-Auswertung`; sie abzuschreiben hilft niemandem, ihre Bedeutung schon.
+   Nach der Freigabe kommt das Artefakt: vollständiger Prompt (kein Diff) als Codeblock nach `template.md`, geänderte Speicher-, Tool- und Plattform-Inhalte darunter. Ist ein Repo genannt, schreibe dorthin und committe, statt in den Chat zu drucken. Wer den Prompt schon im Auftrag verlangt, überspringt die Freigabe.
+   Fixes, die nicht in den Prompt gehören (regeln.md §3.4), getrennt ausweisen.
 7. **Rückfragen** max. 5 — nie etwas fragen, das in Prompt, Transkripten oder Läufen steht.
