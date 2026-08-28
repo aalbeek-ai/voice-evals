@@ -5,158 +5,125 @@
 Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor Lieferung prüfen. Bewertung ✅ vorhanden · ⚠️ fehlt oder fehlerhaft · ❌ kritisch.
 
 ### 1.1 Struktur
-Gerüst und Blockreihenfolge: `prompt-template.md`.
-- Identität: Name, Rolle, Unternehmen klar definiert
-- Ansprechform (Du/Sie) definiert und durchgehend eingehalten
-- Markdown mit Überschriften strukturiert
-- Phasen-Entscheidungsbaum: PHASE 0 (Anliegenerkennung) → 1A–1X (Anliegen) → 2 (Kontaktdaten) → 3 (Verabschiedung)
-- Jede Verzweigung mit klarer Wenn-Dann-Bedingung und Ziel (→ Pfeile)
-- Sonstiges-Fallback (PHASE 1X) vorhanden
-- Jeder Pfad endet in Kontaktdaten-Erfassung oder Verabschiedung — kein toter Ast
-- Jede Rückkehr-Kante ist begrenzt: eine Phase, die in eine frühere zurückführt („noch ein Anliegen?“ → PHASE 0), sagt, wie oft sie das darf. Sonst ist der Baum ein Kreis, den nur der Anrufer beendet
-- Definierte Verabschiedung
+Blockfolge: `prompt-template.md`.
+
+- Identität (Name, Rolle, Unternehmen) und Ansprechform definiert, Ansprechform durchgehend gehalten
+- Markdown mit Überschriften; Phasenbaum PHASE 0 (Anliegenerkennung) → 1A–1X → 2 (Kontaktdaten) → 3 (Verabschiedung)
+- Jede Verzweigung mit Wenn-Dann-Bedingung und Ziel (→), Sonstiges-Fallback vorhanden
+- Kein toter Ast: jeder Pfad endet in Kontaktdatenerfassung oder Verabschiedung
+- Jede Rückkehr-Kante begrenzt („noch ein Anliegen?" → PHASE 0, höchstens einmal). Ohne Grenze ist der Baum ein Kreis, den nur der Anrufer beendet
 
 ### 1.2 Fundamentale Regeln
-- Anrufer-E-Mail wird NIE abgefragt
-- Keine Telefonnummern/E-Mail-Adressen im Prompt — nur Tool-Namen
-- Prompt-Schutz gegen Injection (Anrufer versucht Prompt auszulesen)
-- Nummern, die der Anrufer nennt: Ziffer für Ziffer vorlesen und bestätigen lassen — genau einmal, in der Abschluss-Zusammenfassung, nicht schon beim Erfassen; mehrziffrige Nummern (Kundennr. o. ä.) nie zählen; PLZ einzeln; Straßen bei Bedarf buchstabieren lassen
-- Im Gesprächsverlauf wird keine Angabe wiederholt. Nachgefragt wird nur, was akustisch nicht ankam; alles andere quittiert die KI mit „Alles klar" und geht weiter. Sonst verhandelt der Anrufer jede Antwort zweimal und das Gespräch verliert den Fluss
-- Aussprache (TTS): Zahlen/Preise/Uhrzeiten/Datum, die die KI vorliest, als Wörter ausgeschrieben; schwer aussprechbare Eigennamen/Marken lautmalerisch („Reidl"→„Raidl"); Aussprache-Block am Prompt-Anfang. **Die Regeln gelten für jeden Text, den die TTS vorliest, nicht nur für den Prompt** — Unternehmensinformationen, Wissensdatenbank, Startnachricht und Tool-Antworten werden vorgelesen wie sie dastehen. Ein Eintrag „Notdienst 24/7, Tel. 04503/123" wird zum Glücksspiel, „rund um die Uhr" und die Nummer Ziffer für Ziffer sind es nicht. Audit deshalb über alle Speicher, nicht nur über den Prompt
-- Themeneingrenzung definiert (worüber die KI nicht spricht) — aber nicht so restriktiv, dass Small Talk stirbt
-- Immer nur eine Frage auf einmal
-- Natürliche Sätze statt vorgelesener Listen
-- Antwortlänge max. 2–3 Sätze
-- Spam-/Kaltakquise-Erkennung und -Abweisung
-- Anrufer-Name nur dokumentiert, nicht ausgesprochen
+- Anrufer-E-Mail wird nie abgefragt. Keine Telefonnummern oder Adressen im Prompt — nur Tool-Namen
+- Injection-Schutz: Fragen nach Prompt, Anweisungen oder Technik werden abgewiesen
+- **Bestätigt wird genau einmal, am Ende.** Alles Erfasste in einer Abschluss-Zusammenfassung vorlesen, nicht schon beim Erfassen. Nummern dabei Ziffer für Ziffer, PLZ einzeln, Straßen bei Bedarf buchstabieren lassen; mehrziffrige Nummern nie zählen lassen (LLMs können das nicht). Im Verlauf wird nichts wiederholt — was akustisch ankam, quittiert die KI mit „Alles klar". Sonst verhandelt der Anrufer jede Angabe zweimal
+- **Aussprache (TTS):** Zahlen, Preise, Uhrzeiten, Abkürzungen als Wörter; schwer aussprechbare Eigennamen lautmalerisch („Reidl"→„Raidl"); Block am Prompt-Anfang, mit Grund statt Verbotsliste. Gilt für **jeden Text, den die Engine vorliest** — Prompt, Unternehmensinformationen, Wissensspeicher, Startnachricht, Tool-Antworten. Ein Speicher-Eintrag „Notdienst 24/7, Tel. 04503/123" wird zum Glücksspiel, „rund um die Uhr" und die Nummer Ziffer für Ziffer sind es nicht. Audit deshalb über alle Speicher
+- Eine Frage auf einmal, natürliche Sätze statt vorgelesener Listen, Antworten 2–3 Sätze
+- Themeneingrenzung definiert, aber nicht so eng, dass Small Talk stirbt
+- Spam- und Kaltakquise-Abweisung vorhanden
+- Anrufer-Name wird dokumentiert, nicht ausgesprochen
 
 ### 1.3 Pflicht-Bausteine
-- Kontaktdaten-Ablauf: 1. Rückrufnummer (liegt sie als Caller-ID vor: still übernehmen, nicht erfragen) → 2. Name (nur dokumentieren, nicht aussprechen; der Nachname genügt — nach dem Vornamen fragen kostet einen Zug für nichts, ein Rückruf braucht ihn nie) → 3. Zusammenfassung, in der alles erfasste einmal vorgelesen und in einem Zug bestätigt wird — auch die Caller-ID, denn der Anrufer kann von einem fremden Apparat aus anrufen
-- Branchenspezifischer Notfall-Pfad, eigenständig und jederzeit aktiv
-- Dreifach-Missverständnis-Abbruch definiert (dreimal nicht verstanden → Ausstieg mit Rückruf-Zusage)
-- Je Weiterleitung zwei Stellen, arbeitsteilig: die **Weiche** im Prompt, an der Phase, wo die Entscheidung fällt — eine Zeile, endend auf `tool_call <name>`; die **Auslöser-Details** (Aufzählung der konkreten Fälle) im Bedingungsfeld des Tools als Wenn-Dann-Satz. Die Bedingung allein im Tool zu führen, feuert unzuverlässig — beobachtet: dasselbe Szenario löste mal aus, mal nicht, weil das Modell im Baum keine Stelle hat, an der es entscheidet. Der Fehler ist nicht die Doppelung, sondern **ungleiche Abdeckung**: jede Weiterleitung folgt demselben Muster, oder keine. Prüfsignal: kommt jeder Tool-Name mindestens einmal im Prompt vor?
-- Jeder Weiterleitungszweig hat einen Scheitern-Arm. Zurück kommt der Anruf nur bei aktiver Ablehnung durch das Ziel; eine Mailbox gilt als angenommen und beendet das Gespräch, eine unterdrückte Rufnummer lässt sich nicht verbinden. Ein Ziel ohne Erreichbarkeitszusage ist eine Sackgasse — vor dem Bau klären, nicht im Prompt kompensieren. „Weiterleitung nicht möglich" meint zwei Dinge und muss beide nennen: das Ziel war von vornherein zu (dann gar nicht erst ankündigen) oder es hat abgelehnt (dann lief die Ansage schon)
-- Widerspricht der Anrufer der Aufzeichnung und steht das Dashboard auf automatisches Löschen, verfallen Transkript und Extraktion: dann weiterleiten oder mit Öffnungszeiten beenden, aber kein Anliegen aufnehmen und keinen Rückruf zusagen — das Ticket entsteht nie
-- Post-Call-E-Mail-Zusammenfassung ans Team (Tool, nicht an Anrufer), enthält alle bearbeitungsrelevanten Felder
+- **Kontaktdaten:** Rückrufnummer (liegt sie als Caller-ID vor: still übernehmen, nicht erfragen) → Nachname (Vorname kostet einen Zug für nichts) → Zusammenfassung, in der alles einmal bestätigt wird, auch die Caller-ID — der Anrufer kann vom fremden Apparat aus anrufen
+- Branchenspezifischer Notfallpfad, eigenständig und **jederzeit aktiv**, nicht als Ziel aus PHASE 0
+- Dreifach-Missverständnis-Abbruch (dreimal nicht verstanden → Ausstieg mit Rückruf-Zusage)
+- **Weiterleitung braucht zwei Stellen, arbeitsteilig:** die Weiche im Prompt an der Phase, wo die Entscheidung fällt — eine Zeile, endend auf dem Aufruf; die Auslöser-Details im Bedingungsfeld des Tools. Allein im Tool geführt, feuert sie mal und mal nicht: das Modell hat im Baum keine Stelle, an der es entscheidet. Der Fehler ist nicht die Doppelung, sondern **ungleiche Abdeckung** — jede Weiterleitung folgt dem Muster oder keine. Prüfsignal: kommt jeder Tool-Name mindestens einmal im Prompt vor?
+- **Jede Weiterleitung ist ein Einwegtor.** Zurück kommt der Anruf nur bei aktiver Ablehnung; eine Mailbox gilt als angenommen und beendet das Gespräch, eine unterdrückte Rufnummer lässt sich nicht verbinden. Erreichbarkeit vor dem Bau klären, nicht im Prompt kompensieren. Der Scheitern-Arm muss beide Fälle nennen: Ziel von vornherein zu (dann gar nicht ankündigen) oder Ablehnung (dann lief die Ansage schon)
+- **Ein Abschluss-Block für alle Ausstiege:** ein kurzer Verabschiedungssatz → sofort beenden → keine Frage, keine Bestätigung abwarten. Geben Zweige eigene Inhalte vor (Nummer, Öffnungszeiten), legt der Block die **Reihenfolge** fest: Zweig-Inhalt → Verabschiedung → Aufruf. Fehlt sie, spricht das Modell den Zweig-Inhalt und lässt die Verabschiedung weg
+- **Ausstieg ohne Verabschiedung** (Notruf-Ansage) nennt den Aufruf am Zweig selbst. Prosa („beende das Gespräch") lässt das Modell die Aktion ankündigen statt ausführen; danach fällt es in die Verabschiedungsphase zurück, die einzige Gesprächsende-Formel, die es kennt. Umformulieren scheitert daran beliebig oft. Hinter dem Aufruf darf eine Begründung stehen, keine zweite Handlungsanweisung. Schreibweise der Plattform, ohne Anführungszeichen, auch für Weiterleitungen — etwa `tool_call <name>`. Ein eingebautes Tool ohne Beschreibungsfeld (Auflegen) trägt sein Wann komplett im Prompt, selbst angelegte Tools in ihrer Beschreibung
+- Widerspricht der Anrufer der Aufzeichnung und löscht die Plattform automatisch, verfallen Transkript und Extraktion: weiterleiten oder mit Öffnungszeiten beenden, aber kein Anliegen aufnehmen und keinen Rückruf zusagen — das Ticket entsteht nie
+- Post-Call-Zusammenfassung ans Team (Tool, nicht an den Anrufer) mit allen bearbeitungsrelevanten Feldern; Variablen-Extraktion deckt die businessrelevanten Datenpunkte ab
 - Jedes Tool hat einen klaren Auslöser im Entscheidungsbaum
-- Eigener Abschluss-Block, der für jeden Ausstieg gilt: genau ein kurzer Verabschiedungssatz → Gespräch unmittelbar danach beenden → keine Frage mehr, keine Bestätigung abwarten. Der deckt alle Ausstiege mit Verabschiedung ab; sie beenden den Anruf von selbst, ein Tool-Aufruf gehört dort nicht hin. Geben die Zweige darunter je einen eigenen Inhalt vor (Nummer nennen, Öffnungszeiten nennen), muss der Block die **Reihenfolge** festlegen — erst Zweig-Inhalt, dann Verabschiedungssatz, dann Aufruf. Fehlt sie, spricht das Modell den Zweig-Inhalt und lässt die Verabschiedung weg; ohne Abschluss greift es zur offenen Frage aus der Verabschiedungsphase, der einzigen Gesprächsende-Formel, die es sonst kennt
-- Ein Ausstieg **ohne** Verabschiedung, der sofort feuern muss (Notruf-Ansage), nennt den Aufruf am Zweig selbst — Prosa („beende das Gespräch", „lege auf") lässt das Modell die Aktion ankündigen statt ausführen — auch *hinter* dem Aufruf in derselben Zeile: eine Begründung darf dort stehen, eine zweite Handlungsanweisung nicht. Aufruf in der Schreibweise der Plattform, ohne Anführungszeichen, auch für Weiterleitungen — etwa `tool_call <name>`. Ein eingebautes Tool ohne Beschreibungsfeld (Auflegen) trägt sein Wann komplett im Prompt; selbst angelegte Tools tragen es in ihrer Beschreibung
-- Variablen-Extraktion deckt die businessrelevanten Datenpunkte ab
 
-### 1.4 Inhaltliche Qualität
-- Detailinfos (FAQ, Preise, Kataloge) in Wissensdatenbank ausgelagert, nicht im Prompt
-- Die Plattform trennt drei Speicher: **Unternehmensinformationen** (Freitext, immer im Kontext), **Öffnungszeiten-Feld** (strukturiert, eigenes UI-Element — vermutlich Basis der automatisierten Geschäftszeiten-Logik, herstellerseitig nicht bestätigt) und **Wissen/Wissensdatenbank** (Frage-Antwort-Paare, nur bei thematischem Bedarf abgerufen, retrieval-abhängig und praktisch unzuverlässig — beobachtet: eine im Prompt verankerte Wissens-Prüfung griff live trotzdem nicht). Ablage-Kriterium ist **Zuverlässigkeit**, nicht Kernfakt vs. Randfall: alles, das fast immer korrekt sitzen muss (Adresse, Leistungen, Notdienst-Kontakte) → Unternehmensinformationen. Zweite Achse: **Wortlaut-Determinismus** — Unternehmensinformationen wird frei paraphrasiert (ok bei egaler Formulierung); braucht eine Antwort exakten Wortlaut (Rechtliches), gezielt Wissen für genau diese Frage aktivieren (Kundenannahme, herstellerseitig nicht bestätigt). Default: Wissen aus, jede aktive Quelle ist eine weitere Fehlerfläche. Nie doppelt ablegen — erzeugt auseinanderlaufende Drittquellen (beobachtet: Öffnungszeiten in Wissen wich von Unternehmensinformationen ab). Das gilt auch Prompt gegen Dashboard: was ein Dashboard-Feld deterministisch entscheidet (Erreichbarkeit nach Uhrzeit), gehört nicht zusätzlich als Prompt-Zeile hinein — dort ist es bestenfalls wirkungslos, schlechtens eine zweite Wahrheit
-- Unternehmensinformationen und Wissen sind Datenspeicher, kein Verhaltenscode: nur kurze Stichpunkte (Wert, Nummer, Kategorie) hinein — Bedingungen, Disclaimer, Tonalität und wann was gesagt wird gehören in den Prompt. Ein Speicher-Eintrag, der ein ganzer Satz mit Begründung ist, gehört umformuliert: der Fakt bleibt kurz im Speicher, die Logik wandert in die passende Phase. Kurz heißt nicht abgekürzt — Zahlen, Uhrzeiten und Nummern darin nach §1.2 ausschreiben
-- KI beantwortet häufige Fragen direkt statt reflexhaft auf Rückruf zu verweisen
-- Anrufertypen unterschieden (z. B. Neukunde vs. Bestandskunde)
-- Empathie-Anweisungen bei sensiblen Branchen (Gesundheit, Recht, Versicherung, Pflege)
-- Branchenspezifische Patterns eingebaut (z. B. Fristsachen bei Anwälten, Verordnungs-Fristen bei Therapeuten, Produktionsstillstand bei Industrie, Patientenversorgung bei Kliniken)
+### 1.4 Speicher und Inhalt
+Drei getrennte Speicher, und das Ablage-Kriterium ist **Zuverlässigkeit**, nicht Kernfakt vs. Randfall:
+
+| Speicher | Verhalten | Wofür |
+| --- | --- | --- |
+| Unternehmensinformationen | Freitext, immer im Kontext, wird frei paraphrasiert | alles, was fast immer sitzen muss: Adresse, Leistungen, Notfallkontakte |
+| Öffnungszeiten-Feld | strukturiert, eigenes UI-Element, vermutlich Basis der Geschäftszeiten-Logik (herstellerseitig nicht bestätigt) | Zeiten |
+| Wissen / Wissensdatenbank | Frage-Antwort-Paare, nur bei thematischem Bedarf abgerufen, retrieval-abhängig und praktisch unzuverlässig | echte Nice-to-have-FAQ, bei denen ein Fehltreffer nichts kostet |
+
+- Beobachtet: eine im Prompt verankerte Wissens-Prüfung griff live trotzdem nicht. **Default: Wissen aus** — jede aktive Quelle ist eine weitere Fehlerfläche
+- Zweite Achse **Wortlaut-Determinismus**: braucht eine Antwort exakten Wortlaut (Rechtliches), gezielt Wissen für genau diese Frage aktivieren (herstellerseitig nicht bestätigt)
+- **Nie doppelt ablegen.** Zwei Quellen laufen auseinander — beobachtet: Öffnungszeiten in Wissen wichen von den Unternehmensinformationen ab. Gilt auch Prompt gegen Dashboard: was ein Dashboard-Feld deterministisch entscheidet (Erreichbarkeit nach Uhrzeit), gehört nicht zusätzlich in den Prompt — dort ist es wirkungslos oder eine zweite Wahrheit
+- **Speicher sind Daten, kein Verhaltenscode.** Nur kurze Stichpunkte (Wert, Nummer, Kategorie); Bedingungen, Disclaimer, Tonalität und das Wann gehören in den Prompt. Kurz heißt nicht abgekürzt — Zahlen und Uhrzeiten darin nach §1.2 ausschreiben
+- Detailinfos (FAQ, Preise, Kataloge) nicht im Prompt; mehr als 10 FAQ-Antworten im Prompt sind ein Anti-Pattern
+- Die KI beantwortet häufige Fragen direkt, statt reflexhaft auf Rückruf zu verweisen
+- Anrufertypen unterschieden (Neukunde vs. Bestandskunde); Empathie-Anweisungen bei sensiblen Branchen; branchenspezifische Muster eingebaut (Fristsachen bei Anwälten, Produktionsstillstand bei Industrie)
 
 ### 1.5 Anti-Patterns
 - Startnachricht-Dopplung (KI begrüßt zweimal)
-- Redundante Betonungen („NIEMALS!!!", Dreifach-Verneinung) — einmal klar reicht
-- Verbot statt Reihenfolge: ein Verbot deckt nur die Richtung ab, die es nennt („danach keine Frage mehr" fing „Darf ich beenden?" davor nicht). Wo eine Abfolge gemeint ist, die Abfolge schreiben
-- Gleiche Regel mehrfach im Prompt
-- Widersprüche (duzen vs. siezen, immer vs. nie weiterleiten)
-- Regel nennt einen konkreten Eval-Fall, Testnamen oder Transkript-Wortlaut (§3.3)
-- Mehr als 10 FAQ-Antworten im Prompt statt Wissensdatenbank
-- Derselbe Kernfakt gleichzeitig in Unternehmensinformationen und als eigener Wissen-Eintrag gepflegt (Divergenz-Risiko, siehe § 1.4)
-- Überdetaillierte Sprechanweisungen (Millisekunden-Pausen, Silbenbetonung — Sache des TTS, nicht des Prompts)
-- Regel ohne Grund, obwohl eine Begründung unlistete Ähnlichkeiten mit abdecken würde („Grund statt Betonung")
+- Redundante Betonung („NIEMALS!!!", Dreifach-Verneinung); Regel ohne Grund, obwohl eine Begründung die ungenannten Ähnlichkeiten mit abdecken würde
+- Verbot statt Reihenfolge: ein Verbot deckt nur die Richtung ab, die es nennt („danach keine Frage mehr" fing „Darf ich beenden?" davor nicht)
+- Gleiche Regel mehrfach; Widersprüche (duzen vs. siezen, immer vs. nie weiterleiten)
+- Regel nennt einen Eval-Fall, Testnamen oder Transkript-Wortlaut (§3.3)
+- Überdetaillierte Sprechanweisungen (Millisekunden-Pausen, Silbenbetonung — Sache der TTS)
 
 ### 1.6 Namens-Erkennung (falls relevant)
-- Eigennamen (Team, Standorte) in den Fachbegriffen: nur korrekte Schreibweise, KEINE Varianten (Feld ist Biasing, Output = wie gelistet → Variante landet falsch im Ticket). Varianten nur, wo der Name bloß zum Routen erkannt und nicht gespeichert wird; sonst n8n-Normalisierung. TTS-Aussprache separat im Aussprache-Block (lautmalerisch)
+Eigennamen (Team, Standorte) in die Fachbegriffe, **nur in korrekter Schreibweise, keine Varianten**: das Feld ist Biasing, der Output kommt so heraus, wie er gelistet ist — eine Variante landet falsch im Ticket. Varianten nur, wo der Name bloß zum Routen erkannt und nicht gespeichert wird; sonst nachgelagert normalisieren. TTS-Aussprache separat im Aussprache-Block.
 
 ### 1.7 Multi-Standort (falls relevant)
-- Standort-Fachbereich-Matrix vorhanden
-- Prüfung: gewünschter Service am gewünschten Standort verfügbar?
-- Routing-Kriterium definiert (PLZ, Stadtname, Nähe)
-- Eigenes Weiterleitungs-Tool pro Standort
+Standort-Fachbereich-Matrix, Prüfung ob der Service am Standort verfügbar ist, Routing-Kriterium (PLZ, Stadtname, Nähe), eigenes Weiterleitungs-Tool je Standort.
 
 ### 1.8 Lieferformat
 - Prompt als Markdown-Codeblock, direkt kopierbar
-- Startnachricht kurz halten (Richtwert 90 Zeichen), KI-Offenlegung trotzdem enthalten
-- Anrede über das Anrede-Feld der Plattform (Formell/Informell) gesetzt → Ansprechform NICHT auch im Prompt; nur bei „Individuell" im Prompt
-- „Unterbrechung verhindern" für kurze Begrüßung aktiviert (KI-Offenlegung wird gehört)
-- Darunter separat: Startnachricht, Dashboard-Einstellungen (Anrufdauer, Sensitivität, Kreativität, Stimme & Sprache; zusätzlich Maximale Wartezeit, genaue Informationsverarbeitung, Anrede-Feld), Tool-Konfiguration, Variablen-Extraktion, Wissensdatenbank-Inhalte
+- Startnachricht kurz halten (Richtwert 90 Zeichen), KI-Offenlegung trotzdem enthalten; „Unterbrechung verhindern" aktiviert, damit sie gehört wird
+- Ansprechform über das Anrede-Feld der Plattform, dann **nicht** auch im Prompt — nur bei „Individuell" dort
+- Darunter separat: Startnachricht, Dashboard-Einstellungen (Anrufdauer, Sensitivität, Kreativität, Stimme, Wartezeit, genaue Informationsverarbeitung, Anrede), Tool-Konfiguration, Variablen-Extraktion, Speicher-Inhalte
 
 ## 2 Transkript-Fehler-Taxonomie
 
-### 2.1 Gesprächsführung
-- **Endlosschleife**: dieselbe Frage wiederholt, weil Antwort nicht verstanden
-- **Mehrfach-Fragen**: mehrere Fragen auf einmal
-- **Listen vorgelesen** statt natürlich formuliert
-- **Zu lange Antworten**: Absätze statt 2–3 Sätze
-- **Roboter-Sprache**: „Ihre Anfrage wurde registriert", „Ich stehe Ihnen gerne zur Verfügung"
-- **Begrüßungs-Dopplung**
-- **Doppelbestätigung**: Angabe erst beim Erfassen und dann nochmal in der Zusammenfassung vorgelesen — kostet einen ganzen Gesprächszug und wirkt misstrauisch
+Symptome, wie sie im Transkript auffallen — die Regel dahinter steht in §1.
 
-### 2.2 Entscheidungsbaum
-- **Falscher Pfad**: z. B. Bestandskunde im Neukunden-Pfad
-- **Fehlender Pfad**: Anliegen ohne Zuordnung
-- **Vorzeitige Weiterleitung**: obwohl selbst lösbar
-- **Reflexhafter Rückruf-Verweis**: obwohl Antwort in Wissensdatenbank stand
-- **Pfad-Abbruch**: Logik nicht zu Ende definiert
+**Gesprächsführung:** Endlosschleife (dieselbe Frage, weil die Antwort nicht ankam) · mehrere Fragen auf einmal · Listen vorgelesen · Antworten länger als 2–3 Sätze · Roboter-Sprache („Ihre Anfrage wurde registriert") · Begrüßungs-Dopplung · Doppelbestätigung (Angabe beim Erfassen **und** in der Zusammenfassung)
 
-### 2.3 Datenerfassung
-- Nummern/PLZ falsch erkannt
-- Nummern als Gesamtzahl vorgelesen („siebzigtausendvierhundert" statt „sieben null vier null null")
-- KI versucht Ziffern zu zählen und scheitert
-- Pflichtdaten (Name, Rückrufnummer) vergessen
-- Unnötige Daten abgefragt
+**Entscheidungsbaum:** falscher Pfad · Anliegen ohne Zuordnung · Weiterleitung, obwohl selbst lösbar · Rückruf-Verweis, obwohl die Antwort im Speicher stand · Pfad-Abbruch, Logik nicht zu Ende definiert
 
-### 2.4 Ton und Empathie
-- Kühle Reaktion auf emotionale Situation
-- Anrufer unterbrochen
-- Anrufer wird hörbar ungeduldig — Ursache benennen
+**Datenerfassung:** Nummer oder PLZ falsch erkannt · Nummer als Gesamtzahl vorgelesen („siebzigtausendvierhundert") · KI zählt Ziffern und scheitert · Pflichtdaten vergessen · unnötige Daten abgefragt
+
+**Ton:** kühl in emotionaler Lage · Anrufer unterbrochen · Anrufer wird hörbar ungeduldig (Ursache benennen)
 
 ## 3 Ursachenanalyse (Eval-Modus)
 
-Ein Eval-Fall ist eine Stichprobe, kein Anforderungskatalog. Wer ihn direkt fixt, baut einen Agenten, der die zwei Dutzend getesteten Situationen beherrscht und bei der dreiundzwanzigsten ratlos ist. Deshalb je Befund: Symptom → Ursache → Ebene → Geschwister-Test.
+Ein Eval-Fall ist eine Stichprobe, kein Anforderungskatalog. Wer ihn direkt fixt, baut einen Agenten, der die getesteten zwei Dutzend Situationen beherrscht und bei der dreiundzwanzigsten ratlos ist. Je Befund deshalb: Symptom → Ursache → Ebene → Geschwister-Test.
 
-**Vor der Ebenen-Bestimmung (§3.1): der Algo aus operating-system.md.** Jede Frage kann den Fix beenden, bevor er anfängt:
-1. **Hinterfragen.** Ist das Symptom real oder Artefakt eines einzelnen Tests — würde ein kritischer Prüfer es genauso werten? Wenn nicht: kein Fix, sondern Notiz.
-2. **Löschen.** Lässt sich eine bestehende Regel, ein Speicher-Eintrag oder eine Phase ersatzlos streichen, statt etwas hinzuzufügen? Löschen schlägt Hinzufügen.
-3. **Vereinfachen.** Gibt es eine Variante mit weniger beweglichen Teilen (weniger Speicher, weniger Instruktionsketten, weniger Abhängigkeiten)? Die einfachste Lösung, die trifft, gewinnt gegen die elegantere.
+**Vor der Ebenen-Bestimmung der Algo, jede Frage kann den Fix beenden:**
+1. **Hinterfragen.** Ist das Symptom real oder Artefakt eines einzelnen Tests? Wenn nicht: Notiz, kein Fix
+2. **Löschen.** Lässt sich eine Regel, ein Speicher-Eintrag, eine Phase ersatzlos streichen, statt etwas hinzuzufügen?
+3. **Vereinfachen.** Gibt es eine Variante mit weniger beweglichen Teilen? Die einfachste, die trifft, gewinnt gegen die elegantere
 
-Beschleunigen/Automatisieren (Schritt 4–5 des Algo) kommen erst, wenn 1–3 durchlaufen sind und sich der Bedarf wiederholt hat — nicht vorab strukturell ausbauen (z. B. eine Wissensdatenbank-Struktur aufbauen, bevor der einfache Weg als unzureichend belegt ist).
+Beschleunigen und Automatisieren kommen erst, wenn 1–3 durchlaufen sind und sich der Bedarf wiederholt hat — keine Wissensdatenbank-Struktur aufbauen, bevor der einfache Weg als unzureichend belegt ist.
 
 ### 3.1 Ebene des Fixes
-
-Symptom in §2 einordnen, dann die Ebene bestimmen, auf der die Ursache sitzt. Auf der **höchsten zutreffenden** Ebene fixen — je höher, desto mehr ungetestete Fälle deckt der Fix mit ab.
+Auf der **höchsten zutreffenden** Ebene fixen — je höher, desto mehr ungetestete Fälle deckt der Fix mit ab.
 
 | Ebene | Ursache | Fix |
 | --- | --- | --- |
-| **Wortlaut** | KI sagt das Richtige unnatürlich, zu lang oder unverständlich | Formulierung an der bestehenden Stelle ändern |
-| **Regel** | Regel fehlt, ist negativ formuliert, steht doppelt oder widerspricht einer anderen | bestehende Regel schärfen, zwei zusammenlegen, Widerspruch auflösen |
-| **Struktur** | Pfad fehlt, endet tot, Bedingung greift nicht, Phase in falscher Reihenfolge | Verzweigung reparieren |
-| **Prinzip** | KI arbeitet den Baum starr ab, statt das Anliegen zu verstehen; scheitert an jeder Abweichung vom erwarteten Verlauf | ein Verhaltensprinzip früh im Prompt, dafür die Detailregeln streichen, die es ersetzt |
+| **Wortlaut** | sagt das Richtige unnatürlich, zu lang, unverständlich | Formulierung an der bestehenden Stelle ändern |
+| **Regel** | Regel fehlt, ist negativ formuliert, steht doppelt oder widerspricht | schärfen, zusammenlegen, Widerspruch auflösen |
+| **Struktur** | Pfad fehlt, endet tot, Bedingung greift nicht, Phasen in falscher Reihenfolge | Verzweigung reparieren |
+| **Prinzip** | arbeitet den Baum starr ab, scheitert an jeder Abweichung | ein Verhaltensprinzip früh im Prompt, dafür die Detailregeln streichen, die es ersetzt |
 
-Die Prinzip-Ebene ist die einzige, auf der der Prompt kürzer wird, während er mehr abdeckt. Wiederholte Befunde derselben Ursache sind ihr Signal.
+Die Prinzip-Ebene ist die einzige, auf der der Prompt kürzer wird und mehr abdeckt. Wiederholte Befunde derselben Ursache sind ihr Signal.
 
 ### 3.2 Geschwister-Test (Pflicht vor jedem Fix)
-
 Drei Situationen benennen, die dieselbe Ursache auslösen, aber **nicht** im Eval-Set stehen. Deckt der Fix sie nicht mit ab, ist er zu eng → eine Ebene höher.
 
 ### 3.3 Überanpassung erkennen
-
-Ein Fix ist verbrannt, wenn er:
-- einen Fallnamen, eine Testadresse, einen Anrufernamen oder einen Wortlaut aus dem Transkript enthält
-- als neuer Spiegelstrich unter „Regeln" landet, statt eine bestehende Stelle zu ändern
-- nur für eine einzige Anliegen-Variante gilt
-- eine Situation beschreibt statt ein Verhalten („Wenn jemand wegen Schimmel im Bad anruft" statt „Bei Gesundheitsgefahr im Wohnraum")
+Ein Fix ist verbrannt, wenn er einen Fallnamen, eine Testadresse oder einen Transkript-Wortlaut enthält · als neuer Spiegelstrich unter „Regeln" landet, statt eine bestehende Stelle zu ändern · nur für eine Anliegen-Variante gilt · eine Situation beschreibt statt ein Verhalten („wenn jemand wegen Schimmel im Bad anruft" statt „bei Gesundheitsgefahr im Wohnraum").
 
 ### 3.4 Gehört der Fix überhaupt in den Prompt?
 
 | Befund | Gehört nach |
 | --- | --- |
-| Kernfakt falsch/fehlt (Adresse, Öffnungszeiten, Leistungen) ODER Information, die zuverlässig fallen muss (Notdienst-Kontakte, handlungskritische Selbsthilfe) | Unternehmensinformationen bzw. strukturiertes Öffnungszeiten-Feld — nicht als Wissen-Eintrag, Wissen ist retrieval-abhängig |
-| Echtes Nice-to-have-FAQ, bei dem ein Fehltreffer keinen Schaden anrichtet | Wissensdatenbank/Wissen (Frage-Antwort-Paar) |
-| Eigenname falsch erkannt | STT-Fachbegriffe (nur korrekte Schreibweise) oder n8n-Normalisierung |
-| Zahl, Uhrzeit oder Nummer falsch vorgelesen — egal ob aus Prompt, Unternehmensinformationen oder Wissen | dort ausschreiben, wo sie steht (§1.2) |
-| Weiterleitung ins Leere, falsche Empfänger, fehlende Mail-Felder | Tool-Konfiguration |
-| Ticketfeld leer, falsch formatiert, Priorität falsch gesetzt | n8n-Post-Call |
+| Kernfakt falsch oder fehlend, oder Information, die zuverlässig fallen muss | Unternehmensinformationen bzw. Öffnungszeiten-Feld — nicht ins Wissen, das ist retrieval-abhängig |
+| Nice-to-have-FAQ ohne Schadenspotenzial | Wissensspeicher |
+| Zahl, Uhrzeit oder Nummer falsch vorgelesen | dort ausschreiben, wo sie steht (§1.2) |
+| Eigenname falsch erkannt | Fachbegriffe (nur korrekte Schreibweise) oder nachgelagerte Normalisierung |
+| Weiterleitung ins Leere, falscher Empfänger, fehlende Mail-Felder | Tool-Konfiguration |
+| Ticketfeld leer, falsch formatiert, Priorität falsch | Post-Call-Automation |
 | KI unterbricht, wartet zu kurz, versteht Zahlen schlecht | Dashboard (Sensitivität, Wartezeit, genaue Informationsverarbeitung) |
-| KI kündigt eine Aktion an, statt sie auszuführen („ich beende jetzt das Gespräch", „ich verbinde Sie") und redet danach weiter | Erst prüfen, ob der Ausstieg überhaupt einen Abschluss hat: fehlt die Verabschiedung, ist es der Abschluss-Block (§1.3). Hat er einen und feuert trotzdem nicht, gehört der Tool-Aufruf an den Zweig. Umformulieren scheitert in beiden Fällen beliebig oft |
+| KI kündigt eine Aktion an, statt sie auszuführen, und redet weiter | Hat der Ausstieg keine Verabschiedung: Abschluss-Block. Hat er eine und feuert trotzdem nicht: Aufruf an den Zweig (§1.3). Umformulieren scheitert in beiden Fällen |
 
-Bleibt nach dieser Sortierung nichts übrig, war es kein Prompt-Problem. Solche Befunde getrennt ausweisen, nicht in den Prompt schreiben.
+Bleibt nach dieser Sortierung nichts übrig, war es kein Prompt-Problem. Solche Befunde getrennt ausweisen.

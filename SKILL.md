@@ -7,9 +7,9 @@ description: Voice-Agent-Prompts für Telefon-KI gegen ein Eval-Set messen und v
 
 Zwei Aufgaben, beide gegen dasselbe Set: **Fälle schreiben** (§ Fälle) und **Runde auswerten** (§ Auswertung). Dem Nutzer in einem Satz sagen, welche läuft.
 
-Alle Kundenwerte — Promptversion, Testnummern, Workflow-IDs, offene Punkte — stehen im Tab `Setup` des Spreadsheets, nirgends sonst.
+Alle Kundenwerte — Promptversion, Testnummern, Workflow-IDs, offene Punkte — stehen im Tab `01-Setup`, nirgends sonst.
 
-Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe aus dem Spreadsheet › eingefügte Transkripte › nur die Audit-Checkliste. Je dünner die Lage, desto mehr Befunde stammen aus regeln.md §1 statt aus Beobachtung — das im Ergebnis kennzeichnen.
+Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe aus `04-Läufe` › eingefügte Transkripte › nur die Audit-Checkliste. Je dünner die Lage, desto mehr Befunde stammen aus regeln.md §1 statt aus Beobachtung — das im Ergebnis kennzeichnen.
 
 ## Warum die Regeln existieren
 
@@ -24,23 +24,25 @@ Die Checklisten stehen in `regeln.md`, das Gerüst in `prompt-template.md`. Hier
 
 ## Daten
 
-Je Kunde **eine** Spreadsheet-Datei, fünf Tabs: `Setup` · `Fälle` · `Läufe` · `Auswertung` · `Systemtests`.
+Je Kunde **eine** Spreadsheet-Datei, fünf Tabs: `01-Setup` · `02-Systemtests` · `03-Fälle` · `04-Läufe` · `05-Auswertung`.
 
-Lesen und Schreiben laufen über den Skill `google-sheets` — dort stehen Tool-Auswahl und die Locale-Fallen der Sheets-API. Für diesen Skill zählt nur: die `Läufe` schreibt der Grader, nie du. Beitrag dieses Skills sind neue Fallzeilen und gefüllte `Referenzlösung`.
+**Vor dem ersten Tabellenzugriff den Skill `google-sheets` aufrufen** — er hält die Tool-Auswahl und die Fallen der Tabellen-API und lädt in dieselbe Sitzung, kein Subagent nötig. Fehlt er, gehen Lesen und Schreiben direkt über die Sheets-Tools.
+
+Die `04-Läufe` schreibt der Grader, nie du. Beitrag dieses Skills sind neue Fallzeilen und gefüllte `Referenzlösung`.
 
 ## Fälle
 
-Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensspeicher, Stammdaten des Kunden. Ausgabe: Zeilen für den Tab `Fälle` — Spaltenreihenfolge aus der Kopfzeile der Kundendatei lesen, nicht aus dem Gedächtnis.
+Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensspeicher, Stammdaten des Kunden. Ausgabe: Zeilen für den Tab `03-Fälle` — Spaltenreihenfolge aus der Kopfzeile der Kundendatei lesen, nicht aus dem Gedächtnis.
 
 1. **Pfade auszählen.** Je Phase, je Weiterleitung, je Regel im Prompt ein Auslöser. Das ist die Grundgesamtheit, nicht die Fantasie.
 2. **Je Auslöser einen Zwilling.** „One-sided evals create one-sided optimization" — ein Fall, in dem das Verhalten kommen *soll*, und einer, in dem es ausbleiben soll. Der Zwilling trägt dieselbe Nummer mit `-Z-` und die Spalte `Zwilling zu`. Ohne Zwilling kein Fall.
 3. **Edge Cases als eigene Fälle:** Tippfehler und Nuscheln, mehrere Anliegen in einem Anruf, Themenwechsel mitten im Gespräch, ambige Angaben, unterdrückte Nummer, außerhalb der Geschäftszeiten, Anrufer legt auf.
-4. **Angriffsfälle getrennt**, eigener Pfad `Angriff`, Regel-Grader statt Judge (der Angreifertext nimmt den Judge sonst mit). In `Angriff` steht nur, wo Daten abfließen könnten; was Verhalten misst, gehört zu `Regeln`.
+4. **`Pfad` steuert, wer bewertet:** `Notfall` und `Notdienst` prüft ein Regel-Grader auf Ansage bzw. Weiterleitung, `Angriff` auf eine Verbotsliste, alles andere ein Judge gegen `Bestanden wenn`. Angriffsfälle deshalb getrennt, Regel-Grader statt Judge (der Angreifertext nimmt den Judge sonst mit). In `Angriff` steht nur, wo Daten abfließen könnten; was Verhalten misst, gehört zu `Regeln`.
 5. **Jede Zeile vollständig**, sonst greift sie nicht: `Codewort` ist das gesprochene Erkennungswort · `Kontext` bestimmt, von welcher Nummer angerufen wird · `Anrufe` die Wiederholungen (3 bei Haftung und Angriff, sonst 1) · `Ticket erwartet` den Zustand nach dem Anruf · `Zweck` beginnt bei `Capability` · `Rückhalte` bleibt leer, außer der Fall wird bewusst zurückgehalten.
 6. **Erreichbarkeit prüfen, bevor der Fall ins Set geht.** Ist `Bestanden wenn` mit dem erreichbar, was der Agent tatsächlich hat — Wissensspeicher, Stammdaten, Tools? Sonst misst der Fall den Fall, nicht den Agenten.
 7. **Zwei Prüfer, ein Urteil.** Formuliere `Bestanden wenn` / `Durchgefallen wenn` so, dass zwei Menschen unabhängig zum selben Pass/Fail kämen. Was nur du entscheiden kannst, ist kein Kriterium.
 8. **Teilpunkte** in `Punkte 0-2` definieren, wo die Aufgabe mehrteilig ist: Anliegen erkannt aber Ticket unvollständig ist besser als Sofort-Scheitern. Binär bleibt, was binär ist (Haftung, Angriff).
-9. **Codewort vergeben**, je Fall genau eines: ein kurzer, geläufiger **deutscher Vogelname**, zweisilbig und auf Anhieb aussprechbar — Amsel, Möwe, Specht, Drossel, Reiher, Fink. Keine seltenen oder langen (Zilpzalp, Trauerschnäpper), keine verwechselbaren (Star/Storch), keines, das im Sprechtext vorkommen kann. Der Anrufer nennt es mitten im Gespräch, der Grader sucht es im ganzen Transkript und schneidet es vor der Bewertung heraus. Vor jedem Lauf gehören die Codewörter ins Fachbegriff-Feld der Plattform und danach wieder heraus — ohne Eintrag überhört die Spracherkennung sie. Keine Fall-ID sprechen lassen: `NOT-01` wird zu „N O T null eins“. Nicht in `Anrufer sagt` schreiben — das Codewort ist Testmechanik, kein Teil des Anliegens.
+9. **Codewort vergeben**, je Fall ein anderer kurzer deutscher Vogelname (Amsel, Möwe, Specht, Fink). Nichts Seltenes, nichts Verwechselbares, nichts, das im Sprechtext vorkommt — und keine Fall-ID, die zerlegt die Spracherkennung. Gehört in die Spalte `Codewort`, nicht in `Anrufer sagt`: es ist Testmechanik, kein Anliegen. Vor jedem Lauf ins Fachbegriff-Feld der Plattform, danach wieder heraus.
 
 **Bringt der Nutzer einen Fall aus eigener Erfahrung mit** — ein realer Anruf, eine Vermutung, ein Ärgernis —, ist das die beste Quelle, die es gibt: sie kommt aus der Produktion, nicht aus der Fantasie. Nicht abweisen, sondern in eine vollständige Zeile übersetzen und drei Dinge prüfen: Deckt ein bestehender Fall denselben Auslöser schon ab (dann Zeile schärfen statt neue anlegen)? Ist das Kriterium beobachtbar formuliert? Fehlt der Zwilling? Danach mit den fehlenden Spalten zurückfragen, nicht raten.
 
@@ -54,5 +56,5 @@ Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensspeicher, Stammdat
    - **Fall besteht zum ersten Mal und Feld ist leer** → sein Transkript nach `Referenzlösung` schreiben.
 4. **Ursache statt Symptom** — regeln.md §3. Pflicht je Befund: Symptom → Ursache → Ebene des Fixes → Geschwister-Test. Mehrere Fälle mit derselben Ursache ergeben **einen** Fix, nicht mehrere.
 5. **Fix schreiben — Algo aus regeln.md §3 zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Warum 2 und 3).
-6. **Liefern.** Vollständig überarbeiteter Prompt (kein Diff) als Codeblock, Aufbau nach `references/prompt-template.md`, geänderte Plattform-, Tool- oder Wissensspeicher-Empfehlungen darunter. Dazu das Gate: die KPIs stehen im Tab `Setup`, der Stand im Tab `Auswertung`. Von dort die vier Quoten übernehmen — Pass-Quote, Δ zur Vorversion, Regression, Rückhalte. Δ ist die Zahl, die über Weitermachen oder Aufhören entscheidet. Dazu die Nebenzahlen aus den Läufen: Dauer, Züge, Tool-Calls, Trennungsgrund — eine Quote allein sagt nicht, was sie gekostet hat. Fixes, die nicht in den Prompt gehören (regeln.md §3.4), getrennt ausweisen.
+6. **Liefern.** Vollständig überarbeiteter Prompt (kein Diff) als Codeblock, Aufbau nach `references/prompt-template.md`, geänderte Plattform-, Tool- oder Wissensspeicher-Empfehlungen darunter. Dazu das Gate: die KPIs stehen im Tab `01-Setup`, der Stand im Tab `05-Auswertung`. Von dort die vier Quoten übernehmen — Pass-Quote, Δ zur Vorversion, Regression, Rückhalte. Δ ist die Zahl, die über Weitermachen oder Aufhören entscheidet. Dazu die Nebenzahlen aus den Läufen: Dauer, Züge, Tool-Calls, Trennungsgrund — eine Quote allein sagt nicht, was sie gekostet hat. Fixes, die nicht in den Prompt gehören (regeln.md §3.4), getrennt ausweisen.
 7. **Rückfragen** max. 5 — nie etwas fragen, das in Prompt, Transkripten oder Läufen steht.
