@@ -1,6 +1,6 @@
 # voice-evals
 
-Claude-Code-Skill: fonio Voice-Agent-Prompts gegen ein Eval-Set messen und verbessern.
+Claude-Code-Skill: Voice-Agent-Prompts für Telefon-KI gegen ein Eval-Set messen und verbessern.
 
 Dieses Repo **ist** das Skill-Verzeichnis:
 
