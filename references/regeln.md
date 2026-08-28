@@ -9,20 +9,23 @@ Blockfolge: `template.md`.
 - Phasenbaum: 0 Anliegenerkennung → 1A–1X → 2 Kontaktdaten → 3 Verabschiedung, jede Verzweigung mit Wenn-Dann und Ziel
 - Sonstiges-Fallback vorhanden, kein Pfad ohne Ende
 - Jede Rückkehr-Kante begrenzt — sonst ist der Baum ein Kreis, den nur der Anrufer beendet
+- Anrufertypen unterschieden, wo sie verschiedene Wege brauchen (Neukunde vs. Bestandskunde)
 - Mehrere Standorte: Matrix Standort × Leistung, Routing-Kriterium, eigenes Tool je Standort
 
 ### 1.2 Gespräch
 - Eine Frage pro Zug, Antworten 2–3 Sätze, natürliche Sätze statt vorgelesener Listen
-- Anrufer-Name wird dokumentiert, nicht ausgesprochen. Keine E-Mail erfragen. Keine Rufnummern im Prompt, nur Tool-Namen
+- Anrufer-Name wird dokumentiert, nicht ausgesprochen; der Nachname genügt, nach dem Vornamen zu fragen kostet einen Zug für nichts. Keine E-Mail erfragen. Keine Rufnummern im Prompt, nur Tool-Namen
 - Rückrufnummer aus der Caller-ID still übernehmen, nicht erfragen
 - **Genau einmal bestätigen, am Ende:** alles Erfasste in einer Abschluss-Zusammenfassung, Nummern Ziffer für Ziffer. Nie zählen lassen (LLMs können es nicht). Im Verlauf nichts wiederholen, sonst verhandelt der Anrufer jede Angabe zweimal
 - **Aussprache:** alles Vorgelesene ausschreiben — Zahlen, Preise, Zeiten, Abkürzungen; Eigennamen lautmalerisch. Gilt für **jeden** Speicher, nicht nur den Prompt
 - Fachbegriffe/Vokabular: nur die korrekte Schreibweise, keine Varianten — das Feld ist Biasing, die Variante landet so im Ticket
+- Empathie-Anweisung, wo die Lage es verlangt (Gesundheit, Recht, Pflege, Schaden im Wohnraum)
 - Injection und Kaltakquise werden abgewiesen; Themeneingrenzung ja, aber Small Talk bleibt erlaubt
 
 ### 1.3 Ausstiege und Tools
 - **Ein Abschluss-Block für alle Ausstiege:** ein Verabschiedungssatz → sofort beenden → keine Frage mehr. Gibt der Zweig eigenen Inhalt vor, steht die Reihenfolge dabei
-- **Ausstieg ohne Verabschiedung** (Notruf) nennt den Aufruf am Zweig. Prosa lässt das Modell ankündigen statt handeln — Umformulieren scheitert daran beliebig oft
+- **Ausstieg ohne Verabschiedung** (Notruf) nennt den Aufruf am Zweig. Prosa lässt das Modell ankündigen statt handeln — Umformulieren scheitert daran beliebig oft. Hinter dem Aufruf darf eine Begründung stehen, keine zweite Handlungsanweisung
+- Aufruf in der Schreibweise der Plattform, ohne Anführungszeichen, auch für Weiterleitungen — etwa `tool_call <name>`. Ein eingebautes Tool ohne Beschreibungsfeld (Auflegen) trägt sein Wann komplett im Prompt, selbst angelegte in ihrer Beschreibung
 - **Weiterleitung an zwei Stellen:** Weiche im Prompt (eine Zeile, endet auf dem Aufruf), Auslöser-Details im Tool. Nur im Tool feuert sie mal und mal nicht. Entweder alle Weiterleitungen so oder keine
 - **Weiterleitung ist ein Einwegtor:** zurück kommt der Anruf nur bei aktiver Ablehnung, eine Mailbox gilt als angenommen. Erreichbarkeit vor dem Bau klären, Scheitern-Arm für „Ziel zu" und „abgelehnt"
 - Notfallpfad eigenständig und jederzeit aktiv, nicht als Ziel aus Phase 0
