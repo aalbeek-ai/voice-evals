@@ -44,7 +44,9 @@ Prompt = Verhalten, Speicher = Daten. Kurze Stichpunkte hinein, Bedingungen und 
 Doppelte Begrüßung · dieselbe Regel mehrfach · Widersprüche · „NIEMALS!!!" statt Grund · Verbot, wo eine Reihenfolge gemeint ist · Regel nennt einen Eval-Fall oder Transkript-Wortlaut (§3.3) · Sprechanweisungen auf Millisekunden-Ebene.
 
 ### 1.6 Lieferformat
-Prompt als Codeblock. Darunter getrennt: Startnachricht (kurz, mit KI-Offenlegung), Dashboard-Einstellungen, Tool-Konfiguration, Variablen-Extraktion, Speicher-Inhalte. Ansprechform über das Plattform-Feld, dann nicht auch im Prompt.
+Prompt als Codeblock. Darunter getrennt: Startnachricht, Dashboard-Einstellungen, Tool-Konfiguration, Variablen-Extraktion, Speicher-Inhalte. Ansprechform über das Plattform-Feld, dann nicht auch im Prompt.
+
+Startnachricht höchstens ~90 Zeichen und trotzdem mit KI-Offenlegung — längere schneidet der Anrufer mit seinem ersten Wort ab. Dagegen die Einstellung aktivieren, die das Unterbrechen der Begrüßung verhindert, sonst hört die Offenlegung niemand und sie ist rechtlich wertlos.
 
 ## 2 Symptome im Transkript
 **Gesprächsführung:** Endlosschleife · mehrere Fragen auf einmal · Liste vorgelesen · zu lange Antworten · Roboter-Sprache · Doppelbestätigung
