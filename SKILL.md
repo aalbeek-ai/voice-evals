@@ -15,7 +15,7 @@ Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe au
 
 Die Checklisten stehen in `regeln.md`, das Gerüst in `template.md`. Hier nur das Warum, damit Fixes auf die Ursache zielen statt die Symptomliste abzuarbeiten. Die §-Verweise zeigen in `regeln.md`.
 
-1. **STT und TTS haben getrennte Fehlermodi → spiegelverkehrte Regeln.** TTS liest vor (Ausgabefehler: Aussprache), STT hört zu (Eingabefehler: Erkennung) — dieselbe Sache, Namen und Zahlen, braucht entgegengesetzte Behandlung. Die Aussprache-Seite gilt für jeden Text, den die Engine vorliest, nicht nur für den Prompt. §1.2, §1.6
+1. **STT und TTS haben getrennte Fehlermodi → spiegelverkehrte Regeln.** TTS liest vor (Ausgabefehler: Aussprache), STT hört zu (Eingabefehler: Erkennung) — dieselbe Sache, Namen und Zahlen, braucht entgegengesetzte Behandlung. Die Aussprache-Seite gilt für jeden Text, den die Engine vorliest, nicht nur für den Prompt. §1.2
 2. **Instruktionsdichte senkt Befolgung.** Jede Regel genau einmal, Details in den Wissensspeicher statt in den Prompt. 800 Wörter ohne Doppelung schlagen 400 mit. §1.4, §1.5
 3. **Der Prompt beschreibt Verhalten, kein Fallverzeichnis.** Ein Eval-Set deckt zwei Dutzend Fälle ab, der Agent erlebt tausende. Eine Regel, die nur den getesteten Fall trifft, macht den Agenten überall sonst starrer und verbraucht das Instruktionsbudget aus Punkt 2. §3
 4. **Grund statt Betonung.** „NIEMALS Auslassungspunkte" wirkt nur auf Auslassungspunkte; „der Text wird von einer TTS-Engine vorgelesen, die … nicht kann" generalisiert auf jedes ähnliche Zeichen. §1.5
