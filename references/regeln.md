@@ -5,6 +5,7 @@
 Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor Lieferung prüfen. Bewertung ✅ vorhanden · ⚠️ fehlt oder fehlerhaft · ❌ kritisch.
 
 ### 1.1 Struktur
+Gerüst und Blockreihenfolge: `prompt-template.md`.
 - Identität: Name, Rolle, Unternehmen klar definiert
 - Ansprechform (Du/Sie) definiert und durchgehend eingehalten
 - Markdown mit Überschriften strukturiert
@@ -21,7 +22,7 @@ Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor 
 - Prompt-Schutz gegen Injection (Anrufer versucht Prompt auszulesen)
 - Nummern, die der Anrufer nennt: Ziffer für Ziffer vorlesen und bestätigen lassen — genau einmal, in der Abschluss-Zusammenfassung, nicht schon beim Erfassen; mehrziffrige Nummern (Kundennr. o. ä.) nie zählen; PLZ einzeln; Straßen bei Bedarf buchstabieren lassen
 - Im Gesprächsverlauf wird keine Angabe wiederholt. Nachgefragt wird nur, was akustisch nicht ankam; alles andere quittiert die KI mit „Alles klar" und geht weiter. Sonst verhandelt der Anrufer jede Antwort zweimal und das Gespräch verliert den Fluss
-- Aussprache (TTS): Zahlen/Preise/Uhrzeiten/Datum, die die KI vorliest, als Wörter ausgeschrieben; schwer aussprechbare Eigennamen/Marken lautmalerisch („Reidl"→„Raidl"); Aussprache-Block am Prompt-Anfang
+- Aussprache (TTS): Zahlen/Preise/Uhrzeiten/Datum, die die KI vorliest, als Wörter ausgeschrieben; schwer aussprechbare Eigennamen/Marken lautmalerisch („Reidl"→„Raidl"); Aussprache-Block am Prompt-Anfang. **Die Regeln gelten für jeden Text, den die TTS vorliest, nicht nur für den Prompt** — Unternehmensinformationen, Wissensdatenbank, Startnachricht und Tool-Antworten werden vorgelesen wie sie dastehen. Ein Eintrag „Notdienst 24/7, Tel. 04503/123" wird zum Glücksspiel, „rund um die Uhr" und die Nummer Ziffer für Ziffer sind es nicht. Audit deshalb über alle Speicher, nicht nur über den Prompt
 - Themeneingrenzung definiert (worüber die KI nicht spricht) — aber nicht so restriktiv, dass Small Talk stirbt
 - Immer nur eine Frage auf einmal
 - Natürliche Sätze statt vorgelesener Listen
@@ -45,7 +46,7 @@ Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor 
 ### 1.4 Inhaltliche Qualität
 - Detailinfos (FAQ, Preise, Kataloge) in Wissensdatenbank ausgelagert, nicht im Prompt
 - fonio hat drei getrennte Speicher: **Unternehmensinformationen** (Freitext, immer im Kontext), **Öffnungszeiten-Feld** (strukturiert, eigenes UI-Element — vermutlich Basis der automatisierten Geschäftszeiten-Logik, fonio-seitig nicht bestätigt) und **Wissen/Wissensdatenbank** (Frage-Antwort-Paare, nur bei thematischem Bedarf abgerufen, retrieval-abhängig und praktisch unzuverlässig — beobachtet: eine im Prompt verankerte Wissens-Prüfung griff live trotzdem nicht). Ablage-Kriterium ist **Zuverlässigkeit**, nicht Kernfakt vs. Randfall: alles, das fast immer korrekt sitzen muss (Adresse, Leistungen, Notdienst-Kontakte) → Unternehmensinformationen. Zweite Achse: **Wortlaut-Determinismus** — Unternehmensinformationen wird frei paraphrasiert (ok bei egaler Formulierung); braucht eine Antwort exakten Wortlaut (Rechtliches), gezielt Wissen für genau diese Frage aktivieren (Kundenannahme, fonio-seitig nicht bestätigt). Default: Wissen aus, jede aktive Quelle ist eine weitere Fehlerfläche. Nie doppelt ablegen — erzeugt auseinanderlaufende Drittquellen (beobachtet: Öffnungszeiten in Wissen wich von Unternehmensinformationen ab). Das gilt auch Prompt gegen Dashboard: was ein Dashboard-Feld deterministisch entscheidet (Erreichbarkeit nach Uhrzeit), gehört nicht zusätzlich als Prompt-Zeile hinein — dort ist es bestenfalls wirkungslos, schlechtens eine zweite Wahrheit
-- Unternehmensinformationen und Wissen sind Datenspeicher, kein Verhaltenscode: nur kurze Stichpunkte (Wert, Nummer, Kategorie) hinein — Bedingungen, Disclaimer, Tonalität und wann was gesagt wird gehören in den Prompt. Ein Speicher-Eintrag, der ein ganzer Satz mit Begründung ist, gehört umformuliert: der Fakt bleibt kurz im Speicher, die Logik wandert in die passende Phase
+- Unternehmensinformationen und Wissen sind Datenspeicher, kein Verhaltenscode: nur kurze Stichpunkte (Wert, Nummer, Kategorie) hinein — Bedingungen, Disclaimer, Tonalität und wann was gesagt wird gehören in den Prompt. Ein Speicher-Eintrag, der ein ganzer Satz mit Begründung ist, gehört umformuliert: der Fakt bleibt kurz im Speicher, die Logik wandert in die passende Phase. Kurz heißt nicht abgekürzt — Zahlen, Uhrzeiten und Nummern darin nach §1.2 ausschreiben
 - KI beantwortet häufige Fragen direkt statt reflexhaft auf Rückruf zu verweisen
 - Anrufertypen unterschieden (z. B. Neukunde vs. Bestandskunde)
 - Empathie-Anweisungen bei sensiblen Branchen (Gesundheit, Recht, Versicherung, Pflege)
@@ -61,7 +62,7 @@ Dieselbe Liste für beides: einen fremden Prompt auditieren und den eigenen vor 
 - Mehr als 10 FAQ-Antworten im Prompt statt Wissensdatenbank
 - Derselbe Kernfakt gleichzeitig in Unternehmensinformationen und als eigener Wissen-Eintrag gepflegt (Divergenz-Risiko, siehe § 1.4)
 - Überdetaillierte Sprechanweisungen (Millisekunden-Pausen, Silbenbetonung — Sache des TTS, nicht des Prompts)
-- Regel ohne Grund, obwohl eine Begründung unlistete Ähnlichkeiten mit abdecken würde („Grund statt Betonung", → tools/claude-api.md)
+- Regel ohne Grund, obwohl eine Begründung unlistete Ähnlichkeiten mit abdecken würde („Grund statt Betonung")
 
 ### 1.6 Namens-Erkennung (falls relevant)
 - Eigennamen (Team, Standorte) in den Fachbegriffen: nur korrekte Schreibweise, KEINE Varianten (Feld ist Biasing, Output = wie gelistet → Variante landet falsch im Ticket). Varianten nur, wo der Name bloß zum Routen erkannt und nicht gespeichert wird; sonst n8n-Normalisierung. TTS-Aussprache separat im Aussprache-Block (lautmalerisch)
@@ -152,6 +153,7 @@ Ein Fix ist verbrannt, wenn er:
 | Kernfakt falsch/fehlt (Adresse, Öffnungszeiten, Leistungen) ODER Information, die zuverlässig fallen muss (Notdienst-Kontakte, handlungskritische Selbsthilfe) | Unternehmensinformationen bzw. strukturiertes Öffnungszeiten-Feld — nicht als Wissen-Eintrag, Wissen ist retrieval-abhängig |
 | Echtes Nice-to-have-FAQ, bei dem ein Fehltreffer keinen Schaden anrichtet | Wissensdatenbank/Wissen (Frage-Antwort-Paar) |
 | Eigenname falsch erkannt | STT-Fachbegriffe (nur korrekte Schreibweise) oder n8n-Normalisierung |
+| Zahl, Uhrzeit oder Nummer falsch vorgelesen — egal ob aus Prompt, Unternehmensinformationen oder Wissen | dort ausschreiben, wo sie steht (§1.2) |
 | Weiterleitung ins Leere, falsche Empfänger, fehlende Mail-Felder | Tool-Konfiguration |
 | Ticketfeld leer, falsch formatiert, Priorität falsch gesetzt | n8n-Post-Call |
 | KI unterbricht, wartet zu kurz, versteht Zahlen schlecht | Dashboard (Sensitivität, Wartezeit, genaue Informationsverarbeitung) |
