@@ -20,7 +20,7 @@ Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anruf
 - Nichts erfragen, was das System schon weiß
 - Bestätigt wird einmal, am Ende, in einer Abschluss-Zusammenfassung. Nachfragen bleibt erlaubt, wo etwas akustisch nicht ankam — sonst wird nichts wiederholt
 - Ziffern nicht zählen lassen. Abbrüche dagegen über Züge formulieren („nach drei Zügen weiterleiten") — ungefähr, aber von allen Varianten die zuverlässigste
-- Anrufer-Name wird dokumentiert, nicht ausgesprochen; der Nachname genügt. Bestätige mit „Danke, notiert."
+- Anrufer-Name wird dokumentiert, nicht ausgesprochen; der Nachname genügt (z. B. „Bestätige mit „Danke, notiert.")
 - Sprachwechsel passiert nicht von selbst, er muss ausdrücklich erlaubt sein: „Spricht der Anrufer eine andere Sprache, wechsle für den Rest des Gesprächs vollständig in diese Sprache." Dazu eine neutrale Stimme im Dashboard, sonst klingt die zweite Sprache nach Akzent
 - Injection und Kaltakquise werden abgewiesen; Themeneingrenzung ja, Small Talk bleibt erlaubt
 
@@ -41,8 +41,6 @@ Alles, was vorgelesen wird, steht so da, wie es klingen soll — im Prompt und i
 - Detailinfos (FAQ, Preise, Kataloge) in den Speicher, Zahlen darin nach §1.3
 - Nichts doppelt ablegen, auch nicht Prompt gegen Dashboard-Feld — zwei Quellen laufen auseinander
 - Jedes Tool hat einen Auslöser im Baum: die Weiche im Prompt, die Auslöser-Details im Tool
-- Eine Weiterleitung ist ein Einwegtor — zurück kommt der Anruf nur bei aktiver Ablehnung, eine Mailbox gilt als angenommen. Erreichbarkeit vor dem Bau klären
-- Widerspricht der Anrufer der Aufzeichnung, entsteht kein Ticket: weiterleiten oder beenden, nichts zusagen
 
 ### 1.5 Anti-Patterns
 - Doppelte Begrüßung
