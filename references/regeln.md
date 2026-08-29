@@ -5,13 +5,13 @@ Womit ein Prompt geprüft wird — nach einer Runde, um Befunde einzuordnen, und
 ## 1 Prüfliste
 
 ### Startnachricht
-Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anrufersprache übersetzt wird — kurz und neutral halten, den Sprachwechsel übernimmt der Prompt.
+Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anrufersprache übersetzt wird — kurz und neutral halten, den Sprachwechsel übernimmt der Prompt. Variablen darin über das Variablen-Feld der Plattform einsetzen, nicht abtippen: abgetippte bleiben als `{{name}}` stehen und werden vorgelesen. Zusätzlich prüfen, ob Inbound-Webhook oder Outbound-API den Wert überhaupt liefern.
 
 ### 1.1 Struktur
 - Identität und Ansprechform definiert und durchgehend gehalten
 - Sonstiges-Fallback vorhanden, kein Pfad ohne Ende
 - Jede Rückkehr-Kante begrenzt — sonst ist der Baum ein Kreis, den nur der Anrufer beendet
-- Eigener Block „Gespräch beenden" mit fester Schrittfolge. Beenden-Anweisungen an den einzelnen Zweigen wirken nicht, der Block schon
+- Eigener Block „Gespräch beenden" mit fester Schrittfolge.
 - Anrufertypen getrennt, wo sie verschiedene Wege brauchen; bei mehreren Standorten Matrix, Routing-Kriterium und ein Tool je Standort
 
 ### 1.2 Gespräch
@@ -20,7 +20,7 @@ Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anruf
 - Nichts erfragen, was das System schon weiß
 - Bestätigt wird einmal, am Ende, in einer Abschluss-Zusammenfassung. Nachfragen bleibt erlaubt, wo etwas akustisch nicht ankam — sonst wird nichts wiederholt
 - Ziffern nicht zählen lassen. Abbrüche dagegen über Züge formulieren („nach drei Zügen weiterleiten") — ungefähr, aber von allen Varianten die zuverlässigste
-- Anrufer-Name wird dokumentiert, nicht ausgesprochen; der Nachname genügt (z. B. „Bestätige mit „Danke, notiert.")
+- Anrufer-Name wird dokumentiert, nicht ausgesprochen; der Nachname genügt — z. B. „Bestätige mit „Danke, notiert."
 - Sprachwechsel passiert nicht von selbst, er muss ausdrücklich erlaubt sein: „Spricht der Anrufer eine andere Sprache, wechsle für den Rest des Gesprächs vollständig in diese Sprache." Dazu eine neutrale Stimme im Dashboard, sonst klingt die zweite Sprache nach Akzent
 - Injection und Kaltakquise werden abgewiesen; Themeneingrenzung ja, Small Talk bleibt erlaubt
 
@@ -31,7 +31,7 @@ Alles, was vorgelesen wird, steht so da, wie es klingen soll — im Prompt und i
 - Haus-, Wohnungs- und Stockwerksnummern dagegen als ganze Zahl: „Strandallee hundertsechsundfünfzig", „dritter Stock"
 - Schwierige Firmen- und Eigennamen lautmalerisch, wie das TTS sie sprechen soll: „Aalbeek" → „Aal-Beek"
 - E-Mail- und Internetadressen in Bestandteilen, Symbole als Wort: „info at aalbeek punkt de" · „fonio punkt info"
-- Was erst im Gespräch entsteht — Variablen, Tool-Ergebnisse, vorgelesene Adressen — lässt sich nicht vorab umschreiben. Solche Stellen in `<speak>`-Tags setzen, darin steht die gesprochene Form: „Sie erreichen ihn unter <speak>m g at gemeinhardt punkt a g</speak>"
+- Muss die geschriebene Form erhalten bleiben und trotzdem anders klingen, die Einzelstelle in `<speak>`-Tags setzen — darin steht die gesprochene Form: „Sie erreichen ihn unter <speak>mg at Gemeinhardt punkt ag</speak>"
 
 ### 1.4 Speicher und Tools
 - **In den Systemprompt gehört, was zuverlässig sitzen muss** — Retrieval greift nicht sicher
