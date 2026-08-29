@@ -31,7 +31,7 @@ Alles, was vorgelesen wird, steht so da, wie es klingen soll — im Prompt und i
 - Haus-, Wohnungs- und Stockwerksnummern dagegen als ganze Zahl: „Strandallee hundertsechsundfünfzig", „dritter Stock"
 - Schwierige Firmen- und Eigennamen lautmalerisch, wie das TTS sie sprechen soll: „Aalbeek" → „Aal-Beek"
 - E-Mail- und Internetadressen in Bestandteilen, Symbole als Wort: „info at aalbeek punkt de" · „fonio punkt info"
-- Muss die geschriebene Form erhalten bleiben und trotzdem anders klingen, die Einzelstelle in `<speak>`-Tags setzen — darin steht die gesprochene Form: „Sie erreichen ihn unter <speak>mg at Gemeinhardt punkt ag</speak>"
+- Muss die geschriebene Form erhalten bleiben und trotzdem anders klingen, die Einzelstelle in `<speak>`-Tags setzen. Darin gelten dieselben Muster wie oben, auch Buchstabenfolgen einzeln: „Sie erreichen ihn unter <speak>em geh at Gemeinhardt punkt ah geh</speak>". Ob die Schreibweise trägt, entscheidet der Testanruf, nicht das Lesen
 
 ### 1.4 Speicher und Tools
 - **In den Systemprompt gehört, was zuverlässig sitzen muss** — Retrieval greift nicht sicher
