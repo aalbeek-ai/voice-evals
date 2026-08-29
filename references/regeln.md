@@ -5,7 +5,7 @@ Womit ein Prompt geprüft wird — nach einer Runde, um Befunde einzuordnen, und
 ## 1 Prüfliste
 
 ### Startnachricht
-Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anrufersprache übersetzt wird — kurz und neutral halten, den Sprachwechsel übernimmt der Prompt. Variablen darin über das Variablen-Feld der Plattform einsetzen, nicht abtippen: abgetippte bleiben als `{{name}}` stehen und werden vorgelesen. Zusätzlich prüfen, ob Inbound-Webhook oder Outbound-API den Wert überhaupt liefern.
+Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anrufersprache übersetzt wird — kurz und neutral halten, den Sprachwechsel übernimmt der Prompt.
 
 ### 1.1 Struktur
 - Identität und Ansprechform definiert und durchgehend gehalten
@@ -31,10 +31,11 @@ Alles, was vorgelesen wird, steht so da, wie es klingen soll — im Prompt und i
 - Haus-, Wohnungs- und Stockwerksnummern dagegen als ganze Zahl: „Strandallee hundertsechsundfünfzig", „dritter Stock"
 - Schwierige Firmen- und Eigennamen lautmalerisch, wie das TTS sie sprechen soll: „Aalbeek" → „Aal-Beek"
 - E-Mail- und Internetadressen in Bestandteilen, Symbole als Wort: „info at aalbeek punkt de" · „fonio punkt info"
-- Muss die geschriebene Form erhalten bleiben und trotzdem anders klingen, die Einzelstelle in `<speak>`-Tags setzen. Darin gelten dieselben Muster wie oben, auch Buchstabenfolgen einzeln: „Sie erreichen ihn unter <speak>em geh at Gemeinhardt punkt ah geh</speak>". Ob die Schreibweise trägt, entscheidet der Testanruf, nicht das Lesen
+- Soll eine Einzelstelle im Moment auf eine bestimmte Art klingen (typisch: eine E-Mail-Adresse vorlesen), mit `<speak>`-Tags umschließen: „Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>". Ob die Schreibweise trägt, entscheidet der Testanruf, nicht das Lesen
 
 ### 1.4 Speicher und Tools
 - **In den Systemprompt gehört, was zuverlässig sitzen muss** — Retrieval greift nicht sicher
+- Variablen überall im Prompt über das Variablen-Feld der Plattform einfügen, nicht abtippen: abgetippte bleiben als `{{name}}` stehen und werden vorgelesen. Zusätzlich prüfen, ob Outbound-API oder Inbound-Webhook den Wert übergeben
 - **Speicherzwang und Nichtwissens-Satz stehen im Prompt:** unternehmensspezifische Angaben ausschließlich aus dem Speicher, und steht dort nichts, ein fester Satz („Diese Information habe ich nicht — eine Kollegin oder ein Kollege meldet sich") statt einer Schätzung. Ohne den Satz füllt das Modell die Lücke selbst
 - Personenbezogene Daten, Objektadressen und Kontakte von Mitarbeitenden nie von sich aus nennen — nur auf ausdrückliche Frage und nur, wenn sie im Speicher stehen
 - Rufnummern und Kontakte gehören in Tools oder in den Speicher, nie in den Prompt: dort liest die KI sie vor und eine Injection zieht sie heraus
