@@ -11,6 +11,7 @@ Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anruf
 - Identität und Ansprechform definiert und durchgehend gehalten
 - Sonstiges-Fallback vorhanden, kein Pfad ohne Ende
 - Jede Rückkehr-Kante begrenzt — sonst ist der Baum ein Kreis, den nur der Anrufer beendet
+- Jede Phase als nummerierte Schrittfolge mit sichtbarem Abschluss — der letzte Schritt fasst zusammen und verabschiedet. Ein Ablauf ohne markiertes Ende läuft weiter
 - Eigener Block „Gespräch beenden" mit fester Schrittfolge.
 - Anrufertypen getrennt, wo sie verschiedene Wege brauchen; bei mehreren Standorten Matrix, Routing-Kriterium und ein Tool je Standort
 
@@ -31,11 +32,11 @@ Alles, was vorgelesen wird, steht so da, wie es klingen soll — im Prompt und i
 - Haus-, Wohnungs- und Stockwerksnummern dagegen als ganze Zahl: „Strandallee hundertsechsundfünfzig", „dritter Stock"
 - Schwierige Firmen- und Eigennamen lautmalerisch, wie das TTS sie sprechen soll: „Aalbeek" → „Aal-Beek"
 - E-Mail- und Internetadressen in Bestandteilen, Symbole als Wort: „info at aalbeek punkt de" · „fonio punkt info"
-- Soll eine Einzelstelle im Moment auf eine bestimmte Art klingen (typisch: eine E-Mail-Adresse vorlesen), mit `<speak>`-Tags umschließen: „Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>". Ob die Schreibweise trägt, entscheidet der Testanruf, nicht das Lesen
+- Soll eine Einzelstelle im Moment auf eine bestimmte Art klingen (typisch: eine E-Mail-Adresse vorlesen), mit `<speak>`-Tags umschließen: „Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>"
 
 ### 1.4 Speicher und Tools
 - **In den Systemprompt gehört, was zuverlässig sitzen muss** — Retrieval greift nicht sicher
-- Variablen überall im Prompt über das Variablen-Feld der Plattform einfügen, nicht abtippen: abgetippte bleiben als `{{name}}` stehen und werden vorgelesen. Zusätzlich prüfen, ob Outbound-API oder Inbound-Webhook den Wert übergeben
+- Variablen überall im Prompt über das Variablen-Feld der Plattform einfügen, nicht abtippen: robuster und weniger fehleranfällig.
 - **Speicherzwang und Nichtwissens-Satz stehen im Prompt:** unternehmensspezifische Angaben ausschließlich aus dem Speicher, und steht dort nichts, ein fester Satz („Diese Information habe ich nicht — eine Kollegin oder ein Kollege meldet sich") statt einer Schätzung. Ohne den Satz füllt das Modell die Lücke selbst
 - Personenbezogene Daten, Objektadressen und Kontakte von Mitarbeitenden nie von sich aus nennen — nur auf ausdrückliche Frage und nur, wenn sie im Speicher stehen
 - Rufnummern und Kontakte gehören in Tools oder in den Speicher, nie in den Prompt: dort liest die KI sie vor und eine Injection zieht sie heraus
