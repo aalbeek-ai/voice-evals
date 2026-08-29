@@ -9,7 +9,8 @@ Identität und Aussprache stehen vorn, weil das Modell sie beim Vorlesen jeder Z
 <Name, Rolle, Unternehmen>
 
 # Aussprache
-<Warum: der Text wird vorgelesen. Dann die Muster — §1.3>
+Der Text wird wortwörtlich von einer TTS-Engine einem Menschen vorgelesen.
+<Dann die Muster — §1.3>
 
 # Unternehmensinformationen (in deinem Kontext)
 <Welche Themen im Speicher liegen. Keine Werte, sonst zwei Wahrheiten>
