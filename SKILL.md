@@ -28,7 +28,7 @@ Je Kunde **eine** Spreadsheet-Datei, fünf Tabs: `01-Setup` · `02-Systemtests` 
 
 **Vor dem ersten Tabellenzugriff den Skill `google-sheets` aufrufen** — er hält die Tool-Auswahl und die Fallen der Tabellen-API und lädt in dieselbe Sitzung, kein Subagent nötig. Fehlt er, gehen Lesen und Schreiben direkt über die Sheets-Tools.
 
-Die `04-Läufe` schreibt der Grader, nie du. Beitrag dieses Skills sind neue Fallzeilen und gefüllte `Referenzlösung`. Einzige Ausnahme ist die Nachbewertung eines Fehlurteils: `Bestanden`, `Punkte` und `Begründung` von Hand überschreiben, die Begründung dabei vollständig neu schreiben und die Zeile in `Lauf` mit `✏️` beginnen, wie der Grader es dort mit `⚠️` tut — sonst liest die nächste Runde ein Grader-Urteil, das keines mehr ist.
+Die `04-Läufe` schreibt der Grader, nie du. Beitrag dieses Skills sind neue Fallzeilen und gefüllte `Referenzlösung`. Einzige Ausnahme ist die Nachbewertung eines Fehlurteils. Dann hängt in der Spalte `Lauf` `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` an — sonst liest die nächste Runde ein Grader-Urteil, das keines mehr ist.
 
 ## Fälle
 
