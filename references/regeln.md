@@ -11,7 +11,6 @@ Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anruf
 - Identität und Ansprechform definiert und durchgehend gehalten
 - Sonstiges-Fallback vorhanden, kein Pfad ohne Ende
 - Jede Rückkehr-Kante begrenzt — sonst ist der Baum ein Kreis, den nur der Anrufer beendet
-- Jede Phase als nummerierte Schrittfolge mit sichtbarem Abschluss — der letzte Schritt fasst zusammen und verabschiedet. Ein Ablauf ohne markiertes Ende läuft weiter
 - Eigener Block „Gespräch beenden" mit fester Schrittfolge.
 - Anrufertypen getrennt, wo sie verschiedene Wege brauchen; bei mehreren Standorten Matrix, Routing-Kriterium und ein Tool je Standort
 
@@ -59,6 +58,7 @@ Ein Prompt, den ein LLM Runde für Runde repariert, wächst zum Fallverzeichnis 
 
 - **Algo vor jedem Fix:** hinterfragen (Symptom real?) → löschen (was geht ersatzlos raus?) → vereinfachen oder optimieren. Ausbauen erst, wenn sich der Bedarf wiederholt hat
 - **Höchste zutreffende Ebene wählen:** Wortlaut (klingt falsch) → Regel (fehlt, doppelt, widersprüchlich) → Struktur (Pfad fehlt oder greift nicht) → Prinzip (arbeitet den Baum starr ab, scheitert an jeder Abweichung). Nur auf der Prinzip-Ebene wird der Prompt kürzer und deckt mehr ab
+- **Nummerierte Schritte sind ein Werkzeug, kein Standard:** verheddert sich der Agent in einer Phase, bekommt genau diese Phase eine nummerierte Schrittfolge. Überall nummeriert macht ihn starr und kostet die Freiheit, die er für Abweichungen braucht. Der letzte Schritt verweist auf die nächste Phase; eine Verabschiedung steht nur am Ende des Gesprächs
 - **Geschwister-Test:** drei Situationen mit derselben Ursache benennen, die nicht im Set stehen. Deckt der Fix sie nicht ab, eine Ebene höher
 - **Überanpassung:** ein Fix, der einen Fallnamen oder Transkript-Wortlaut enthält, als neuer Spiegelstrich angehängt wird oder eine Situation statt eines Verhaltens beschreibt, ist verbrannt
 - **Nicht jeder Fix gehört in den Prompt:** Fakt falsch → Speicher · Weiterleitung ins Leere → Tool · Ticketfeld falsch → Post-Call-Automation · unterbricht oder versteht Zahlen schlecht → Dashboard · KI-Offenlegung wird abgeschnitten → Dashboard („Unterbrechung verhindern"). Bleibt nichts übrig, war es kein Prompt-Problem
