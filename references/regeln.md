@@ -13,6 +13,8 @@ Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anruf
 - Jede Rückkehr-Kante begrenzt — sonst ist der Baum ein Kreis, den nur der Anrufer beendet
 - Eigener Block „Gespräch beenden" mit fester Schrittfolge.
 - Anrufertypen getrennt, wo sie verschiedene Wege brauchen; bei mehreren Standorten Matrix, Routing-Kriterium und ein Tool je Standort
+- **Je Anliegenart eine eigene Phase.** Eine Phase, die zwei Arten bündelt, arbeitet das Modell als Liste ab und stellt die Fragen der einen Art in der anderen
+- **Alle Weiterleitungen in einem Block**, mit der Weiche, ob sie gerade möglich ist, und dem, was nach einem gescheiterten Transfer passiert. Hängen sie an den einzelnen Phasen, fehlt beides
 
 ### 1.2 Gespräch
 - Eine Frage pro Zug, Antworten zwei bis drei Sätze, natürliche Sätze statt vorgelesener Listen
