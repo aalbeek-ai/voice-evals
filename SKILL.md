@@ -9,18 +9,18 @@ Zwei Aufgaben, beide gegen dasselbe Set: **Fälle schreiben** (§ Fälle) und **
 
 Alle Kundenwerte — Promptversion, Testnummern, Stammdaten, Agenten- und Judge-Modell, Gate-KPIs, Workflow-IDs — stehen im Tab `01-Setup`, nirgends sonst.
 
-Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe aus `04-Läufe` › eingefügte Transkripte › nur die Audit-Checkliste. Je dünner die Lage, desto mehr Befunde stammen aus regeln.md §1 statt aus Beobachtung — das im Ergebnis kennzeichnen.
+Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe aus `04-Läufe` › eingefügte Transkripte › nur die Audit-Checkliste. Je dünner die Lage, desto mehr Befunde stammen aus `references/regeln.md` §1 statt aus Beobachtung — das im Ergebnis kennzeichnen.
 
 ## Warum die Regeln existieren
 
-Die Checklisten stehen in `regeln.md`, das Gerüst in `template.md`. Hier nur das Warum, damit Fixes auf die Ursache zielen statt die Symptomliste abzuarbeiten. Die §-Verweise zeigen in `regeln.md`.
+Die Checklisten stehen in `references/regeln.md`, das Gerüst in `references/template.md`. Hier nur das Warum, damit Fixes auf die Ursache zielen statt die Symptomliste abzuarbeiten. Die §-Verweise zeigen in `references/regeln.md`.
 
 1. **STT und TTS haben getrennte Fehlermodi → spiegelverkehrte Regeln.** TTS liest vor (Ausgabefehler: Aussprache), STT hört zu (Eingabefehler: Erkennung) — dieselbe Sache, Namen und Zahlen, braucht entgegengesetzte Behandlung. Die Aussprache-Seite gilt für jeden Text, den die Engine vorliest, nicht nur für den Prompt. §1.3
 2. **Instruktionsdichte senkt Befolgung.** Jede Regel genau einmal, Details in den Speicher statt in den Prompt. 800 Wörter ohne Doppelung schlagen 400 mit. §1.4, §1.5
 3. **Der Prompt beschreibt Verhalten, kein Fallverzeichnis.** Ein Eval-Set deckt zwei Dutzend Fälle ab, der Agent erlebt tausende. Eine Regel, die nur den getesteten Fall trifft, macht den Agenten überall sonst starrer und verbraucht das Instruktionsbudget aus Punkt 2. §2
 4. **Grund statt Betonung.** „NIEMALS Auslassungspunkte" wirkt nur auf Auslassungspunkte; „deine Antworten werden von einer TTS-Engine vorgelesen, die … nicht kann" generalisiert auf jedes ähnliche Zeichen. §1.5
 5. **Positive Anweisungen.** „Wenn X → sage Y" statt „sage nie Z" — Negationen befolgen LLMs unzuverlässig.
-6. **Ein Ausstieg braucht einen eigenen Block.** Beenden-Anweisungen, die an den einzelnen Zweigen hängen, wirken nicht — ein Block „Gespräch beenden" mit fester Schrittfolge schon; Wortlaut in `template.md`. Prüfsignal ist der Trennungsgrund: hat der Agent aufgelegt oder der Anrufer?
+6. **Ein Ausstieg braucht einen eigenen Block.** Beenden-Anweisungen, die an den einzelnen Zweigen hängen, wirken nicht — ein Block „Gespräch beenden" mit fester Schrittfolge schon; Wortlaut in `references/template.md`. Prüfsignal ist der Trennungsgrund: hat der Agent aufgelegt oder der Anrufer?
 
 ## Daten
 
@@ -54,10 +54,10 @@ Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensspeicher, Stammdat
    - **Fall durchgefallen** → Fehl-Transkript neben die Referenz legen und den **ersten abweichenden Zug** benennen. Dort sitzt die Ursache, nicht dort, wo das Gespräch sichtbar entgleist.
    - **Referenz mit dem heutigen Prompt nicht mehr erreichbar** (Pfad entfernt, Tool getauscht, Modell gewechselt) → Fall ist veraltet. Fall und Referenz korrigieren, **nicht** den Prompt daran biegen.
    - **Fall besteht zum ersten Mal und Feld ist leer** → sein Transkript nach `Referenzlösung` schreiben.
-4. **Ursache statt Symptom** — regeln.md §2. Pflicht je Befund: Symptom → Ursache → Ebene des Fixes → Geschwister-Test. Mehrere Fälle mit derselben Ursache ergeben **einen** Fix, nicht mehrere.
-5. **Fix schreiben — Algo aus regeln.md §2 zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen oder optimieren — hier meist optimieren: dieselbe Regel auf eine höhere Ebene heben, statt eine zweite danebenzustellen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Warum 2 und 3).
+4. **Ursache statt Symptom** — `references/regeln.md` §2. Pflicht je Befund: Symptom → Ursache → Ebene des Fixes → Geschwister-Test. Mehrere Fälle mit derselben Ursache ergeben **einen** Fix, nicht mehrere.
+5. **Fix schreiben — Algo aus `references/regeln.md` §2 zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen oder optimieren — hier meist optimieren: dieselbe Regel auf eine höhere Ebene heben, statt eine zweite danebenzustellen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Warum 2 und 3).
 6. **Erst Vorschläge, dann Artefakte.** Liefere die Befunde und je Fix eine Zeile: Ebene · was sich ändert · was dafür rausfliegt. Dazu zwei bis drei Sätze Stand — Version, Richtung gegen die Vorversion, Weitermachen oder Gate. Quoten und Nebenzahlen stehen im Tab `05-Auswertung`; sie abzuschreiben hilft niemandem, ihre Bedeutung schon.
-   Nach der Freigabe kommt das Artefakt: vollständiger Prompt (kein Diff) als Codeblock nach `template.md`, geänderte Speicher-, Tool- und Plattform-Inhalte darunter. Wer den Prompt schon im Auftrag verlangt, überspringt die Freigabe.
+   Nach der Freigabe kommt das Artefakt: vollständiger Prompt (kein Diff) als Codeblock nach `references/template.md`, geänderte Speicher-, Tool- und Plattform-Inhalte darunter. Wer den Prompt schon im Auftrag verlangt, überspringt die Freigabe.
    **Liegt ein Repo vor, tauschst du dort nur die Dateien aus und committest.** Die Datei enthält danach das Artefakt und sonst nichts — keine Überschrift, keine Begründung, keine Quellenliste, kein „bewusst weggelassen". Was der Agent nicht liest, gehört nicht hinein. Jede Erklärung — was sich geändert hat und warum — steht kurz im Chat, nie in der Datei.
-   Fixes, die nicht in den Prompt gehören (regeln.md §2, letzter Punkt), getrennt ausweisen.
+   Fixes, die nicht in den Prompt gehören (`references/regeln.md` §2, letzter Punkt), getrennt ausweisen.
 7. **Rückfragen** max. 5 — nie etwas fragen, das in Prompt, Transkripten oder Läufen steht.
