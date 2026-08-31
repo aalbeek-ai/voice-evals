@@ -36,6 +36,7 @@ Haftungspfade gehen nie an ein LLM. Ein falsches „bestanden" wäre dort ein Ha
 | [SKILL.md](SKILL.md) | Der Claude-Code-Skill: Fälle schreiben, Runde auswerten |
 | [references/regeln.md](references/regeln.md) | Prüfliste für Voice-Prompts und die Ursachenanalyse dahinter |
 | [references/template.md](references/template.md) | Blockgerüst für einen Voice-Agent-Systemprompt |
+| [Tabellenvorlage](https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing) | Fälle, Läufe und die Auswertung, die sich selbst rechnet (Google Sheets) |
 
 ## Benutzen
 
@@ -49,7 +50,9 @@ Danach greift er in Claude Code von selbst, sobald es um Eval-Fälle, eine Eval-
 
 Den Grader in n8n importieren, dann drei Dinge setzen: die beiden `PLATZHALTER_SPREADSHEET_ID` in `load-case` und `write-run`, die `PLATZHALTER_GID` des Läufe-Tabs, und die Credentials für Google Sheets und Anthropic. Die Werte je Kunde stehen ausschließlich im Node `config`. Der Webhook nimmt den Post-Call-Payload der Telefonie-Plattform entgegen und wird *hinter* die Ticket-Erstellung gehängt.
 
-Die Tabellenvorlage ist im Aufbau — bis dahin steht das Schema in [versuchsaufbau.md](versuchsaufbau.md#datenschema).
+Die Tabelle über **[Vorlage kopieren](https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy)** in das eigene Drive holen. Fünf Tabs: `01-Setup` trägt alle Kundenwerte, `02-Systemtests` prüft vor dem ersten Lauf die Leitung, `03-Fälle` und `04-Läufe` sind die beiden Datentabellen, `05-Auswertung` rechnet die vier Quoten von selbst und wird nicht angefasst. In `03-Fälle` stehen ein Beispielfall und sein Zwilling — die zeigen die Konvention und werden überschrieben.
+
+Eine Kopie behält die Tab-IDs: `03-Fälle` ist `gid=0`, `04-Läufe` ist `gid=932118030`. Beide gehen so in den Grader.
 
 ## Stand
 
