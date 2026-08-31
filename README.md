@@ -1,21 +1,10 @@
 # voice-evals
 
-Ein Sprachmodell, das als Text 85 % einer Aufgabenreihe löst, schafft dieselben Aufgaben am Telefon nur noch zu 31–51 % — mit Störgeräuschen und verschiedenen Akzenten zu 26–38 %. Übrig bleiben 30–45 % der Textfähigkeit, und 79–90 % der Fehlschläge gehen auf das Verhalten des Agenten zurück, nicht auf die Umgebung ([τ-Voice, 278 Aufgaben, März 2026](https://arxiv.org/abs/2603.13686)).
+**88 % aller KI-Piloten erreichen nie den Produktivbetrieb** — auf 33 gestartete Proof-of-Concepts kommen vier, die live gehen ([IDC/Lenovo, März 2025](https://www.cio.com/article/3850763/88-of-ai-pilots-fail-to-reach-production-but-thats-not-all-on-it.html)). Die Bruchstellen sind nicht die Modelle, sondern Evaluation, Governance und Integration.
 
-Dazu überzeichnet jeder Durchschnitt die Zuverlässigkeit: zwischen „klappt einmal" und „klappt jedes Mal" liegen im Median 0,44 Punkte — `pass@k` gegen `pass^k` ([EVA-Bench, 213 Szenarien, Mai 2026](https://arxiv.org/abs/2605.13841)). Der Anrufer bekommt keinen zweiten Versuch.
+Bei einem Voice-Agent am Telefon ist die Lücke größer als bei Text: Hintergrundgeräusche, Dialekte, Latenz, und ein Anrufer, der keinen zweiten Versuch bekommt. Ohne Messung ist jede Promptänderung eine Vermutung.
 
-Ohne Messung ist jede Promptänderung eine Vermutung. Dieses Repo ist der Messaufbau, mit dem ich das mache — Methode, Grader, Tabellenvorlage und der Claude-Code-Skill, der die Auswertung fährt.
-
-## Was drin liegt
-
-| Datei | Was |
-| --- | --- |
-| [versuchsaufbau.md](versuchsaufbau.md) | Messgegenstand, Instrument, Kontrollen, Metriken, Ablauf — und die Grenzen |
-| [eval-grader.json](eval-grader.json) | Der Grader als n8n-Workflow, importierbar |
-| [skills/voice-evals/](skills/voice-evals/) | Der Claude-Code-Skill: Fälle schreiben, Runde auswerten |
-| [Tabellenvorlage](https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing) | Fälle, Läufe und die Auswertung, die sich selbst rechnet (Google Sheets) |
-
-Der Skill besteht aus `SKILL.md` und zwei Referenzen: [regeln.md](skills/voice-evals/references/regeln.md) (Prüfliste für Voice-Prompts und die Ursachenanalyse) und [template.md](skills/voice-evals/references/template.md) (Blockgerüst für einen Systemprompt). Beide gehören fest dazu und wandern beim Installieren mit.
+Dieses Repo ist der Messaufbau, mit dem ich das mache — Methode, Grader, Tabellenvorlage und der Claude-Code-Skill, der die Auswertung fährt.
 
 ## Wie es läuft
 
@@ -37,6 +26,17 @@ flowchart TD
 ```
 
 Haftungspfade gehen nie an ein LLM. Ein falsches „bestanden" wäre dort ein Haftungsfall, kein Messfehler.
+
+## Was drin liegt
+
+| Datei | Was |
+| --- | --- |
+| [versuchsaufbau.md](versuchsaufbau.md) | Messgegenstand, Instrument, Kontrollen, Metriken, Ablauf — und die Grenzen |
+| [eval-grader.json](eval-grader.json) | Der Grader als n8n-Workflow, importierbar |
+| [skills/voice-evals/](skills/voice-evals/) | Der Claude-Code-Skill: Fälle schreiben, Runde auswerten |
+| [Tabellenvorlage](https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing) | Fälle, Läufe und die Auswertung, die sich selbst rechnet (Google Sheets) |
+
+Der Skill besteht aus `SKILL.md` und zwei Referenzen: [regeln.md](skills/voice-evals/references/regeln.md) (Prüfliste für Voice-Prompts und die Ursachenanalyse) und [template.md](skills/voice-evals/references/template.md) (Blockgerüst für einen Systemprompt). Beide gehören fest dazu und wandern beim Installieren mit.
 
 ## Benutzen
 
