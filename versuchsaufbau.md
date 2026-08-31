@@ -78,9 +78,11 @@ Ein durchgefallener Fall wird gegen seine Referenzlösung gelegt und am **ersten
 
 Zwei Tabellen tragen den Aufbau. Der Grader liest die erste und schreibt die zweite; von Hand geschrieben wird nur die erste.
 
-**Fälle** — `Fall` · `Pfad` · `Zwilling zu` · `Codewort` · `Anrufer sagt` · `Kontext` · `Anrufe` · `Bestanden wenn` · `Durchgefallen wenn` · `Punkte 0-2` · `Ticket erwartet` · `Zweck` (`Capability`/`Regression`) · `Rückhalte` · `Referenzlösung`
+**Fälle** — `Fall` · `Codewort` · `Pfad` · `Zwilling zu` · `Kontext` · `Anrufer sagt` · `Bestanden wenn` · `Durchgefallen wenn` · `Punkte 0-2` · `Anrufe` · `Zweck` (`Capability`/`Regression`) · `Rückhalte` · `Ticket erwartet` · `Referenzlösung`
 
 **Läufe** — `Lauf` · `Fall` · `Promptversion` · `Bestanden` · `Punkte` · `Begründung` · `Transkript` · `Dauer` · `Züge` · `Tool-Calls` · `disconnectReason` · `Ticket`
+
+Die Auswertung ist reine Formelarbeit über diesen beiden Tabellen und reicht bis Fall 40 — wer mehr Fälle braucht, zieht die Formeln nach unten.
 
 `Züge` zählt nur Gesprächszüge; Tool-Zeilen bleiben draußen, sonst sieht jede Weiterleitung zwei Züge länger aus und die Zuggrenze schlägt an, wo niemand nachgefragt hat.
 
