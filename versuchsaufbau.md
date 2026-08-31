@@ -104,5 +104,3 @@ Was dieser Aufbau **nicht** kann — für die Bewertung der Zahlen wichtiger als
 - Panickssery et al., [LLM Evaluators Recognize and Favor Their Own Generations](https://arxiv.org/abs/2404.13076) — warum der Judge nicht das Agentenmodell sein darf
 - Yao et al., [τ-bench](https://arxiv.org/abs/2406.12045) — `pass^k` als Zuverlässigkeitsmaß
 - Chen et al., [Evaluating Large Language Models Trained on Code](https://arxiv.org/abs/2107.03374) — `pass@k`, das Gegenstück
-- Ray et al., [τ-Voice](https://arxiv.org/abs/2603.13686) — wie viel Textfähigkeit ein Agent am Telefon verliert, und dass die Fehlschläge am Verhalten hängen
-- Bogavelli et al., [EVA-Bench](https://arxiv.org/abs/2605.13841) — gemessener Abstand zwischen `pass@k` und `pass^k` bei Voice-Agents

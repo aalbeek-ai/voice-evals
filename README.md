@@ -66,7 +66,7 @@ Gebaut auf einer Telefonie-Plattform mit Post-Call-Webhook, n8n und Google Sheet
 Das ist ausdrücklich erwünscht — besonders von Leuten, die selbst Voice-Agents in Produktion haben.
 
 - Fachlich, mit Beleg: [Issue aufmachen](https://github.com/aalbeek-ai/voice-evals/issues)
-- Alles andere: **kresse@aalbeek.de**
+- Alles andere: **lasse@aalbeek.de**
 
 Wo etwas nicht belegt ist, steht es als Annahme da. Wenn eine Zahl oder eine Regel hier falsch ist, will ich das wissen.
 
