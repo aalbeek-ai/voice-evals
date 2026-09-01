@@ -38,9 +38,7 @@ After that it triggers on its own in Claude Code whenever eval cases, an eval ro
 
 **The spreadsheet**: get your own copy via **<a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">copy template</a>**. Five tabs: `01-Setup` holds every customer value, `02-Systemtests` tests the full chain end to end before the first real run — delivery, routing, grader matching, not agent behavior — `03-Fälle` and `04-Läufe` are the two data tables, `05-Auswertung` computes the four rates itself and stays untouched. `03-Fälle` ships with one example case and its twin — they show the convention and get overwritten.
 
-Google Sheets keeps a tab's `gid` when you make a copy, so the grader's placeholders below can hardcode it: `03-Fälle` is `gid=0`, `04-Läufe` is `gid=932118030`. Skip looking these up yourself — reuse them as-is when you set the grader's `PLATZHALTER_GID`.
-
-**The grader**: import it into n8n, then set three things — the two `PLATZHALTER_SPREADSHEET_ID` placeholders in `load-case` and `write-run`, the `PLATZHALTER_GID` of the runs tab, and the credentials for Google Sheets and Anthropic. Per-customer values live exclusively in the `config` node. The webhook takes the post-call payload from the telephony platform; the routing to it hangs *after* ticket creation.
+**The grader**: import it into n8n, then point `load-case` and `write-run` at your copy — both fields are list pickers, so open each and select your spreadsheet and tab instead of typing anything. Set the credentials for Google Sheets and Anthropic. Per-customer values live exclusively in the `config` node. The webhook takes the post-call payload from the telephony platform; the routing to it hangs *after* ticket creation.
 
 ## Status
 
