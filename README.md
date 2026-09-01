@@ -16,12 +16,12 @@ Liability paths never go to an LLM. A false "pass" there would be a liability in
 
 | File | What |
 | --- | --- |
-| [versuchsaufbau.md](versuchsaufbau.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
+| [experimental-setup.md](experimental-setup.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
 | [eval-grader.json](eval-grader.json) | The grader as an n8n workflow, importable |
 | [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, score a round |
 | [Spreadsheet template](https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing) | Cases, runs, and the scoring that computes itself (Google Sheets) |
 
-The skill is `SKILL.md` plus two references: [regeln.md](skills/voice-evals/references/regeln.md) (checklist for voice agent systems and root-cause analysis) and [template.md](skills/voice-evals/references/template.md) (block scaffold for a system prompt). Both belong to it and travel with it on install.
+The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/references/rules.md) (checklist for voice agent systems and root-cause analysis) and [template.md](skills/voice-evals/references/template.md) (block scaffold for a system prompt). Both belong to it and travel with it on install.
 
 ## Using it
 

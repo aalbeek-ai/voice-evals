@@ -9,11 +9,11 @@ Two jobs, both against the same set: **write cases** (§ Cases) and **score a ro
 
 All customer values — prompt version, test numbers, master data, agent and judge model, gate KPIs, workflow IDs — live in tab `01-Setup`, nowhere else.
 
-The data available only determines where findings come from, never the procedure: runs from `04-Läufe` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/regeln.md` §1 instead of observation — flag that in the result.
+The data available only determines where findings come from, never the procedure: runs from `04-Läufe` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/rules.md` §1 instead of observation — flag that in the result.
 
 ## Why the rules exist
 
-The checklists live in `references/regeln.md`, the scaffold in `references/template.md`. Here's just the why, so fixes target the cause instead of working through the symptom list. The § references point into `references/regeln.md`.
+The checklists live in `references/rules.md`, the scaffold in `references/template.md`. Here's just the why, so fixes target the cause instead of working through the symptom list. The § references point into `references/rules.md`.
 
 1. **STT and TTS have separate failure modes → mirrored rules.** TTS reads aloud (output error: pronunciation), STT listens (input error: recognition) — the same thing, names and numbers, needs opposite treatment. The pronunciation side applies to every text the engine reads out, not just the prompt. §1.3
 2. **Instruction density lowers compliance.** Every rule exactly once, details in the knowledge store instead of the prompt. 800 words without duplication beat 400 with. §1.4, §1.5
@@ -54,10 +54,10 @@ Input: system prompt, tool descriptions, variables, knowledge store, customer ma
    - **Case failed** → lay the failed transcript next to the reference and name the **first diverging turn**. That's where the cause sits, not where the conversation visibly derails.
    - **Reference no longer reachable with today's prompt** (path removed, tool swapped, model changed) → the case is stale. Fix the case and the reference, **don't** bend the prompt to fit it.
    - **Case passes for the first time and the field is empty** → write its transcript into `Referenzlösung`.
-4. **Cause, not symptom** — `references/regeln.md` §2. Mandatory per finding: symptom → cause → fix level → sibling test. Multiple cases with the same cause get **one** fix, not several.
-5. **Write the fix — run the algorithm from `references/regeln.md` §2 first, don't just cite it.** Before every line: question it (is the symptom real?), then delete (what comes out with nothing replacing it?), only then simplify or optimize — usually optimize here: lift the same rule to a higher level instead of placing a second one next to it. **Success is a spot that gets shorter, not longer** — state old/new word count in the result; if it grows anyway, say why. Every round that adds erodes the compliance it's trying to produce (§ Why 2 and 3).
+4. **Cause, not symptom** — `references/rules.md` §2. Mandatory per finding: symptom → cause → fix level → sibling test. Multiple cases with the same cause get **one** fix, not several.
+5. **Write the fix — run the algorithm from `references/rules.md` §2 first, don't just cite it.** Before every line: question it (is the symptom real?), then delete (what comes out with nothing replacing it?), only then simplify or optimize — usually optimize here: lift the same rule to a higher level instead of placing a second one next to it. **Success is a spot that gets shorter, not longer** — state old/new word count in the result; if it grows anyway, say why. Every round that adds erodes the compliance it's trying to produce (§ Why 2 and 3).
 6. **Proposals first, artifacts after.** Deliver the findings and one line per fix: level · what changes · what comes out for it. Add two to three sentences of status — version, direction versus the previous version, continue or gate. Rates and secondary numbers live in tab `05-Auswertung`; copying them out helps no one, their meaning does.
    After approval comes the artifact: the full prompt (no diff) as a code block per `references/template.md`, changed knowledge-store, tool, and platform content below it. Anyone who's already asked for the prompt as a deliverable skips the approval step.
    **If a repo exists, you only swap the files there and commit.** The file then contains the artifact and nothing else — no heading, no rationale, no source list, no "deliberately left out." What the agent doesn't read doesn't belong in it. Every explanation — what changed and why — goes briefly in the chat, never in the file.
-   Flag fixes that don't belong in the prompt (`references/regeln.md` §2, last point) separately.
+   Flag fixes that don't belong in the prompt (`references/rules.md` §2, last point) separately.
 7. **Follow-up questions**, max 5 — never ask something that's already in the prompt, transcripts, or runs.
