@@ -44,7 +44,7 @@ Google Sheets keeps a tab's `gid` when you make a copy, so the grader's placehol
 
 ## Status
 
-The harness runs against a real voice agent for a property management company. Measured numbers follow once a version clears the gate — until then this is the method, not the result.
+The harness runs against a real voice agent for a property management company, working through the baseline round now.
 
 Built on a telephony platform with a post-call webhook, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
 
@@ -52,6 +52,7 @@ Built on a telephony platform with a post-call webhook, n8n, and Google Sheets. 
 
 **What changes in v2?**
 
+- Measured pass rate and Δ per round, published once a version clears the gate.
 - The grader moves from n8n to a plain Python script — one dependency less, easier to audit.
 - The remaining German-only pieces (spreadsheet columns, path names, case codewords) get translated, so the whole repo runs in one language.
 
