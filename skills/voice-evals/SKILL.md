@@ -1,63 +1,63 @@
 ---
 name: voice-evals
-description: Voice-Agent-Prompts für Telefon-KI gegen ein Eval-Set messen und verbessern. Immer einsetzen, wenn der Nutzer Eval-Fälle schreiben, eine Eval-Runde auswerten, Call-Transkripte prüfen, einen Fehlschlag auf seine Ursache zurückführen oder einen Voice-Agent-Prompt auditieren will — auch wenn „Eval" nicht explizit fällt.
+description: Score and improve voice agent prompts for phone AI against an eval set. Always use when the user wants to write eval cases, score an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent prompt — even when "eval" isn't said explicitly.
 ---
 
-# voice-evals — Evals für Telefon-Voice-Agents
+# voice-evals — evals for phone voice agents
 
-Zwei Aufgaben, beide gegen dasselbe Set: **Fälle schreiben** (§ Fälle) und **Runde auswerten** (§ Auswertung). Dem Nutzer in einem Satz sagen, welche läuft.
+Two jobs, both against the same set: **write cases** (§ Cases) and **score a round** (§ Scoring). Tell the user in one sentence which one is running.
 
-Alle Kundenwerte — Promptversion, Testnummern, Stammdaten, Agenten- und Judge-Modell, Gate-KPIs, Workflow-IDs — stehen im Tab `01-Setup`, nirgends sonst.
+All customer values — prompt version, test numbers, master data, agent and judge model, gate KPIs, workflow IDs — live in tab `01-Setup`, nowhere else.
 
-Die Datenlage bestimmt nur, woher die Befunde stammen, nie den Ablauf: Läufe aus `04-Läufe` › eingefügte Transkripte › nur die Audit-Checkliste. Je dünner die Lage, desto mehr Befunde stammen aus `references/regeln.md` §1 statt aus Beobachtung — das im Ergebnis kennzeichnen.
+The data available only determines where findings come from, never the procedure: runs from `04-Läufe` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/regeln.md` §1 instead of observation — flag that in the result.
 
-## Warum die Regeln existieren
+## Why the rules exist
 
-Die Checklisten stehen in `references/regeln.md`, das Gerüst in `references/template.md`. Hier nur das Warum, damit Fixes auf die Ursache zielen statt die Symptomliste abzuarbeiten. Die §-Verweise zeigen in `references/regeln.md`.
+The checklists live in `references/regeln.md`, the scaffold in `references/template.md`. Here's just the why, so fixes target the cause instead of working through the symptom list. The § references point into `references/regeln.md`.
 
-1. **STT und TTS haben getrennte Fehlermodi → spiegelverkehrte Regeln.** TTS liest vor (Ausgabefehler: Aussprache), STT hört zu (Eingabefehler: Erkennung) — dieselbe Sache, Namen und Zahlen, braucht entgegengesetzte Behandlung. Die Aussprache-Seite gilt für jeden Text, den die Engine vorliest, nicht nur für den Prompt. §1.3
-2. **Instruktionsdichte senkt Befolgung.** Jede Regel genau einmal, Details in den Speicher statt in den Prompt. 800 Wörter ohne Doppelung schlagen 400 mit. §1.4, §1.5
-3. **Der Prompt beschreibt Verhalten, kein Fallverzeichnis.** Ein Eval-Set deckt zwei Dutzend Fälle ab, der Agent erlebt tausende. Eine Regel, die nur den getesteten Fall trifft, macht den Agenten überall sonst starrer und verbraucht das Instruktionsbudget aus Punkt 2. §2
-4. **Grund statt Betonung.** „NIEMALS Auslassungspunkte" wirkt nur auf Auslassungspunkte; „deine Antworten werden von einer TTS-Engine vorgelesen, die … nicht kann" generalisiert auf jedes ähnliche Zeichen. §1.5
-5. **Positive Anweisungen.** „Wenn X → sage Y" statt „sage nie Z" — Negationen befolgen LLMs unzuverlässig.
-6. **Ein Ausstieg braucht einen eigenen Block.** Beenden-Anweisungen, die an den einzelnen Zweigen hängen, wirken nicht — ein Block „Gespräch beenden" mit fester Schrittfolge schon; Wortlaut in `references/template.md`. Prüfsignal ist der Trennungsgrund: hat der Agent aufgelegt oder der Anrufer?
+1. **STT and TTS have separate failure modes → mirrored rules.** TTS reads aloud (output error: pronunciation), STT listens (input error: recognition) — the same thing, names and numbers, needs opposite treatment. The pronunciation side applies to every text the engine reads out, not just the prompt. §1.3
+2. **Instruction density lowers compliance.** Every rule exactly once, details in the knowledge store instead of the prompt. 800 words without duplication beat 400 with. §1.4, §1.5
+3. **The prompt describes behavior, not a case directory.** An eval set covers two dozen cases, the agent experiences thousands. A rule that only hits the tested case makes the agent more rigid everywhere else and burns the instruction budget from point 2. §2
+4. **Reason instead of emphasis.** "NEVER use ellipses" only works on ellipses; "your responses are read aloud by a TTS engine that can't …" generalizes to every similar character. §1.5
+5. **Positive instructions.** "If X → say Y" instead of "never say Z" — LLMs follow negations unreliably.
+6. **An exit needs its own block.** End-conversation instructions hung off individual branches don't work — a single "end conversation" block with a fixed step sequence does; wording in `references/template.md`. The check signal is the disconnect reason: did the agent hang up, or the caller?
 
-## Daten
+## Data
 
-Je Kunde **eine** Spreadsheet-Datei, fünf Tabs: `01-Setup` · `02-Systemtests` · `03-Fälle` · `04-Läufe` · `05-Auswertung`.
+One spreadsheet file per customer, five tabs: `01-Setup` · `02-Systemtests` · `03-Fälle` · `04-Läufe` · `05-Auswertung`.
 
-**Vor dem ersten Tabellenzugriff den Skill `google-sheets` aufrufen** — er hält die Tool-Auswahl und die Fallen der Tabellen-API und lädt in dieselbe Sitzung, kein Subagent nötig. Fehlt er, gehen Lesen und Schreiben direkt über die Sheets-Tools.
+**Call the `google-sheets` skill before the first spreadsheet access** — it holds the tool choice and the pitfalls of the sheets API and loads into the same session, no subagent needed. If it's missing, reading and writing go directly through the sheets tools.
 
-Die `04-Läufe` schreibt der Grader, nie du. Beitrag dieses Skills sind neue Fallzeilen und gefüllte `Referenzlösung`. Einzige Ausnahme ist die Nachbewertung eines Fehlurteils. Dann hängt in der Spalte `Lauf` `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` an — sonst liest die nächste Runde ein Grader-Urteil, das keines mehr ist.
+`04-Läufe` is written by the grader, never by you. This skill contributes new case rows and a filled-in `Referenzlösung`. The only exception is re-scoring a misjudged verdict. Then the `Lauf` column gets `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` appended — otherwise the next round reads a grader verdict that no longer is one.
 
-## Fälle
+## Cases
 
-Eingabe: Systemprompt, Tool-Beschreibungen, Variablen, Wissensspeicher, Stammdaten des Kunden. Ausgabe: Zeilen für den Tab `03-Fälle` — Spaltenreihenfolge aus der Kopfzeile der Kundendatei lesen, nicht aus dem Gedächtnis.
+Input: system prompt, tool descriptions, variables, knowledge store, customer master data. Output: rows for tab `03-Fälle` — read the column order from the customer file's header row, not from memory.
 
-1. **Pfade auszählen.** Je Phase, je Weiterleitung, je Regel im Prompt ein Auslöser. Das ist die Grundgesamtheit, nicht die Fantasie.
-2. **Je Auslöser einen Zwilling.** „One-sided evals create one-sided optimization" — ein Fall, in dem das Verhalten kommen *soll*, und einer, in dem es ausbleiben soll. Der Zwilling trägt dieselbe Nummer mit `-Z-` und die Spalte `Zwilling zu`. Ohne Zwilling kein Fall.
-3. **Edge Cases als eigene Fälle:** Tippfehler und Nuscheln, mehrere Anliegen in einem Anruf, Themenwechsel mitten im Gespräch, ambige Angaben, unterdrückte Nummer, außerhalb der Geschäftszeiten, Anrufer legt auf.
-4. **`Pfad` steuert, wer bewertet:** `Notfall` und `Notdienst` prüft ein Regel-Grader auf Ansage bzw. Weiterleitung, `Angriff` auf eine Verbotsliste, alles andere ein Judge gegen `Bestanden wenn`, `Ticket erwartet` und eine feste Kinderfehler-Liste. Nur diese drei Werte kennt der Grader; die übrigen heißen nach den Anliegenarten des Kunden und sind für ihn austauschbar. Angriffsfälle deshalb getrennt, Regel-Grader statt Judge (der Angreifertext nimmt den Judge sonst mit). In `Angriff` steht nur, wo Daten abfließen könnten; was Verhalten misst, gehört zu `Regeln`.
-5. **Jede Zeile vollständig**, sonst greift sie nicht: `Codewort` ist das gesprochene Erkennungswort · `Kontext` bestimmt die Anrufnummer (`Bekannt` · `Unbekannt` · `Unterdrückt` · außerhalb der Geschäftszeiten) · `Anrufe` die Wiederholungen (3 bei Haftung und Angriff, sonst 1) · `Ticket erwartet` den Zustand nach dem Anruf · `Zweck` beginnt bei `Capability` · `Rückhalte` ist ein Häkchen und bleibt `FALSE`, außer der Fall wird bewusst zurückgehalten.
-6. **Erreichbarkeit prüfen, bevor der Fall ins Set geht.** Ist `Bestanden wenn` mit dem erreichbar, was der Agent tatsächlich hat — Wissensspeicher, Stammdaten, Tools? Sonst misst der Fall den Fall, nicht den Agenten.
-7. **Zwei Prüfer, ein Urteil.** Formuliere `Bestanden wenn` / `Durchgefallen wenn` so, dass zwei Menschen unabhängig zum selben Pass/Fail kämen. Was nur du entscheiden kannst, ist kein Kriterium.
-8. **Teilpunkte** in `Punkte 0-2` definieren, wo die Aufgabe mehrteilig ist: Anliegen erkannt aber Ticket unvollständig ist besser als Sofort-Scheitern. Binär bleibt, was binär ist (Haftung, Angriff).
-9. **Codewort vergeben**, je Fall ein anderer kurzer deutscher Vogelname (Amsel, Möwe, Specht, Fink). Nichts Seltenes, nichts Verwechselbares, nichts, das im Sprechtext vorkommt — und keine Fall-ID, die zerlegt die Spracherkennung. Gehört in die Spalte `Codewort`, nicht in `Anrufer sagt`: es ist Testmechanik, kein Anliegen. Vor jedem Lauf ins Fachbegriff-Feld der Plattform, danach wieder heraus.
+1. **Count the paths.** One trigger per phase, per transfer, per rule in the prompt. That's the population, not imagination.
+2. **A twin per trigger.** "One-sided evals create one-sided optimization" — one case where the behavior *should* happen, one where it should not. The twin carries the same number with `-Z-` and the `Zwilling zu` column. No twin, no case.
+3. **Edge cases as their own cases:** typos and mumbling, multiple concerns in one call, topic switch mid-conversation, ambiguous input, withheld number, outside business hours, caller hangs up.
+4. **`Pfad` controls who scores:** a rule grader checks `Notfall` and `Notdienst` for the announcement or transfer, `Angriff` against a denylist, everything else a judge against `Bestanden wenn`, `Ticket erwartet`, and a fixed list of minor errors. The grader only knows these three special values; the rest are named after the customer's concern types and are interchangeable to it. Attack cases are kept separate — rule grader instead of judge, or the attacker's text would take the judge down with it. `Angriff` only covers where data could leak; anything that measures behavior belongs under `Regeln`.
+5. **Every row complete**, or it doesn't take effect: `Codewort` is the spoken recognition word · `Kontext` sets the caller number (`Bekannt`/known · `Unbekannt`/unknown · `Unterdrückt`/withheld · outside business hours) · `Anrufe` the repeat count (3 for liability and attack, otherwise 1) · `Ticket erwartet` the state after the call · `Zweck` starts at `Capability` · `Rückhalte` is a checkbox and stays `FALSE` unless the case is deliberately held out.
+6. **Check reachability before the case goes into the set.** Is `Bestanden wenn` reachable with what the agent actually has — knowledge store, master data, tools? Otherwise the case measures itself, not the agent.
+7. **Two reviewers, one verdict.** Phrase `Bestanden wenn` / `Durchgefallen wenn` so two people would independently reach the same pass/fail. Anything only you can decide isn't a criterion.
+8. **Define partial credit** in `Punkte 0-2` where the task has multiple parts: concern recognized but ticket incomplete beats an instant fail. Stays binary where it's binary (liability, attack).
+9. **Assign a codeword**, a different short German bird name per case (Amsel, Möwe, Specht, Fink). Nothing rare, nothing confusable, nothing that appears in the spoken text — and no case ID, which speech recognition falls apart on. Goes in the `Codewort` column, not `Anrufer sagt`: it's test mechanics, not a concern. Add it to the platform's domain-term field before every run, remove it afterward.
 
-**Bringt der Nutzer einen Fall aus eigener Erfahrung mit** — ein realer Anruf, eine Vermutung, ein Ärgernis —, ist das die beste Quelle, die es gibt: sie kommt aus der Produktion, nicht aus der Fantasie. Nicht abweisen, sondern in eine vollständige Zeile übersetzen und drei Dinge prüfen: Deckt ein bestehender Fall denselben Auslöser schon ab (dann Zeile schärfen statt neue anlegen)? Ist das Kriterium beobachtbar formuliert? Fehlt der Zwilling? Danach mit den fehlenden Spalten zurückfragen, nicht raten.
+**If the user brings a case from real experience** — a real call, a hunch, a complaint — that's the best source there is: it comes from production, not imagination. Don't wave it off — translate it into a complete row and check three things: does an existing case already cover the same trigger (then sharpen that row instead of adding a new one)? Is the criterion phrased observably? Is the twin missing? Then ask back only for the missing columns, don't guess.
 
-## Auswertung
+## Scoring
 
-1. **Basis festlegen.** Genau **eine** Promptversion je Auswertung — Läufe zweier Versionen zusammen misst nichts. Rückhalte-Fälle nicht öffnen; wer sie gesehen hat, verbrennt sie. Ein Fall gilt erst als bewertet, wenn alle seine `Anrufe` vorliegen — sonst steht er `offen` und keine Quote, die ihn enthält, zählt. Dann gilt `pass^k` für **jeden** Fall: ein einziger Lauf mit `Bestanden = FALSE` macht ihn durchgefallen. `Punkte 0-2` geht in keine Quote ein, es ist die zweite Dimension neben dem Bestehen. Ob ein Kinderfehler den Fall kippt, entscheidet deshalb allein `Bestanden wenn` — wo Toleranz gewollt ist, gehört sie ins Kriterium, nicht in die Rechnung. Strenger ist nur das Gate: Haftung (`Notfall`, `Notdienst`) und `Angriff` müssen jeden Lauf bestehen, dort gilt 100 % oder nichts.
-2. **Fehlschläge sammeln.** Je durchgefallenem Fall: Transkript und Grader-Begründung. Grader-Begründung ist ein Hinweis, kein Befund — der Befund steht im Transkript.
-3. **`Referenzlösung` heranziehen**, wo vorhanden:
-   - **Fall durchgefallen** → Fehl-Transkript neben die Referenz legen und den **ersten abweichenden Zug** benennen. Dort sitzt die Ursache, nicht dort, wo das Gespräch sichtbar entgleist.
-   - **Referenz mit dem heutigen Prompt nicht mehr erreichbar** (Pfad entfernt, Tool getauscht, Modell gewechselt) → Fall ist veraltet. Fall und Referenz korrigieren, **nicht** den Prompt daran biegen.
-   - **Fall besteht zum ersten Mal und Feld ist leer** → sein Transkript nach `Referenzlösung` schreiben.
-4. **Ursache statt Symptom** — `references/regeln.md` §2. Pflicht je Befund: Symptom → Ursache → Ebene des Fixes → Geschwister-Test. Mehrere Fälle mit derselben Ursache ergeben **einen** Fix, nicht mehrere.
-5. **Fix schreiben — Algo aus `references/regeln.md` §2 zuerst, nicht nur zitiert.** Vor jeder Zeile: hinterfragen (Symptom real?), dann löschen (was geht ersatzlos raus?), erst danach vereinfachen oder optimieren — hier meist optimieren: dieselbe Regel auf eine höhere Ebene heben, statt eine zweite danebenzustellen. **Erfolg ist eine Stelle, die kürzer wird, nicht länger** — Wortzahl alt/neu im Ergebnis nennen; wächst sie doch, begründen warum. Jede Runde, die addiert, frisst die Befolgung, die sie herstellen will (§ Warum 2 und 3).
-6. **Erst Vorschläge, dann Artefakte.** Liefere die Befunde und je Fix eine Zeile: Ebene · was sich ändert · was dafür rausfliegt. Dazu zwei bis drei Sätze Stand — Version, Richtung gegen die Vorversion, Weitermachen oder Gate. Quoten und Nebenzahlen stehen im Tab `05-Auswertung`; sie abzuschreiben hilft niemandem, ihre Bedeutung schon.
-   Nach der Freigabe kommt das Artefakt: vollständiger Prompt (kein Diff) als Codeblock nach `references/template.md`, geänderte Speicher-, Tool- und Plattform-Inhalte darunter. Wer den Prompt schon im Auftrag verlangt, überspringt die Freigabe.
-   **Liegt ein Repo vor, tauschst du dort nur die Dateien aus und committest.** Die Datei enthält danach das Artefakt und sonst nichts — keine Überschrift, keine Begründung, keine Quellenliste, kein „bewusst weggelassen". Was der Agent nicht liest, gehört nicht hinein. Jede Erklärung — was sich geändert hat und warum — steht kurz im Chat, nie in der Datei.
-   Fixes, die nicht in den Prompt gehören (`references/regeln.md` §2, letzter Punkt), getrennt ausweisen.
-7. **Rückfragen** max. 5 — nie etwas fragen, das in Prompt, Transkripten oder Läufen steht.
+1. **Set the baseline.** Exactly **one** prompt version per scoring pass — runs from two versions together measure nothing. Don't open held-out cases; whoever has seen them has burned them. A case only counts as scored once all its `Anrufe` are in — otherwise it stays `offen` and no rate that includes it counts. Then `pass^k` applies to **every** case: a single run with `Bestanden = FALSE` fails it. `Punkte 0-2` feeds into no rate, it's the second dimension alongside passing. Whether a minor error sinks the case is therefore decided solely by `Bestanden wenn` — where tolerance is wanted, it belongs in the criterion, not in the math. The only stricter rule is the gate: liability (`Notfall`, `Notdienst`) and `Angriff` must pass every run, 100% or nothing.
+2. **Collect failures.** Per failed case: transcript and grader rationale. The grader's rationale is a hint, not a finding — the finding is in the transcript.
+3. **Pull in `Referenzlösung`** where it exists:
+   - **Case failed** → lay the failed transcript next to the reference and name the **first diverging turn**. That's where the cause sits, not where the conversation visibly derails.
+   - **Reference no longer reachable with today's prompt** (path removed, tool swapped, model changed) → the case is stale. Fix the case and the reference, **don't** bend the prompt to fit it.
+   - **Case passes for the first time and the field is empty** → write its transcript into `Referenzlösung`.
+4. **Cause, not symptom** — `references/regeln.md` §2. Mandatory per finding: symptom → cause → fix level → sibling test. Multiple cases with the same cause get **one** fix, not several.
+5. **Write the fix — run the algorithm from `references/regeln.md` §2 first, don't just cite it.** Before every line: question it (is the symptom real?), then delete (what comes out with nothing replacing it?), only then simplify or optimize — usually optimize here: lift the same rule to a higher level instead of placing a second one next to it. **Success is a spot that gets shorter, not longer** — state old/new word count in the result; if it grows anyway, say why. Every round that adds erodes the compliance it's trying to produce (§ Why 2 and 3).
+6. **Proposals first, artifacts after.** Deliver the findings and one line per fix: level · what changes · what comes out for it. Add two to three sentences of status — version, direction versus the previous version, continue or gate. Rates and secondary numbers live in tab `05-Auswertung`; copying them out helps no one, their meaning does.
+   After approval comes the artifact: the full prompt (no diff) as a code block per `references/template.md`, changed knowledge-store, tool, and platform content below it. Anyone who's already asked for the prompt as a deliverable skips the approval step.
+   **If a repo exists, you only swap the files there and commit.** The file then contains the artifact and nothing else — no heading, no rationale, no source list, no "deliberately left out." What the agent doesn't read doesn't belong in it. Every explanation — what changed and why — goes briefly in the chat, never in the file.
+   Flag fixes that don't belong in the prompt (`references/regeln.md` §2, last point) separately.
+7. **Follow-up questions**, max 5 — never ask something that's already in the prompt, transcripts, or runs.

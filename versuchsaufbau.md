@@ -1,106 +1,106 @@
-# Versuchsaufbau
+# Experimental Setup
 
-Wie ein Telefon-Voice-Agent gemessen wird: was der Messgegenstand ist, womit gemessen wird, welche Kontrollen den Messfehler klein halten und wo der Aufbau an seine Grenze kommt.
+How a phone voice agent gets measured: what's being measured, what measures it, which controls keep measurement error small, and where the setup hits its limits.
 
-Gebaut wurde er gegen eine Hausverwaltung — Notfälle, Schadensmeldungen, Weiterleitungen. Die Mechanik ist von der Branche unabhängig; die Pfadnamen sind es nicht.
+Built against a property management company — emergencies, damage reports, transfers. The mechanics are industry-independent; the path names are not.
 
-## Messgegenstand
+## Measurement object
 
-Gemessen wird **eine Promptversion**, nicht „der Agent". Die Version steht an drei Stellen gleich: im Frontmatter des Systemprompts, im Node `config` des Graders und in der Telefonie-Plattform. Läufe zweier Versionen zusammen zu werten misst nichts.
+What's measured is **one prompt version**, not "the agent." The version is set identically in three places: the system prompt's frontmatter, the grader's `config` node, and the telephony platform. Scoring runs from two versions together measures nothing.
 
-Zum Messgegenstand gehören Systemprompt, Wissensspeicher, Variablen, Tool-Beschreibungen und die Dashboard-Einstellungen der Plattform. Alles davon ändert das Verhalten, also gehört alles unter dieselbe Versionsnummer.
+The measurement object includes the system prompt, knowledge store, variables, tool descriptions, and the platform's dashboard settings. All of it changes behavior, so all of it belongs under the same version number.
 
 ## Instrument
 
-Ein Anruf wird über ein **gesprochenes Codewort** seinem Fall zugeordnet, nicht über die Rufnummer und nicht über die Uhrzeit. Nach dem Auflegen schickt die Post-Call-Automation den Payload an den Grader; der sucht das Codewort im normalisierten Transkript, hängt die Kriterien des Falls an, schneidet das Wort heraus und bewertet.
+A call is matched to its case via a **spoken codeword**, never via caller ID or time of day. After hangup, the post-call automation sends the payload to the grader; it searches the normalized transcript for the codeword, attaches the case's criteria, strips the word out, and scores.
 
-**Der Pfad entscheidet, wer bewertet.** Drei der vier Wege kommen ohne LLM aus — ein falsches „bestanden" wäre dort ein Haftungsfall, kein Messfehler:
+**The path decides who scores.** Three of the four paths run without an LLM — a false "pass" there would be a liability incident, not a measurement error:
 
-| Pfad | Grader | Prüft |
+| Path | Grader | Checks |
 | --- | --- | --- |
-| `Notfall` | Regel | Pflichtansage in der geforderten Anzahl, kein Weiterreden danach |
-| `Notdienst` | Regel | Weiterleitung nachweislich erfolgreich (`succeeded`-Tool-Zeile oder `disconnectReason: call_transfer`) und keine Ansage |
-| `Angriff` | Regel | Verbotsliste aus `config` taucht im Transkript nicht auf |
-| alles andere | Judge | `Bestanden wenn` / `Durchgefallen wenn`, Ticket-Zustand, feste Kinderfehler-Liste |
+| `Notfall` (emergency) | Rule | Mandatory announcement, said the required number of times, no further talking after it |
+| `Notdienst` (dispatch) | Rule | Transfer demonstrably succeeded (`succeeded` tool line or `disconnectReason: call_transfer`) and no announcement |
+| `Angriff` (attack) | Rule | Denylist from `config` doesn't appear in the transcript |
+| everything else | Judge | `Bestanden wenn` / `Durchgefallen wenn` (pass-if / fail-if), ticket state, fixed list of minor errors |
 
-Zwei Details, die den Regel-Grader tragen:
+Two details that carry the rule grader:
 
-- **Weiterleitung wird am Zustand gemessen, nicht am Gesagten.** „Ich verbinde Sie" sagt das Modell auch dann, wenn es kein Tool aufgerufen hat. Gezählt wird nur der Erfolg — für jeden Transfer steht zuerst eine Versuchszeile im Transkript, ein gescheiterter Versuch wäre sonst eine bestandene Weiterleitung.
-- **Transkript und Prüfbegriffe laufen durch dieselbe Normalisierung** (Kleinschreibung, Umlaute aufgelöst, alles Nicht-Alphanumerische zu Leerzeichen). Sonst findet ein Begriff mit Umlaut sich selbst im umlautfreien Transkript nicht.
+- **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only success counts — every transfer has an attempt row in the transcript first, otherwise a failed attempt would read as a passed transfer.
+- **Transcript and check terms run through the same normalization** (lowercased, umlauts resolved, everything non-alphanumeric turned to spaces). Otherwise a term with an umlaut can't find itself in an umlaut-free transcript.
 
-**Der Judge ist nie dasselbe Modell wie der Agent.** LLMs erkennen eigene Ausgaben und bewerten sie höher, als Menschen sie bewerten ([Panickssery et al. 2024](https://arxiv.org/abs/2404.13076)). Er bekommt Kriterien, Transkript, `disconnectReason` und Tool-Calls — nie den Systemprompt des Agenten, sonst bewertet er die Absicht statt das Ergebnis. `unklar` ist eine erlaubte Antwort; fällt die API aus, endet der Lauf als `unklar` und nie als stilles Durchgefallen.
+**The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do ([Panickssery et al. 2024](https://arxiv.org/abs/2404.13076)). It gets criteria, transcript, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unklar` (unclear) is a valid answer; if the API fails, the run ends as `unklar`, never as a silent fail.
 
-## Kontrollen
+## Controls
 
-- **Zwilling je Auslöser.** Zu jedem Fall, in dem ein Verhalten kommen *soll*, gehört einer, in dem es ausbleiben soll — gleiche Nummer mit `-Z-`. Ohne Zwilling kein Fall: „One-sided evals create one-sided optimization" ([Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)). Der Grader dreht die Erwartung am `-Z-` im Fallnamen selbst um.
-- **Codewort mitten im Gespräch.** Direkt nach der Begrüßung und am Ende ist die Spracherkennung am schwächsten — gemessen wurde aus „Amsel. Es riecht hier im" ein „Haben Sie das richtige". Je Fall ein kurzer deutscher Vogelname, vor dem Lauf als Fachbegriff in der Plattform hinterlegt, nach dem Lauf wieder heraus. Sonst hört der Agent im Betrieb Vogelnamen, wo keine fallen.
-- **Rückhalte.** Ein Teil der Fälle wird nie angerufen und nie angesehen, bis das Gate erreicht ist. Erst diese zweite Zahl zeigt, ob der Prompt generalisiert statt sich an das Set anzupassen.
-- **Instrument darf sich mitten in der Runde ändern, Messgegenstand nie.** Schärfen erlaubt: `Bestanden wenn`, Teilpunkte, Judge-Prompt, Grader-Schwellen. Unangetastet bleiben Systemprompt, Wissen, Variablen, Tools, Dashboard. Wer dort mitten in der Runde fixt, beschreibt zwei verschiedene Agenten unter derselben Version.
-- **Nachbewertung statt Neuanruf.** Ein geschärftes Kriterium bewertet die betroffenen Zeilen neu — das Transkript liegt vor. Die Zeile wird mit `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` markiert, sonst liest die nächste Runde ein Grader-Urteil, das keines mehr ist.
-- **Referenzlösung.** Ein bekannt funktionierendes Transkript je Fall. Es beweist, dass die Aufgabe lösbar ist, und prüft den Grader: ändert man den Grader, muss die Referenz weiter bestehen. Tut sie es nicht, ist der Grader kaputt, nicht der Agent.
+- **A twin per trigger.** Every case where a behavior *should* happen has one where it should not — same number with `-Z-`. No twin, no case: "One-sided evals create one-sided optimization" ([Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)). The grader flips the expectation itself off the `-Z-` in the case name.
+- **Codeword mid-conversation.** Right after the greeting and at the end is where speech recognition is weakest — measured: "Amsel. Es riecht hier im" (a bird name mid-sentence) got misheard as "Haben Sie das richtige." A short German bird name per case, entered as a domain term on the platform before the run, removed after. Otherwise the agent hears bird names in production where none were said.
+- **Held-out set.** A portion of cases is never called and never looked at until the gate is reached. Only this second number shows whether the prompt generalizes instead of overfitting to the set.
+- **The instrument may change mid-round, the measurement object never.** Allowed to sharpen: `Bestanden wenn`, partial-credit points, judge prompt, grader thresholds. Untouched: system prompt, knowledge, variables, tools, dashboard. Fixing those mid-round describes two different agents under the same version.
+- **Re-scoring instead of re-calling.** A sharpened criterion re-scores the affected rows — the transcript is already there. The row gets marked `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` (manually adjusted afterward), otherwise the next round reads a grader verdict that no longer is one.
+- **Reference solution.** One known-working transcript per case. It proves the task is solvable, and it checks the grader: change the grader, and the reference must still pass. If it doesn't, the grader is broken, not the agent.
 
-## Metriken
+## Metrics
 
-**`pass^k`, nicht `pass@k`.** Ein Fall gilt nur als bestanden, wenn *alle* seine Anrufe bestehen — ein einziger Fehlschlag kippt ihn. Bei 75 % Erfolg je Lauf sind das über drei Läufe noch 42 % ([Yao et al., τ-bench](https://arxiv.org/abs/2406.12045)). Für einen Agenten, der ans Telefon geht, ist das die einzig ehrliche Metrik: der Anrufer bekommt keinen zweiten Versuch.
+**`pass^k`, not `pass@k`.** A case only counts as passed if *all* its calls pass — a single failure sinks it. At 75% success per run, that's 42% over three runs ([Yao et al., τ-bench](https://arxiv.org/abs/2406.12045)). For an agent that answers the phone, that's the only honest metric: the caller doesn't get a second try.
 
-Vier Quoten, jede über ihren eigenen Stapel:
+Four rates, each over its own stack:
 
-| Quote | Stapel | Erwartung |
+| Rate | Stack | Expectation |
 | --- | --- | --- |
-| Pass | Capability, ohne Rückhalte | niedrig, absichtlich |
-| Δ zur Vorversion | derselbe Stapel | das Abbruchkriterium |
-| Regression | Regression | 100 %, sonst ist etwas kaputtgegangen |
-| Rückhalte | Rückhalte | erst am Gate |
+| Pass | Capability, excluding held-out | low, deliberately |
+| Δ vs. previous version | same stack | the stop criterion |
+| Regression | Regression | 100%, otherwise something broke |
+| Held-out | Held-out | only at the gate |
 
-Eine Quote gilt erst, wenn kein Fall ihres Stapels mehr `offen` steht. `Punkte 0-2` geht in keine Quote ein — Teilpunkte sind die zweite Dimension neben dem Bestehen, nicht ein Viertelbestehen. Strenger ist nur das Gate: `Notfall`, `Notdienst` und `Angriff` müssen jeden einzelnen Lauf bestehen.
+A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial-credit points) doesn't feed into any rate — partial credit is the second dimension alongside pass/fail, not a quarter-pass. The only stricter rule is the gate: `Notfall`, `Notdienst`, and `Angriff` must pass every single run.
 
-**Zwei Schleifen.** Am Anfang steht jeder Fall auf `Capability` — unbewiesen ist nicht bestanden. Wer zwei Runden in Folge alle seine Anrufe besteht, wird `Regression` und fällt aus der Runde raus; wer als Regressionsfall durchfällt, geht zurück auf `Capability`. Der Regressionslauf wird nicht nach Kalender gefahren, sondern bei Auslösern: vor dem Live-Gang, danach vor jeder Promptänderung, jedem Plattform-Update, jedem Modellwechsel.
+**Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. The regression run isn't scheduled by calendar but by trigger: before go-live, then before every prompt change, platform update, or model switch.
 
-Das ist die Regel, die ein handgefahrenes Set dauerhaft trägt: die Rundenkosten hängen am Capability-Stapel, nicht an der Größe des Sets — bei 30 Fällen wie bei 80.
+That's the rule that keeps a hand-run set affordable long-term: round cost tracks the capability stack, not the size of the set — true at 30 cases and at 80.
 
-## Ablauf
+## Procedure
 
-**Aufsetzen.** Tabelle anlegen, Grader importieren, in `config` Promptversion, Pflichtansage, Zuggrenze und Verbotsliste eintragen. Im Post-Call-Workflow die Weiche zum Grader *hinter* die Ticket-Erstellung hängen — sonst misst der Eval einen Anruf, der kein Ticket hinterlassen hat.
+**Setup.** Create the spreadsheet, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. In the post-call workflow, hang the routing to the grader *after* ticket creation — otherwise the eval measures a call that left no ticket behind.
 
-**Vor dem ersten Lauf.** Die Leitung prüfen, nicht das Verhalten: zwei Anrufe, einer ohne Codewort (muss als `nicht zugeordnet` landen), einer mit (muss den richtigen Fall treffen, das Codewort aus dem Transkript entfernt haben und ein gefülltes Ticket zeigen). Danach die Zeilen löschen. Jedes gefundene Problem sofort fixen — das ist keine Messung.
+**Before the first run.** Test the line, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet.
 
-Dann den Judge kalibrieren: die ersten fünf Urteile gegenlesen. Weicht eines vom eigenen ab, entscheidet der Zwei-Menschen-Test — käme ein Zweiter, der nur `Bestanden wenn` und das Transkript sieht, zum selben Urteil? Ja → Kriterium schärfen. Nein → Zeile stehen lassen, der Agent war wirklich schlecht.
+Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Bestanden wenn` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
 
-**Je Runde.** Der Capability-Stapel komplett, in dieser Reihenfolge: erst Haftung, dann je ein Vertreter pro Pfad, dann der Rest. Komplett durchziehen oder abbrechen. Beim Anrufen auf Papier mitschreiben — der Grader sieht das Transkript, nicht den Klang: Pausen, Betonung, der Moment, an dem ein echter Anrufer aufgelegt hätte. Danach Testtickets löschen, Befunde bündeln, Version hoch.
+**Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, bundle findings, bump the version.
 
-Ein durchgefallener Fall wird gegen seine Referenzlösung gelegt und am **ersten abweichenden Zug** gelesen — dort sitzt die Ursache, nicht dort, wo das Gespräch sichtbar entgleist. Mehrere Fälle mit derselben Ursache ergeben *einen* Fix. Fällt ein Fall durch, der nie referenzgelöst war, wird zuerst geprüft, ob das Kriterium überhaupt erreichbar ist: kaputte Fälle werden korrigiert, nicht der Prompt an sie gebogen. Einzige Ausnahme ist `Angriff` — dort ändert ein Fehlschlag immer den Systemprompt, nie den Fall.
+A failed case gets laid against its reference solution and read at the **first diverging turn** — that's where the cause sits, not where the conversation visibly derails. Multiple cases with the same cause become *one* fix. If a case that was never reference-solved fails, first check whether the criterion is reachable at all: broken cases get corrected, the prompt doesn't get bent to fit them. The only exception is `Angriff` — there, a failure always changes the system prompt, never the case.
 
-**Gate.** Woran es besteht, steht vor der ersten Runde fest: binäre KPIs, aus den Läufen ablesbar, und mindestens einer davon misst, ob der Anruf sein Ziel erreicht hat — sonst zeigt das Gate nur, dass nichts kaputtgegangen ist. Aufhören, wenn eine Runde nichts mehr bringt, realistisch nach drei bis vier. Dann zweimal messen: Arbeitsstapel, danach Rückhalte. Danach den Prompt nicht mehr anfassen. Fallen Rückhalte durch, entscheidet das Transkript — mehrdeutiger Fall wird korrigiert, fairer Fall wandert in den Arbeitsstapel und es folgt eine weitere Runde mit neuen Rückhalten.
+**Gate.** What it takes to pass is fixed before the first round: binary KPIs, readable from the runs, and at least one of them measures whether the call reached its goal — otherwise the gate only shows that nothing broke. Stop when a round stops moving the needle, realistically after three to four. Then measure twice: working stack, then held-out. After that, the prompt doesn't get touched again. If held-out cases fail, the transcript decides — an ambiguous case gets corrected, a fair case moves into the working stack and another round follows with fresh held-out cases.
 
-**Nach dem Live-Gang.** Jeder schiefgelaufene echte Anruf wird ein Capability-Fall, je Ursache einer, nicht je Anruf. Ausgelöst vom Fehler, nicht vom Kalender: bei zweistelligen Anrufzahlen je Woche ist jede Wochenquote Rauschen. Ein Wachwert genügt — der Anteil der Anrufer, die selbst auflegen, mit einer beim Live-Gang aus der Baseline festgeschriebenen Schwelle.
+**After go-live.** Every real call that went wrong becomes a capability case, one per cause, not one per call. Triggered by the failure, not the calendar: at double-digit call volumes per week, any weekly rate is noise. One watch metric suffices — the share of callers who hang up themselves, with a threshold locked in from the baseline at go-live.
 
-## Datenschema
+## Data schema
 
-Zwei Tabellen tragen den Aufbau. Der Grader liest die erste und schreibt die zweite; von Hand geschrieben wird nur die erste.
+Two tables carry the setup. The grader reads the first and writes the second; only the first is written by hand.
 
-**Fälle** — `Fall` · `Codewort` · `Pfad` · `Zwilling zu` · `Kontext` · `Anrufer sagt` · `Bestanden wenn` · `Durchgefallen wenn` · `Punkte 0-2` · `Anrufe` · `Zweck` (`Capability`/`Regression`) · `Rückhalte` · `Ticket erwartet` · `Referenzlösung`
+**Cases (`03-Fälle`)** — `Fall` (case) · `Codewort` (codeword) · `Pfad` (path) · `Zwilling zu` (twin of) · `Kontext` (context) · `Anrufer sagt` (caller says) · `Bestanden wenn` (pass if) · `Durchgefallen wenn` (fail if) · `Punkte 0-2` (points) · `Anrufe` (calls) · `Zweck` (purpose: `Capability`/`Regression`) · `Rückhalte` (held-out) · `Ticket erwartet` (ticket expected) · `Referenzlösung` (reference solution)
 
-**Läufe** — `Lauf` · `Fall` · `Promptversion` · `Bestanden` · `Punkte` · `Begründung` · `Transkript` · `Dauer` · `Züge` · `Tool-Calls` · `disconnectReason` · `Ticket`
+**Runs (`04-Läufe`)** — `Lauf` (run) · `Fall` (case) · `Promptversion` (prompt version) · `Bestanden` (passed) · `Punkte` (points) · `Begründung` (rationale) · `Transkript` (transcript) · `Dauer` (duration) · `Züge` (turns) · `Tool-Calls` · `disconnectReason` · `Ticket`
 
-Die Auswertung ist reine Formelarbeit über diesen beiden Tabellen und reicht bis Fall 40 — wer mehr Fälle braucht, zieht die Formeln nach unten.
+Scoring is pure formula work over these two tables and reaches up to case 40 — anyone needing more cases drags the formulas down.
 
-`Züge` zählt nur Gesprächszüge; Tool-Zeilen bleiben draußen, sonst sieht jede Weiterleitung zwei Züge länger aus und die Zuggrenze schlägt an, wo niemand nachgefragt hat.
+`Züge` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up.
 
-## Grenzen
+## Limits
 
-Was dieser Aufbau **nicht** kann — für die Bewertung der Zahlen wichtiger als das, was er kann:
+What this setup **cannot** do — more important for judging the numbers than what it can:
 
-- **Ein Anruf je Fall außerhalb von Haftung und Angriff.** Die Lehrmeinung verlangt mehrere Läufe je Fall, weil ein einzelner Trial kein Ergebnis ist. Hier wird von Hand telefoniert; drei Anrufe über das ganze Set sind nicht bezahlbar. Verdichtet wird deshalb nur dort, wo ein Fehlschlag teuer ist. Das ist eine Kostenentscheidung, keine methodische.
-- **Kleines N.** Ein handgefahrenes Set liegt bei zwei bis drei Dutzend Fällen. Es findet Fehlermodi, es schätzt keine Fehlerraten.
-- **Der Grader hört nicht.** Er liest ein Transkript. Prosodie, Pausen, Sprechtempo und der Moment, in dem ein echter Anrufer entnervt auflegt, kommen nur über die handschriftlichen Notizen in die Auswertung.
-- **Der Judge ist gegen fünf Urteile kalibriert**, nicht gegen einen Goldstandard-Datensatz mit Übereinstimmungsmaß.
-- **Die Spracherkennung ist Teil der Messung.** Ein Fall kann am Codewort scheitern statt am Agenten. Deshalb der Systemtest vorweg und die Regel, das Wort mitten im Gespräch zu nennen.
+- **One call per case outside liability and attack.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only doubled up where a failure is expensive. That's a cost decision, not a methodological one.
+- **Small N.** A hand-run set sits at two to three dozen cases. It finds failure modes; it does not estimate failure rates.
+- **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
+- **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.
+- **Speech recognition is part of the measurement.** A case can fail on the codeword instead of on the agent. Hence the system test upfront and the rule to say the word mid-conversation.
 
-## Quellen
+## Sources
 
-- Anthropic, [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — zwei Schleifen, Referenzlösung, Ergebnis statt Weg bewerten, `pass^k`, Zwillingsregel
-- Anthropic, [Create strong empirical evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests) — Erfolgskriterium, Setgröße, Edge Cases, Graderwahl
-- Anthropic, [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks) — Angriffsfälle, Fremdinhalt als Tool-Ergebnis, Red Teaming vor dem Live-Gang
-- Panickssery et al., [LLM Evaluators Recognize and Favor Their Own Generations](https://arxiv.org/abs/2404.13076) — warum der Judge nicht das Agentenmodell sein darf
-- Yao et al., [τ-bench](https://arxiv.org/abs/2406.12045) — `pass^k` als Zuverlässigkeitsmaß
-- Chen et al., [Evaluating Large Language Models Trained on Code](https://arxiv.org/abs/2107.03374) — `pass@k`, das Gegenstück
+- Anthropic, [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — two loops, reference solution, scoring outcome over process, `pass^k`, the twin rule
+- Anthropic, [Create strong empirical evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests) — success criterion, set size, edge cases, grader choice
+- Anthropic, [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks) — attack cases, foreign content as tool output, red teaming before go-live
+- Panickssery et al., [LLM Evaluators Recognize and Favor Their Own Generations](https://arxiv.org/abs/2404.13076) — why the judge can't be the agent's own model
+- Yao et al., [τ-bench](https://arxiv.org/abs/2406.12045) — `pass^k` as a reliability measure
+- Chen et al., [Evaluating Large Language Models Trained on Code](https://arxiv.org/abs/2107.03374) — `pass@k`, its counterpart

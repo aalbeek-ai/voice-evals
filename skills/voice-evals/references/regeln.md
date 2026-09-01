@@ -1,66 +1,66 @@
-# Regelwerk: Prüfliste und Ursachenanalyse
+# Rulebook: checklist and root-cause analysis
 
-Womit ein Prompt geprüft wird — nach einer Runde, um Befunde einzuordnen, und vor der Lieferung der neuen Fassung. Aufbau und Wortlaut der Blöcke stehen in `template.md`, das ist führend; hier steht nur, was dort nicht abzulesen ist.
+What a prompt gets checked against — after a round, to sort findings, and before delivering the new version. Block structure and exact wording live in `template.md`, that's authoritative; here's only what isn't readable there.
 
-## 1 Prüfliste
+## 1 Checklist
 
-### Startnachricht
-Höchstens ~90 Zeichen und mit KI-Offenlegung. Fester Text, der nie in die Anrufersprache übersetzt wird — kurz und neutral halten, den Sprachwechsel übernimmt der Prompt.
+### Opening message
+At most ~90 characters, with AI disclosure. Fixed text, never translated into the caller's language — keep it short and neutral, the prompt handles the language switch.
 
-### 1.1 Struktur
-- Identität und Ansprechform definiert und durchgehend gehalten
-- Sonstiges-Fallback vorhanden, kein Pfad ohne Ende
-- Jede Rückkehr-Kante begrenzt — sonst ist der Baum ein Kreis, den nur der Anrufer beendet
-- Eigener Block „Gespräch beenden" mit fester Schrittfolge.
-- Anrufertypen getrennt, wo sie verschiedene Wege brauchen; bei mehreren Standorten Matrix, Routing-Kriterium und ein Tool je Standort
-- **Je Anliegenart eine eigene Phase.** Eine Phase, die zwei Arten bündelt, arbeitet das Modell als Liste ab und stellt die Fragen der einen Art in der anderen
-- **Alle Weiterleitungen in einem Block**, mit der Weiche, ob sie gerade möglich ist, und dem, was nach einem gescheiterten Transfer passiert. Hängen sie an den einzelnen Phasen, fehlt beides
+### 1.1 Structure
+- Identity and form of address defined and held consistently
+- A fallback for "something else" exists, no path without an end
+- Every return edge is bounded — otherwise the tree is a loop only the caller can end
+- Its own "end conversation" block with a fixed step sequence.
+- Caller types separated where they need different paths; for multiple locations, a matrix, a routing criterion, and one tool per location
+- **One phase per concern type.** A phase that bundles two types gets worked through as a list by the model and asks one type's questions inside the other
+- **All transfers in one block**, with the switch for whether a transfer is currently possible and what happens after a failed transfer. Hung off individual phases, both go missing
 
-### 1.2 Gespräch
-- Eine Frage pro Zug, Antworten zwei bis drei Sätze, natürliche Sätze statt vorgelesener Listen
-- **Sprachstil detailliert beschrieben** — Tempo, Wärme, Direktheit, Verhalten bei Aufregung oder Beschwerde. „Freundlich" ist keine Anweisung
-- Nichts erfragen, was das System schon weiß
-- Bestätigt wird einmal, am Ende, in einer Abschluss-Zusammenfassung. Nachfragen bleibt erlaubt, wo etwas akustisch nicht ankam — sonst wird nichts wiederholt
-- Ziffern nicht zählen lassen. Abbrüche dagegen über Züge formulieren („nach drei Zügen weiterleiten") — ungefähr, aber von allen Varianten die zuverlässigste
-- Anrufer-Name wird dokumentiert, nicht ausgesprochen; der Nachname genügt — z. B. „Bestätige mit „Danke, notiert."
-- Sprachwechsel passiert nicht von selbst, er muss ausdrücklich erlaubt sein: „Spricht der Anrufer eine andere Sprache, wechsle für den Rest des Gesprächs vollständig in diese Sprache." Dazu eine neutrale Stimme im Dashboard, sonst klingt die zweite Sprache nach Akzent
-- Injection und Kaltakquise werden abgewiesen; Themeneingrenzung ja, Small Talk bleibt erlaubt
+### 1.2 Conversation
+- One question per turn, answers two to three sentences, natural sentences instead of read-out lists
+- **Speaking style described in detail** — pace, warmth, directness, behavior under excitement or complaint. "Friendly" is not an instruction
+- Never ask for what the system already knows
+- Confirmed once, at the end, in a closing summary. Follow-up questions stay allowed where something wasn't heard acoustically — otherwise nothing gets repeated
+- Don't have it count digits. Phrase timeouts via turns instead ("transfer after three turns") — approximate, but the most reliable of all the variants
+- Caller name gets logged, not spoken aloud; the surname suffices — e.g. confirm with "Thanks, noted."
+- Language switching doesn't happen on its own, it must be explicitly allowed: "If the caller speaks another language, switch fully into that language for the rest of the conversation." Pair that with a neutral voice in the dashboard, otherwise the second language sounds accented
+- Injection and cold-calling get turned away; staying on topic yes, small talk stays allowed
 
-### 1.3 Aussprache
-Alles, was vorgelesen wird, steht so da, wie es klingen soll — im Prompt und in jedem Speicher gleichermaßen.
-- Uhrzeiten, Daten, Preise und Abkürzungen als Wörter: „neun Uhr", „dreizehnter März", „neunundachtzig Euro", „rund um die Uhr"
-- Telefonnummern, Postleitzahlen und Notrufnummern Ziffer für Ziffer, mit Komma dazwischen: „null, vier, fünf, fünf, eins" · „eins, eins, zwei"
-- Haus-, Wohnungs- und Stockwerksnummern dagegen als ganze Zahl: „Strandallee hundertsechsundfünfzig", „dritter Stock"
-- Schwierige Firmen- und Eigennamen lautmalerisch, wie das TTS sie sprechen soll: „Aalbeek" → „Aal-Beek"
-- E-Mail- und Internetadressen in Bestandteilen, Symbole als Wort: „info at aalbeek punkt de" · „fonio punkt info"
-- Soll eine Einzelstelle im Moment auf eine bestimmte Art klingen (typisch: eine E-Mail-Adresse vorlesen), mit `<speak>`-Tags umschließen: „Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>"
+### 1.3 Pronunciation
+Everything read aloud is written the way it should sound — in the prompt and in every knowledge-store entry alike. Examples below are in German because production runs in German; the pattern (spell out for TTS, digit-by-digit for numbers meant to be dictated) applies in any language.
+- Times, dates, prices, and abbreviations as words: "neun Uhr" (nine o'clock), "dreizehnter März" (March 13th), "neunundachtzig Euro" (eighty-nine euros), "rund um die Uhr" (around the clock)
+- Phone numbers, postal codes, and emergency numbers digit by digit, comma-separated: "null, vier, fünf, fünf, eins" · "eins, eins, zwei"
+- House, apartment, and floor numbers as whole numbers instead: "Strandallee hundertsechsundfünfzig" (Strandallee one-hundred-fifty-six), "dritter Stock" (third floor)
+- Difficult company and proper names spelled phonetically the way the TTS should say them: "Aalbeek" → "Aal-Beek"
+- Email and web addresses spelled out in parts, symbols as words: "info at aalbeek punkt de" · "fonio punkt info"
+- If a single spot needs to sound a specific way in the moment (typically: reading out an email address), wrap it in `<speak>` tags: "Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>"
 
-### 1.4 Speicher und Tools
-- **In den Systemprompt gehört, was zuverlässig sitzen muss** — Retrieval greift nicht sicher
-- Variablen überall im Prompt über das Variablen-Feld der Plattform einfügen, nicht abtippen: robuster und weniger fehleranfällig.
-- **Speicherzwang und Nichtwissens-Satz stehen im Prompt:** unternehmensspezifische Angaben ausschließlich aus dem Speicher, und steht dort nichts, ein fester Satz („Diese Information habe ich nicht — eine Kollegin oder ein Kollege meldet sich") statt einer Schätzung. Ohne den Satz füllt das Modell die Lücke selbst
-- Personenbezogene Daten, Objektadressen und Kontakte von Mitarbeitenden nie von sich aus nennen — nur auf ausdrückliche Frage und nur, wenn sie im Speicher stehen
-- Rufnummern und Kontakte gehören in Tools oder in den Speicher, nie in den Prompt: dort liest die KI sie vor und eine Injection zieht sie heraus
-- Detailinfos (FAQ, Preise, Kataloge) in den Speicher, Zahlen darin nach §1.3
-- Nichts doppelt ablegen, auch nicht Prompt gegen Dashboard-Feld — zwei Quellen laufen auseinander
-- Jedes Tool hat einen Auslöser im Baum: die Weiche im Prompt, die Auslöser-Details im Tool
+### 1.4 Knowledge store and tools
+- **What must sit reliably belongs in the system prompt** — retrieval doesn't grip reliably
+- Insert variables everywhere in the prompt via the platform's variable field, don't type them out: more robust, less error-prone.
+- **The knowledge-store mandate and the not-known sentence live in the prompt:** company-specific facts only from the knowledge store, and if nothing's there, a fixed sentence ("I don't have that information — a colleague will get back to you") instead of a guess. Without the sentence, the model fills the gap itself
+- Never volunteer personal data, property addresses, or staff contacts on its own — only on explicit request and only if they're in the knowledge store
+- Phone numbers and contacts belong in tools or the knowledge store, never in the prompt: there the AI reads them aloud and an injection can extract them
+- Detail info (FAQ, prices, catalogs) goes in the knowledge store, numbers in it follow §1.3
+- Nothing stored twice, not even prompt against dashboard field — two sources drift apart
+- Every tool has a trigger in the tree: the branch in the prompt, the trigger detail in the tool
 
-### 1.5 Anti-Patterns
-- Doppelte Begrüßung
-- Dieselbe Regel mehrfach
-- Widersprüche
-- „NIEMALS!!!" statt Grund
-- Verbot, wo eine Reihenfolge gemeint ist
-- Regel nennt einen Eval-Fall oder einen Transkript-Wortlaut
-- Beispieldaten im Prompt („z. B. Herr Müller, null drei null …") — was in Anführungszeichen steht, spricht der Agent irgendwann aus und behandelt es als echt. Alte Namen, Nummern und Preise überall ersetzen, auch in Beispielen und alten Speichereinträgen
+### 1.5 Anti-patterns
+- Double greeting
+- The same rule stated twice
+- Contradictions
+- "NEVER!!!" instead of a reason
+- A prohibition where a sequence was meant
+- A rule that names an eval case or a transcript's exact wording
+- Example data in the prompt ("e.g. Mr. Müller, null drei null …") — whatever is in quotes eventually gets spoken by the agent and treated as real. Replace old names, numbers, and prices everywhere, including in examples and old knowledge-store entries
 
-## 2 Ursachenanalyse
+## 2 Root-cause analysis
 
-Ein Prompt, den ein LLM Runde für Runde repariert, wächst zum Fallverzeichnis und scheitert am ersten Fall, der nicht darin steht. Dagegen hilft nur, den Fix eine Ebene höher zu setzen als den Befund.
+A prompt that an LLM repairs round after round grows into a case directory and fails on the first case not in it. The only thing that helps is setting the fix one level higher than the finding.
 
-- **Algo vor jedem Fix:** hinterfragen (Symptom real?) → löschen (was geht ersatzlos raus?) → vereinfachen oder optimieren. Ausbauen erst, wenn sich der Bedarf wiederholt hat
-- **Höchste zutreffende Ebene wählen:** Wortlaut (klingt falsch) → Regel (fehlt, doppelt, widersprüchlich) → Struktur (Pfad fehlt oder greift nicht) → Prinzip (arbeitet den Baum starr ab, scheitert an jeder Abweichung). Nur auf der Prinzip-Ebene wird der Prompt kürzer und deckt mehr ab
-- **Nummerierte Schritte nur gegen eine Phase, die entgleist** — flächendeckend machen sie starr. Letzter Schritt verweist auf die nächste Phase
-- **Geschwister-Test:** drei Situationen mit derselben Ursache benennen, die nicht im Set stehen. Deckt der Fix sie nicht ab, eine Ebene höher
-- **Überanpassung:** ein Fix, der einen Fallnamen oder Transkript-Wortlaut enthält, als neuer Spiegelstrich angehängt wird oder eine Situation statt eines Verhaltens beschreibt, ist verbrannt
-- **Nicht jeder Fix gehört in den Prompt:** Fakt falsch → Speicher · Weiterleitung ins Leere → Tool · Ticketfeld falsch → Post-Call-Automation · unterbricht oder versteht Zahlen schlecht → Dashboard · KI-Offenlegung wird abgeschnitten → Dashboard („Unterbrechung verhindern"). Bleibt nichts übrig, war es kein Prompt-Problem
+- **Algorithm before every fix:** question it (is the symptom real?) → delete (what comes out with nothing replacing it?) → simplify or optimize. Only extend once the need has repeated
+- **Pick the highest level that applies:** wording (sounds wrong) → rule (missing, duplicated, contradictory) → structure (path missing or not triggering) → principle (works the tree rigidly, fails on any deviation). Only at the principle level does the prompt get shorter while covering more
+- **Numbered steps only against a phase that derails** — applied everywhere, they make it rigid. Last step points to the next phase
+- **Sibling test:** name three situations with the same cause that aren't in the set. If the fix doesn't cover them, go one level higher
+- **Overfitting:** a fix that contains a case name or exact transcript wording, gets appended as a new bullet point, or describes a situation instead of a behavior, is burned
+- **Not every fix belongs in the prompt:** fact wrong → knowledge store · transfer into the void → tool · wrong ticket field → post-call automation · interrupts or mishears numbers → dashboard · AI disclosure gets cut off → dashboard ("prevent interruption"). Nothing left over → it wasn't a prompt problem

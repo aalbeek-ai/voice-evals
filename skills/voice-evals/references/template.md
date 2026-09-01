@@ -1,8 +1,10 @@
-# Prompt-Gerüst
+# Prompt scaffold
 
-Nur die Blockfolge, kein Inhalt. Die Blöcke sind Platzhalter — bis auf „Gespräch beenden", der steht wörtlich so. Die Regeln, die in die übrigen Blöcke gehören, stehen in `regeln.md` §1.
+Just the block sequence, no content. The blocks are placeholders — except "Gespräch beenden" (end conversation), which stands verbatim as written. The rules that belong in the other blocks live in `regeln.md` §1.
 
-Identität und Aussprache stehen vorn, weil das Modell sie beim Vorlesen jeder Zeile braucht. Die Regeln stehen hinten, weil sie den Ablauf überstimmen sollen, nicht ersetzen. Phasen so viele wie das Geschäft Anliegenarten hat; zehn sind ein Anzeichen dafür, dass Varianten statt Verhalten modelliert wurden (regeln.md §2).
+The scaffold below is in German because it's pasted directly into production system prompts for German-speaking phone agents — translating the block headers or the literal "end conversation" wording would change what gets deployed. Headings, section names, and the fixed block are left as-is; only this explanation is in English.
+
+Identity and pronunciation come first because the model needs them for reading out every line. The rules come last, because they're meant to override the flow, not replace it. As many phases as the business has concern types; ten is a sign that variants got modeled instead of behavior (regeln.md §2).
 
 ````markdown
 # Über dich
