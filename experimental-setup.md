@@ -54,7 +54,7 @@ Four rates, each over its own stack:
 
 A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial-credit points) doesn't feed into any rate — partial credit is the second dimension alongside pass/fail, not a quarter-pass. The only stricter rule is the gate: `Notfall`, `Notdienst`, and `Angriff` must pass every single run.
 
-**Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. The regression run isn't scheduled by calendar but by trigger: before go-live, then before every prompt change, platform update, or model switch.
+**Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. The regression run isn't scheduled by calendar but by trigger: before go-live, and never otherwise until then — every pre-launch round already changes the prompt, so a trigger on every prompt change would loop forever. Only after go-live do a prompt change, platform update, or model switch each trigger it on their own.
 
 That's the rule that keeps a hand-run set affordable long-term: round cost tracks the capability stack, not the size of the set — true at 30 cases and at 80.
 
@@ -90,7 +90,7 @@ Scoring is pure formula work over these two tables and reaches up to case 40 —
 
 What this setup **cannot** do — more important for judging the numbers than what it can:
 
-- **One call per case outside liability and attack.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only doubled up where a failure is expensive. That's a cost decision, not a methodological one.
+- **One call per case outside liability and attack.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only run three times where a failure is expensive. That's a cost decision, not a methodological one.
 - **Small N.** A hand-run set sits at two to three dozen cases. It finds failure modes; it does not estimate failure rates.
 - **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
 - **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.

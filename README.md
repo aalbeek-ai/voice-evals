@@ -46,7 +46,7 @@ Google Sheets keeps a tab's `gid` when you make a copy, so the grader's placehol
 
 The harness runs against a real voice agent for a property management company, working through the baseline round now.
 
-Built on a telephony platform with a post-call webhook, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
+Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, a post-call webhook, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
 
 ## What's next
 
