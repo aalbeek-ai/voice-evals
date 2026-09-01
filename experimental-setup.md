@@ -28,11 +28,11 @@ Two details that carry the rule grader:
 - **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only success counts — every transfer has an attempt row in the transcript first, otherwise a failed attempt would read as a passed transfer.
 - **Transcript and check terms run through the same normalization** (lowercased, umlauts resolved, everything non-alphanumeric turned to spaces). Otherwise a term with an umlaut can't find itself in an umlaut-free transcript.
 
-**The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do ([Panickssery et al. 2024](https://arxiv.org/abs/2404.13076)). It gets criteria, transcript, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unklar` (unclear) is a valid answer; if the API fails, the run ends as `unklar`, never as a silent fail.
+**The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unklar` (unclear) is a valid answer; if the API fails, the run ends as `unklar`, never as a silent fail.
 
 ## Controls
 
-- **A twin per trigger.** Every case where a behavior *should* happen has one where it should not — same number with `-Z-`. No twin, no case: "One-sided evals create one-sided optimization" ([Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)). The grader flips the expectation itself off the `-Z-` in the case name.
+- **A twin per trigger.** Every case where a behavior *should* happen has one where it should not — same number with `-Z-`. No twin, no case: "One-sided evals create one-sided optimization" (<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a>). The grader flips the expectation itself off the `-Z-` in the case name.
 - **Codeword mid-conversation.** Right after the greeting and at the end is where speech recognition is weakest — measured: "Amsel. Es riecht hier im" (a bird name mid-sentence) got misheard as "Haben Sie das richtige." A short German bird name per case, entered as a domain term on the platform before the run, removed after. Otherwise the agent hears bird names in production where none were said.
 - **Held-out set.** A portion of cases is never called and never looked at until the gate is reached. Only this second number shows whether the prompt generalizes instead of overfitting to the set.
 - **The instrument may change mid-round, the measurement object never.** Allowed to sharpen: `Bestanden wenn`, partial-credit points, judge prompt, grader thresholds. Untouched: system prompt, knowledge, variables, tools, dashboard. Fixing those mid-round describes two different agents under the same version.
@@ -41,7 +41,7 @@ Two details that carry the rule grader:
 
 ## Metrics
 
-**`pass^k`, not `pass@k`.** A case only counts as passed if *all* its calls pass — a single failure sinks it. At 75% success per run, that's 42% over three runs ([Yao et al., τ-bench](https://arxiv.org/abs/2406.12045)). For an agent that answers the phone, that's the only honest metric: the caller doesn't get a second try.
+**`pass^k`, not `pass@k`.** A case only counts as passed if *all* its calls pass — a single failure sinks it. At 75% success per run, that's 42% over three runs (<a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">Yao et al., τ-bench</a>). For an agent that answers the phone, that's the only honest metric: the caller doesn't get a second try.
 
 Four rates, each over its own stack:
 
@@ -62,7 +62,7 @@ That's the rule that keeps a hand-run set affordable long-term: round cost track
 
 **Setup.** Create the spreadsheet, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. In the post-call workflow, hang the routing to the grader *after* ticket creation — otherwise the eval measures a call that left no ticket behind.
 
-**Before the first run.** Test the line, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet.
+**Before the first run.** Test the chain end to end, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet.
 
 Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Bestanden wenn` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
 
@@ -98,9 +98,9 @@ What this setup **cannot** do — more important for judging the numbers than wh
 
 ## Sources
 
-- Anthropic, [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — two loops, reference solution, scoring outcome over process, `pass^k`, the twin rule
-- Anthropic, [Create strong empirical evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests) — success criterion, set size, edge cases, grader choice
-- Anthropic, [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks) — attack cases, foreign content as tool output, red teaming before go-live
-- Panickssery et al., [LLM Evaluators Recognize and Favor Their Own Generations](https://arxiv.org/abs/2404.13076) — why the judge can't be the agent's own model
-- Yao et al., [τ-bench](https://arxiv.org/abs/2406.12045) — `pass^k` as a reliability measure
-- Chen et al., [Evaluating Large Language Models Trained on Code](https://arxiv.org/abs/2107.03374) — `pass@k`, its counterpart
+- Anthropic, <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Demystifying evals for AI agents</a> — two loops, reference solution, scoring outcome over process, `pass^k`, the twin rule
+- Anthropic, <a href="https://platform.claude.com/docs/en/test-and-evaluate/develop-tests" target="_blank" rel="noopener noreferrer">Create strong empirical evaluations</a> — success criterion, set size, edge cases, grader choice
+- Anthropic, <a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks" target="_blank" rel="noopener noreferrer">Mitigate jailbreaks and prompt injections</a> — attack cases, foreign content as tool output, red teaming before go-live
+- Panickssery et al., <a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">LLM Evaluators Recognize and Favor Their Own Generations</a> — why the judge can't be the agent's own model
+- Yao et al., <a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">τ-bench</a> — `pass^k` as a reliability measure
+- Chen et al., <a href="https://arxiv.org/abs/2107.03374" target="_blank" rel="noopener noreferrer">Evaluating Large Language Models Trained on Code</a> — `pass@k`, its counterpart
