@@ -1,6 +1,6 @@
 ---
 name: voice-evals
-description: Score and improve voice agent prompts for phone AI against an eval set. Always use when the user wants to write eval cases, score an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent prompt — even when "eval" isn't said explicitly.
+description: Score and improve voice agent systems for phone AI against an eval set. Always use when the user wants to write eval cases, score an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
 ---
 
 # voice-evals — evals for phone voice agents
