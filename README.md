@@ -32,7 +32,6 @@ The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/refer
 ```bash
 git clone https://github.com/aalbeek-ai/voice-evals.git
 cp -r voice-evals/skills/voice-evals ~/.claude/skills/
-rm -rf voice-evals
 ```
 
 It then triggers on its own in Claude Code whenever eval cases, an eval round, or a call transcript come up.
