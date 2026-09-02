@@ -27,11 +27,18 @@ The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/refer
 
 ## Using it
 
-**Install the skill** — copy `skills/voice-evals/` to wherever Claude Code looks for skills, personal (every project) or project (this repo only, committable for your team):
+**Install the skill** — with the <a href="https://github.com/vercel-labs/skills" target="_blank" rel="noopener noreferrer">skills CLI</a> (Claude Code, Cursor, Codex, OpenCode, and others):
+
+```bash
+npx skills add aalbeek-ai/voice-evals/skills/voice-evals
+```
+
+Installs to `.claude/skills/` for this project; add `-g` to put it in `~/.claude/skills/` instead, for every project.
+
+Or clone it directly:
 
 ```bash
 git clone https://github.com/aalbeek-ai/voice-evals.git
-
 cp -r voice-evals/skills/voice-evals ~/.claude/skills/       # personal
 cp -r voice-evals/skills/voice-evals .claude/skills/         # project
 ```
