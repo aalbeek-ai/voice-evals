@@ -27,20 +27,22 @@ The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/refer
 
 ## Using it
 
-**Install the skill** — it lives in `skills/voice-evals/` and belongs under `~/.claude/skills/`:
+**Install the skill** — copy `skills/voice-evals/` to wherever Claude Code looks for skills, personal (every project) or project (this repo only, committable for your team):
 
 ```bash
 git clone https://github.com/aalbeek-ai/voice-evals.git
-cp -r voice-evals/skills/voice-evals ~/.claude/skills/
+
+cp -r voice-evals/skills/voice-evals ~/.claude/skills/       # personal
+cp -r voice-evals/skills/voice-evals .claude/skills/         # project
 ```
 
-After that it triggers on its own in Claude Code whenever eval cases, an eval round, or a call transcript come up. Just pointing Claude Code at the cloned repo isn't enough — the skill has to live under `.claude/skills/` (or `~/.claude/skills/`) to be discovered.
+Either way it then triggers on its own whenever eval cases, an eval round, or a call transcript come up. Just opening Claude Code in the cloned repo isn't enough — the skill has to actually sit under one of those two `.claude/skills/` paths to be discovered.
 
 **The spreadsheet**: get your own copy via **<a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">copy template</a>**. Five tabs: `01-Setup` holds every customer value, `02-Systemtests` tests the full chain end to end before the first real run — delivery, routing, grader matching, not agent behavior — `03-Fälle` and `04-Läufe` are the two data tables, `05-Auswertung` computes the four rates itself and stays untouched. `03-Fälle` ships with one example case and its twin — they show the convention and get overwritten.
 
 For the skill to read and write that spreadsheet, Claude Code needs a Google Sheets MCP server, and the underlying Google Cloud project needs to be enrolled in the Workspace Developer Preview Program — without it, the MCP authenticates but returns no data.
 
-**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials. Per-customer values live exclusively in the `config` node. The webhook takes the post-call payload from the telephony platform; the routing to it hangs *after* ticket creation.
+**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials. Per-customer values live exclusively in the `config` node. Its `call-details` webhook expects the post-call payload — wire your telephony platform's post-call automation to forward it there, and place that forward *after* ticket creation, or the eval measures calls that never left a ticket behind.
 
 ## Status
 
