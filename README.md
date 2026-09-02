@@ -4,7 +4,7 @@
 
 For a voice agent the gap is wider than with text: background noise, dialects, latency, and a caller who doesn't get a second try. Without measurement, every prompt change is a guess.
 
-This repo is the eval harness I use for that — method, grader, spreadsheet template, and the Claude Code skill that runs the scoring.
+This repo is the eval harness I use for that — method, grader, spreadsheet template, and the Claude Code skill that writes cases, scores rounds, and traces failures back to a fix in the system.
 
 ## How it works
 
@@ -20,7 +20,7 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 | --- | --- |
 | [experimental-setup.md](experimental-setup.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
 | [eval-grader.json](eval-grader.json) | The grader as an n8n workflow, importable |
-| [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, score a round |
+| [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, score a round, root-cause failures into one fix per cause |
 | <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Spreadsheet template</a> | Cases, runs, and the scoring that computes itself (Google Sheets) |
 
 The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/references/rules.md) (checklist for voice agent systems and root-cause analysis) and [template.md](skills/voice-evals/references/template.md) (block scaffold for a system prompt). Both belong to it and travel with it on install.
@@ -34,17 +34,19 @@ git clone https://github.com/aalbeek-ai/voice-evals.git
 cp -r voice-evals/skills/voice-evals ~/.claude/skills/
 ```
 
-After that it triggers on its own in Claude Code whenever eval cases, an eval round, or a call transcript come up. If you'd rather point Claude Code at the repo, that works too — the skill sits in the usual place.
+After that it triggers on its own in Claude Code whenever eval cases, an eval round, or a call transcript come up. Just pointing Claude Code at the cloned repo isn't enough — the skill has to live under `.claude/skills/` (or `~/.claude/skills/`) to be discovered.
 
 **The spreadsheet**: get your own copy via **<a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">copy template</a>**. Five tabs: `01-Setup` holds every customer value, `02-Systemtests` tests the full chain end to end before the first real run — delivery, routing, grader matching, not agent behavior — `03-Fälle` and `04-Läufe` are the two data tables, `05-Auswertung` computes the four rates itself and stays untouched. `03-Fälle` ships with one example case and its twin — they show the convention and get overwritten.
 
-**The grader**: import it into n8n, then point `load-case` and `write-run` at your copy — both fields are list pickers, so open each and select your spreadsheet and tab instead of typing anything. Set the credentials for Google Sheets and Anthropic. Per-customer values live exclusively in the `config` node. The webhook takes the post-call payload from the telephony platform; the routing to it hangs *after* ticket creation.
+For the skill to read and write that spreadsheet, Claude Code needs a Google Sheets MCP server, and the underlying Google Cloud project needs to be enrolled in the Workspace Developer Preview Program — without it, the MCP authenticates but returns no data.
+
+**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials. Per-customer values live exclusively in the `config` node. The webhook takes the post-call payload from the telephony platform; the routing to it hangs *after* ticket creation.
 
 ## Status
 
-The harness runs against a real voice agent for a property management company, working through the baseline round now.
+The harness runs against a real voice agent for a property management company, past the baseline round and into round two.
 
-Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, a post-call webhook, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
+Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, a post-call workflow, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
 
 ## What's next
 
