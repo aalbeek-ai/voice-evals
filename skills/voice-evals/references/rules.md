@@ -27,7 +27,7 @@ At most ~90 characters, with AI disclosure. Fixed text, never translated into th
 - Injection and cold-calling get turned away; staying on topic yes, small talk stays allowed
 
 ### 1.3 Pronunciation
-Everything read aloud is written the way it should sound — in the prompt and in every knowledge-store entry alike. Examples below are in German because production runs in German; the pattern (spell out for TTS, digit-by-digit for numbers meant to be dictated) applies in any language.
+Everything read aloud is written the way it should sound — in the prompt and in every knowledge-base entry alike. Examples below are in German because production runs in German; the pattern (spell out for TTS, digit-by-digit for numbers meant to be dictated) applies in any language.
 - Times, dates, prices, and abbreviations as words: "neun Uhr" (nine o'clock), "dreizehnter März" (March 13th), "neunundachtzig Euro" (eighty-nine euros), "rund um die Uhr" (around the clock)
 - Phone numbers, postal codes, and emergency numbers digit by digit, comma-separated: "null, vier, fünf, fünf, eins" · "eins, eins, zwei"
 - House, apartment, and floor numbers as whole numbers instead: "Strandallee hundertsechsundfünfzig" (Strandallee one-hundred-fifty-six), "dritter Stock" (third floor)
@@ -35,13 +35,13 @@ Everything read aloud is written the way it should sound — in the prompt and i
 - Email and web addresses spelled out in parts, symbols as words: "info at aalbeek punkt de" · "fonio punkt info"
 - If a single spot needs to sound a specific way in the moment (typically: reading out an email address), wrap it in `<speak>` tags: "Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>"
 
-### 1.4 Knowledge store and tools
+### 1.4 Knowledge base and tools
 - **What must sit reliably belongs in the system prompt** — retrieval doesn't grip reliably
 - Insert variables everywhere in the prompt via the platform's variable field, don't type them out: more robust, less error-prone.
-- **The knowledge-store mandate and the not-known sentence live in the prompt:** company-specific facts only from the knowledge store, and if nothing's there, a fixed sentence ("I don't have that information — a colleague will get back to you") instead of a guess. Without the sentence, the model fills the gap itself
-- Never volunteer personal data, property addresses, or staff contacts on its own — only on explicit request and only if they're in the knowledge store
-- Phone numbers and contacts belong in tools or the knowledge store, never in the prompt: there the AI reads them aloud and an injection can extract them
-- Detail info (FAQ, prices, catalogs) goes in the knowledge store, numbers in it follow §1.3
+- **The knowledge-base mandate and the not-known sentence live in the prompt:** company-specific facts only from the knowledge base, and if nothing's there, a fixed sentence ("I don't have that information — a colleague will get back to you") instead of a guess. Without the sentence, the model fills the gap itself
+- Never volunteer personal data, property addresses, or staff contacts on its own — only on explicit request and only if they're in the knowledge base
+- Phone numbers and contacts belong in tools or the knowledge base, never in the prompt: there the AI reads them aloud and an injection can extract them
+- Detail info (FAQ, prices, catalogs) goes in the knowledge base, numbers in it follow §1.3
 - Nothing stored twice, not even prompt against dashboard field — two sources drift apart
 - Every tool has a trigger in the tree: the branch in the prompt, the trigger detail in the tool
 
@@ -52,7 +52,7 @@ Everything read aloud is written the way it should sound — in the prompt and i
 - "NEVER!!!" instead of a reason
 - A prohibition where a sequence was meant
 - A rule that names an eval case or a transcript's exact wording
-- Example data in the prompt ("e.g. Mr. Müller, null drei null …") — whatever is in quotes eventually gets spoken by the agent and treated as real. Replace old names, numbers, and prices everywhere, including in examples and old knowledge-store entries
+- Example data in the prompt ("e.g. Mr. Müller, null drei null …") — whatever is in quotes eventually gets spoken by the agent and treated as real. Replace old names, numbers, and prices everywhere, including in examples and old knowledge-base entries
 
 ## 2 Root-cause analysis
 
@@ -63,4 +63,4 @@ A prompt that an LLM repairs round after round grows into a case directory and f
 - **Numbered steps only against a phase that derails** — applied everywhere, they make it rigid. Last step points to the next phase
 - **Sibling test:** name three situations with the same cause that aren't in the set. If the fix doesn't cover them, go one level higher
 - **Overfitting:** a fix that contains a case name or exact transcript wording, gets appended as a new bullet point, or describes a situation instead of a behavior, is burned
-- **Not every fix belongs in the prompt:** fact wrong → knowledge store · transfer into the void → tool · wrong ticket field → post-call automation · interrupts or mishears numbers → dashboard · AI disclosure gets cut off → dashboard ("prevent interruption"). Nothing left over → it wasn't a prompt problem
+- **Not every fix belongs in the prompt:** fact wrong → knowledge base · transfer into the void → tool · wrong ticket field → post-call workflow · interrupts or mishears numbers → dashboard · AI disclosure gets cut off → dashboard ("prevent interruption"). Nothing left over → it wasn't a prompt problem

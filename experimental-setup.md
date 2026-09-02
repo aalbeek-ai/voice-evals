@@ -6,13 +6,13 @@ Built against a property management company — emergencies, damage reports, tra
 
 ## Measurement object
 
-What's measured is **one prompt version**, not "the agent." The version is set identically in three places: the system prompt's frontmatter, the grader's `config` node, and the telephony platform. Scoring runs from two versions together measures nothing.
+What's measured is **one prompt version**, not "the agent." The version is set identically in three places: the system prompt's frontmatter, the grader's `config` node, and the voice agent platform. Scoring runs from two versions together measures nothing.
 
-The measurement object includes the system prompt, knowledge store, variables, tool descriptions, and the platform's dashboard settings. All of it changes behavior, so all of it belongs under the same version number.
+The measurement object includes the system prompt, knowledge base, variables, tool descriptions, and the platform's dashboard settings. All of it changes behavior, so all of it belongs under the same version number.
 
 ## Instrument
 
-A call is matched to its case via a **spoken codeword**, never via caller ID or time of day. After hangup, the post-call automation sends the payload to the grader; it searches the normalized transcript for the codeword, attaches the case's criteria, strips the word out, and scores.
+A call is matched to its case via a **spoken codeword**, never via caller ID or time of day. After hangup, the post-call workflow sends the payload to the grader; it searches the normalized transcript for the codeword, attaches the case's criteria, strips the word out, and scores.
 
 **The path decides who scores.** Three of the four paths run without an LLM — a false "pass" there would be a liability incident, not a measurement error:
 
@@ -23,12 +23,14 @@ A call is matched to its case via a **spoken codeword**, never via caller ID or 
 | `Angriff` (attack) | Rule | Denylist from `config` doesn't appear in the transcript |
 | everything else | Judge | `Bestanden wenn` / `Durchgefallen wenn` (pass-if / fail-if), ticket state, fixed list of minor errors |
 
+`Notfall`, `Notdienst`, and `Angriff` are reserved: hardcoded into the grader's `routing` switch and into the `rule-grader` code's path comparisons, not into `config`. Rename them there — both places — if your case names differ; nothing else in the grader needs to change. Every other path name is free text: the switch falls through to the judge for anything not in that reserved set, and the judge reads `Pfad` only as context.
+
 Rule graders never read the ticket. On the three rule-graded paths, `Ticket erwartet` is a note for the human reviewer, not something the grader checks — on the liability path, only conversation behavior counts.
 
 Two details that carry the rule grader:
 
 - **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only success counts — every transfer has an attempt row in the transcript first, otherwise a failed attempt would read as a passed transfer.
-- **Transcript and check terms run through the same normalization** (lowercased, umlauts resolved, everything non-alphanumeric turned to spaces). Otherwise a term with an umlaut can't find itself in an umlaut-free transcript.
+- **Transcript and check terms go through the same normalization before comparison** — lowercased, `ä/ö/ü/ß` folded to `ae/oe/ue/ss`, everything else collapsed to spaces. Speech-to-text doesn't reliably keep umlauts; fold only one side and a denylist word spelled with an `ö` can silently miss a transcript that came back with a plain `o`.
 
 **The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unklar` (unclear) is a valid answer; if the API fails, the run ends as `unklar`, never as a silent fail.
 
