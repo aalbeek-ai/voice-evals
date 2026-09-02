@@ -37,8 +37,8 @@ Two details that carry the rule grader:
 ## Controls
 
 - **A twin per trigger.** Every case where a behavior *should* happen has one where it should not — same number with `-Z-`. No twin, no case: "One-sided evals create one-sided optimization" (<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a>). The flip is a name check, nothing else: the rule grader tests the case name against `/-Z-/i` and, if it matches, requires the *absence* of the announcement/transfer instead of their presence — no separate `Pfad` value, no `config` entry.
-- **Codeword mid-conversation.** Each case gets a short German bird name as its codeword, one per case, in the `Codewort` column. Spoken mid-call, never right after the greeting or at the end, where recognition is weakest. Registered as a domain term on the platform for the run and removed after, so the agent doesn't hear bird names in production where none were said.
-- **Held-out set.** A portion of cases is never called and never looked at until the gate is reached. The skill writes every case row, but doesn't decide which ones — `Rückhalte` is a checkbox a human sets, deliberately, before the first round; no ratio is fixed here or by the skill. Only this second number shows whether the prompt generalizes instead of overfitting to the set.
+- **Codeword mid-conversation.** Each case gets a short German bird name as its codeword, one per case, in the `Codewort` column. Spoken mid-call, never right after the greeting or at the end — that's where recognition is weakest, so that's where a case could fail on the codeword instead of on the agent (registration mechanics: § Procedure).
+- **Held-out set.** A portion of cases is never called and never looked at until the gate is reached. Only this second number shows whether the prompt generalizes instead of overfitting to the set (which cases, and when they're picked: § Data schema).
 - **The instrument may change mid-round, the measurement object never.** Allowed to sharpen: `Bestanden wenn`, the `Punkte 0-2` partial-credit scale, judge prompt, grader thresholds. Untouched: system prompt, knowledge, variables, tools, dashboard. Fixing those mid-round describes two different agents under the same version.
 - **Re-scoring instead of re-calling.** A sharpened criterion re-scores the affected rows — the transcript is already there. The row gets marked `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` (manually adjusted afterward), otherwise the next round reads a grader verdict that no longer is one.
 - **Reference solution.** One known-working transcript per case, proof the task is solvable, and a check on the grader: change the grader, and the reference must still pass — if it doesn't, the grader is broken, not the agent. It isn't authored ahead of time: the first time a case passes with an empty `Referenzlösung`, that transcript becomes the reference (§ Procedure).
@@ -56,7 +56,7 @@ Four rates, each over its own stack:
 | Regression | Regression | 100%, otherwise something broke |
 | Held-out | Held-out | only at the gate |
 
-A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial credit) doesn't feed into any rate — it's the second dimension alongside pass/fail, not a quarter-pass: it separates a near-miss (concern recognized, ticket incomplete) from a total failure, so a reviewer reading the run sees which of two `Bestanden = FALSE` rows is closer. The `Pass` row above says "low, deliberately" — that's the default while a round is still finding failure modes, and failures there stay open for the next round like anything else. `Notfall`, `Notdienst`, and `Angriff` don't get that grace: a failure on any of them is never banked as this round's data point, it's a liability incident that gets fixed on the spot (§ Procedure — `Angriff` in particular always changes the system prompt, never the case).
+A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial credit) doesn't feed into any rate — it's the second dimension alongside pass/fail, not a quarter-pass: a multi-part case that got the concern right but the ticket wrong scores better than a total miss, without softening `Bestanden wenn` itself.
 
 **Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. The regression run isn't scheduled by calendar but by trigger: before go-live, and never otherwise until then — every pre-launch round already changes the prompt, so a trigger on every prompt change would loop forever. Only after go-live do a prompt change, platform update, or model switch each trigger it on their own.
 
@@ -66,7 +66,7 @@ That's the rule that keeps a hand-run set affordable long-term: round cost track
 
 **Setup.** Create the spreadsheet, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. In the post-call workflow, hang the routing to the grader *after* ticket creation — otherwise the eval measures a call that left no ticket behind.
 
-**Before the first run.** Test the chain end to end, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet.
+**Before the first run.** Test the chain end to end, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet. Register every case's codeword as a domain term on the platform before calling, and delete all of them before go-live — otherwise the agent hears bird names in production where none were said.
 
 Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Bestanden wenn` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
 
@@ -83,6 +83,8 @@ A failed case gets laid against its reference solution and read at the **first d
 Two tables carry the setup. The grader reads the first and writes the second; only the first is written by hand.
 
 **Cases (`03-Fälle`)** — `Fall` (case) · `Codewort` (codeword) · `Pfad` (path) · `Zwilling zu` (twin of) · `Kontext` (context) · `Anrufer sagt` (caller says) · `Bestanden wenn` (pass if) · `Durchgefallen wenn` (fail if) · `Punkte 0-2` (points) · `Anrufe` (calls) · `Zweck` (purpose: `Capability`/`Regression`) · `Rückhalte` (held-out) · `Ticket erwartet` (ticket expected) · `Referenzlösung` (reference solution)
+
+`Rückhalte` is a checkbox, `FALSE` by default: a human ticks it deliberately, before round one — the skill writes the row but doesn't decide the flag, and no ratio is fixed anywhere in this repo.
 
 **Runs (`04-Läufe`)** — `Lauf` (run) · `Fall` (case) · `Promptversion` (prompt version) · `Bestanden` (passed) · `Punkte` (points) · `Begründung` (rationale) · `Transkript` (transcript) · `Dauer` (duration) · `Züge` (turns) · `Tool-Calls` · `disconnectReason` · `Ticket`
 
