@@ -36,7 +36,7 @@ cp -r voice-evals/skills/voice-evals ~/.claude/skills/       # personal
 cp -r voice-evals/skills/voice-evals .claude/skills/         # project
 ```
 
-Either way it then triggers on its own whenever eval cases, an eval round, or a call transcript come up. Just opening Claude Code in the cloned repo isn't enough — the skill has to actually sit under one of those two `.claude/skills/` paths to be discovered.
+Either way it then triggers on its own whenever eval cases, an eval round, or a call transcript come up.
 
 **The spreadsheet**: get your own copy via **<a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">copy template</a>**. Five tabs: `01-Setup` holds every customer value, `02-Systemtests` tests the full chain end to end before the first real run — delivery, routing, grader matching, not agent behavior — `03-Fälle` and `04-Läufe` are the two data tables, `05-Auswertung` computes the four rates itself and stays untouched. `03-Fälle` ships with one example case and its twin — they show the convention and get overwritten.
 
