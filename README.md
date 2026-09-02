@@ -27,23 +27,14 @@ The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/refer
 
 ## Using it
 
-**Install the skill** — with the <a href="https://github.com/vercel-labs/skills" target="_blank" rel="noopener noreferrer">skills CLI</a> (Claude Code, Cursor, Codex, OpenCode, and others):
-
-```bash
-npx skills add aalbeek-ai/voice-evals/skills/voice-evals
-```
-
-Installs to `.claude/skills/` for this project; add `-g` to put it in `~/.claude/skills/` instead, for every project.
-
-Or clone it directly:
+**Install the skill**:
 
 ```bash
 git clone https://github.com/aalbeek-ai/voice-evals.git
-cp -r voice-evals/skills/voice-evals ~/.claude/skills/       # personal
-cp -r voice-evals/skills/voice-evals .claude/skills/         # project
+cp -r voice-evals/skills/voice-evals ~/.claude/skills/
 ```
 
-Either way it then triggers on its own whenever eval cases, an eval round, or a call transcript come up.
+It then triggers on its own in Claude Code whenever eval cases, an eval round, or a call transcript come up.
 
 **The spreadsheet**: get your own copy via **<a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">copy template</a>**. Five tabs: `01-Setup` holds every customer value, `02-Systemtests` tests the full chain end to end before the first real run — delivery, routing, grader matching, not agent behavior — `03-Fälle` and `04-Läufe` are the two data tables, `05-Auswertung` computes the four rates itself and stays untouched. `03-Fälle` ships with one example case and its twin — they show the convention and get overwritten.
 
