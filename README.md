@@ -46,7 +46,7 @@ For the skill to read and write that spreadsheet, Claude Code needs a Google She
 
 The harness runs against a real voice agent for a property management company. Numbers get published once a version clears the gate.
 
-Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, a post-call workflow, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
+Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
 
 ## What's next
 
