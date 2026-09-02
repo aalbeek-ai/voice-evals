@@ -1,6 +1,6 @@
 # Experimental Setup
 
-How a phone voice agent gets measured: what's being measured, what measures it, which controls keep measurement error small, and where the setup hits its limits.
+How a voice agent gets measured: what's being measured, what measures it, which controls keep measurement error small, and where the setup hits its limits.
 
 Built against a property management company — emergencies, damage reports, transfers. The mechanics are industry-independent; the path names are not.
 
