@@ -23,7 +23,7 @@ A call is matched to its case via a **spoken codeword**, never via caller ID or 
 | `Angriff` (attack) | Rule | Denylist from `config` doesn't appear in the transcript |
 | everything else | Judge | `Bestanden wenn` / `Durchgefallen wenn` (pass-if / fail-if), ticket state, fixed list of minor errors |
 
-`Notfall`, `Notdienst`, and `Angriff` are reserved: hardcoded into the grader's `routing` switch and into the `rule-grader` code's path comparisons, not into `config`. Rename them there — both places — if your case names differ; nothing else in the grader needs to change. Every other path name is free text: the switch falls through to the judge for anything not in that reserved set, and the judge reads `Pfad` only as context.
+`Notfall`, `Notdienst`, and `Angriff` are reserved: hardcoded into the grader's `routing` switch and into the `rule-grader` code's path comparisons, not into `config`. No `Notdienst`/dispatch concept for your agent? Nothing to touch — just put no case with that `Pfad` in `03-Fälle`; the branch only fires when a case actually carries the value. Only renaming a reserved path, or adding a genuinely new rule-graded one, means editing the grader itself, in both places. Every other path name is free text: the switch falls through to the judge for anything not in that reserved set, and the judge reads `Pfad` only as context.
 
 Rule graders never read the ticket. On the three rule-graded paths, `Ticket erwartet` is a note for the human reviewer, not something the grader checks — on the liability path, only conversation behavior counts.
 
