@@ -4,7 +4,7 @@
 
 For a voice agent the gap is wider than with text: background noise, dialects, latency, and a caller who doesn't get a second try. Without measurement, every prompt change is a guess.
 
-This repo is the eval harness I use for that — method, grader, spreadsheet template, and the Claude Code skill that writes cases, scores rounds, and traces failures back to a fix in the system.
+This repo is the eval harness I use for that — method, grader, spreadsheet template, and the Claude Code skill that writes cases and turns a graded round's failures into a fix at the root cause.
 
 ## How it works
 
@@ -20,7 +20,7 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 | --- | --- |
 | [experimental-setup.md](experimental-setup.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
 | [eval-grader.json](eval-grader.json) | The grader as an n8n workflow, importable |
-| [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, score a round, root-cause failures into one fix per cause |
+| [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, root-cause a graded round into one fix per cause |
 | <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Spreadsheet template</a> | Cases, runs, and the scoring that computes itself (Google Sheets) |
 
 The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/references/rules.md) (checklist for voice agent systems and root-cause analysis) and [template.md](skills/voice-evals/references/template.md) (block scaffold for a system prompt). Both belong to it and travel with it on install.
@@ -44,7 +44,7 @@ For the skill to read and write that spreadsheet, Claude Code needs a Google She
 
 ## Status
 
-The harness runs against a real voice agent for a property management company, past the baseline round and into round two.
+The harness runs against a real voice agent for a property management company. Numbers get published once a version clears the gate.
 
 Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, a post-call workflow, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
 
