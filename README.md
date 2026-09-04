@@ -40,7 +40,7 @@ It then triggers on its own in Claude Code whenever eval cases, an eval round, o
 
 For the skill to read and write that spreadsheet, Claude Code needs a Google Sheets MCP server, and the underlying Google Cloud project needs to be enrolled in the Workspace Developer Preview Program — without it, the MCP authenticates but returns no data.
 
-**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials. Per-customer values live exclusively in the `config` node. Your voice agent platform's post-call workflow needs to call the grader's `call-details` webhook *after* ticket creation — before it, the ticket isn't in the payload yet and nothing the post-call workflow produced enters the scoring.
+**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials. Per-customer values live exclusively in the `config` node. The post-call workflow needs to call the grader's `call-details` webhook *after* ticket creation — before it, the ticket isn't in the payload yet and nothing the post-call workflow produced enters the scoring.
 
 ## Status
 
