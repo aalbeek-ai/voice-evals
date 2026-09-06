@@ -88,7 +88,7 @@ What the columns themselves don't say: `Rückhalte` is a checkbox a human ticks 
 What this setup **cannot** do — more important for judging the numbers than what it can:
 
 - **One call per case outside the liability paths.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only run three times where a failure is expensive. That's a cost decision, not a methodological one.
-- **Small N.** A hand-run set sits at two to three dozen cases. It finds failure modes; it does not estimate failure rates.
+- **Small N.** A hand-run set stays in the dozens — the live one has 39 cases. It finds failure modes; it does not estimate failure rates.
 - **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
 - **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.
 - **Speech recognition is part of the measurement.** A case can fail on the codeword instead of on the agent. Hence the system test upfront and the rule to say the word mid-conversation.
