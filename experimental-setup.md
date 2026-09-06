@@ -80,17 +80,9 @@ A failed case gets laid against its reference solution and read at the **first d
 
 ## Data schema
 
-One spreadsheet holds the cases, the runs, and everything set per customer. Two of its tabs carry the data: the grader reads `03-Fälle` and writes `04-Läufe`. Into `03-Fälle` the grader never writes — those rows come from you and from the skill.
+Tabs and columns come with the template. `03-Fälle` holds the cases, written by you and the skill; `04-Läufe` holds one row per call, written by the grader; `05-Auswertung` computes the four rates from both.
 
-**Cases (`03-Fälle`)** — `Fall` (case) · `Codewort` (codeword) · `Pfad` (path) · `Zwilling zu` (twin of) · `Kontext` (context) · `Anrufer sagt` (caller says) · `Bestanden wenn` (pass if) · `Durchgefallen wenn` (fail if) · `Punkte 0-2` (points) · `Anrufe` (calls) · `Zweck` (purpose: `Capability`/`Regression`) · `Rückhalte` (held-out) · `Ticket erwartet` (ticket expected) · `Referenzlösung` (reference solution)
-
-`Rückhalte` is a checkbox, `FALSE` by default: a human ticks it deliberately, before round one — the skill writes the row but doesn't decide the flag, and no ratio is fixed anywhere in this repo.
-
-**Runs (`04-Läufe`)** — `Lauf` (run) · `Fall` (case) · `Promptversion` (prompt version) · `Bestanden` (passed) · `Punkte` (points) · `Begründung` (rationale) · `Transkript` (transcript) · `Dauer` (duration) · `Züge` (turns) · `Tool-Calls` · `disconnectReason` · `Ticket`
-
-`05-Auswertung` computes the four rates from these two tables, pure formula work, and reaches up to case 40 — anyone needing more cases drags the formulas down.
-
-`Züge` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up.
+Three things the sheet doesn't tell you: `Rückhalte` is ticked by a human before round one, and no ratio is fixed anywhere in this repo. `Züge` counts conversation turns only, so a transfer doesn't read two turns longer than it was. And the formulas reach to case 40 — past that, drag them down.
 
 ## Limits
 
