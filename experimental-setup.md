@@ -88,7 +88,7 @@ One spreadsheet holds the cases, the runs, and everything set per customer. Two 
 
 **Runs (`04-Läufe`)** — `Lauf` (run) · `Fall` (case) · `Promptversion` (prompt version) · `Bestanden` (passed) · `Punkte` (points) · `Begründung` (rationale) · `Transkript` (transcript) · `Dauer` (duration) · `Züge` (turns) · `Tool-Calls` · `disconnectReason` · `Ticket`
 
-Scoring is pure formula work over these two tables and reaches up to case 40 — anyone needing more cases drags the formulas down.
+`05-Auswertung` computes the four rates from these two tables, pure formula work, and reaches up to case 40 — anyone needing more cases drags the formulas down.
 
 `Züge` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up.
 
