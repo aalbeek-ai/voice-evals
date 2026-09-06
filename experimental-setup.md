@@ -72,6 +72,8 @@ Then calibrate the judge: review the first five verdicts. If one diverges from y
 
 **Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, bundle findings, bump the version.
 
+The failure analysis runs through the `voice-evals` skill: it reads the runs, names the cause per finding, and writes one fix per cause.
+
 A failed case gets laid against its reference solution and read at the **first diverging turn** — that's where the cause sits, not where the conversation visibly derails. Multiple cases with the same cause become *one* fix. If a case that was never reference-solved fails, first check whether the criterion is reachable at all: broken cases get corrected, the prompt doesn't get bent to fit them. The only exception is `Angriff` — there, a failure always changes the system prompt, never the case.
 
 **Gate.** What it takes to pass is fixed before the first round: binary KPIs, readable from the runs, and at least one of them measures whether the call reached its goal — otherwise the gate only shows that nothing broke. Stop when a round stops moving the needle, realistically after three to four. Then measure twice: working stack, then held-out. After that, the prompt doesn't get touched again. If held-out cases fail, the transcript decides — an ambiguous case gets corrected, a fair case moves into the working stack and another round follows with fresh held-out cases.
