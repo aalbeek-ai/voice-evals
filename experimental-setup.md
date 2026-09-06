@@ -45,7 +45,7 @@ Two details that carry the rule grader:
 
 ## Metrics
 
-**`pass^k`, not `pass@k`.** A case only counts as passed if *all* its calls pass — a single failure sinks it. The two diverge fast: in <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic's own example</a>, the same agent over three trials hits 97% `pass@3` (at least one of three succeeds) against 39% `pass^3` (all three succeed) — `pass@k` climbs toward 100% as k grows, `pass^k` drops toward 0%. For an agent that answers the phone, `pass^k` is the only honest one: the caller doesn't get a second try.
+**`pass^k`, not `pass@k`.** A case only counts as passed if *all* its calls pass — a single failure sinks it. The two diverge fast: in <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic's own example</a>, the same agent over three trials hits 97% `pass@3` (at least one of three succeeds) against 39% `pass^3` (all three succeed) — `pass@k` climbs toward 100% as k grows, `pass^k` drops toward 0%. For an agent that answers the phone, `pass^k` is the only honest one: the agent gets one attempt per call, and a failed one is a failed call.
 
 Four rates, each over its own stack:
 
