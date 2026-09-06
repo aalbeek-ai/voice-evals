@@ -80,9 +80,9 @@ A failed case gets laid against its reference solution and read at the **first d
 
 ## Data schema
 
-Tabs and columns come with the template. `03-Fälle` holds the cases, written by you and the skill; `04-Läufe` holds one row per call, written by the grader; `05-Auswertung` computes the four rates from both.
+The template brings the tabs and their columns: `03-Fälle` carries the cases, written by hand and by the skill; `04-Läufe` one row per call, written by the grader; `05-Auswertung` the four rates, computed from both.
 
-Three things the sheet doesn't tell you: `Rückhalte` is ticked by a human before round one, and no ratio is fixed anywhere in this repo. `Züge` counts conversation turns only, so a transfer doesn't read two turns longer than it was. And the formulas reach to case 40 — past that, drag them down.
+What the columns themselves don't say: `Rückhalte` is a checkbox a human ticks before round one — the skill writes the row, not the flag, and no ratio is fixed anywhere in this repo. `Züge` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up. And the formulas reach to case 40, so a longer set means dragging them down.
 
 ## Limits
 
