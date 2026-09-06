@@ -14,7 +14,7 @@ The measurement object includes the system prompt, knowledge base, variables, to
 
 A call is matched to its case via a **spoken codeword**, never via caller ID or time of day. After hangup, the post-call workflow sends the payload to the grader; it searches the normalized transcript for the codeword, attaches the case's criteria, strips the word out, and scores.
 
-**The path decides who scores.** Three of the four paths run without an LLM — a false "pass" there would be a liability incident, not a measurement error:
+**The path decides who scores.** Three of the four paths run without an LLM — these three are the **liability paths**, and a false "pass" there would be a liability incident, not a measurement error:
 
 | Path | Grader | Checks |
 | --- | --- | --- |
