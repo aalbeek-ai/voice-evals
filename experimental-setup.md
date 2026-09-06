@@ -62,11 +62,17 @@ A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-
 
 The regression run goes by trigger, not by calendar. Exactly one before go-live: the graduated cases were proven on an older prompt version and get checked against the one that ships. After go-live, a run gates every prompt change, platform update, and model switch.
 
+## Data schema
+
+The template brings the tabs and their columns: `03-Fälle` carries the cases, written by the skill; `04-Läufe` one row per call, written by the grader; `05-Auswertung` the four rates, computed from both.
+
+What the columns themselves don't say: `Rückhalte` is a checkbox a human ticks before round one — the skill writes the row, not the flag. Roughly one case in eight is held out; the live set runs five of 39. `Züge` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up. And the formulas reach to case 40, so a longer set means dragging them down.
+
 ## Procedure
 
 **Setup.** Install the `voice-evals` skill, copy the spreadsheet template, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. Fix the gate KPIs in `01-Setup` before the first round: binary, readable from the runs, and at least one of them measures whether the call reached its goal — otherwise the gate only shows that nothing broke. In the post-call workflow, the branch to the grader sits *after* ticket creation — before it, the payload carries no ticket and the eval scores what was said, not what the call left behind.
 
-**Before the first run.** Test the chain end to end, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet. Register every case's codeword as a domain term on the platform before calling, and delete all of them before go-live — otherwise the agent hears bird names in production where none were said.
+**Before the first run.** `02-Systemtests` gets written first: one row per path the chain has to survive — ticket written, mail out, transfer, outside business hours, withheld number, caller hangs up mid-sentence — with the expected outcome beside it. Make those calls chaotic. Mumbling and half-sentences break a chain that a clean, well-spoken call walks straight through. Two of the rows test the matching rather than the chain: a call without a codeword has to land as `nicht zugeordnet`/unmatched, one with it has to hit the right case, have the codeword stripped from the transcript, and show a filled ticket. Delete the run rows afterward. Fix every problem found immediately — this isn't a measurement yet. Register every case's codeword as a domain term on the platform before calling, and delete all of them before go-live — otherwise the agent hears bird names in production where none were said.
 
 Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Bestanden wenn` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
 
@@ -78,11 +84,6 @@ A failed case gets laid against its reference solution and read at the **first d
 
 **After go-live.** Every real call that went wrong becomes a capability case, one per cause, not one per call. Triggered by the failure, not the calendar: at double-digit call volumes per week, any weekly rate is noise. One watch metric suffices — the share of callers who hang up themselves, with a threshold locked in from the baseline at go-live.
 
-## Data schema
-
-The template brings the tabs and their columns: `03-Fälle` carries the cases, written by the skill; `04-Läufe` one row per call, written by the grader; `05-Auswertung` the four rates, computed from both.
-
-What the columns themselves don't say: `Rückhalte` is a checkbox a human ticks before round one — the skill writes the row, not the flag. Roughly one case in eight is held out; the live set runs five of 39. `Züge` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up.
 ## Limits
 
 What this setup **cannot** do — more important for judging the numbers than what it can:
