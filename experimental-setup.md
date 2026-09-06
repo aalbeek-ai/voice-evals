@@ -25,7 +25,7 @@ A call is matched to its case via a **spoken codeword**, never via caller ID or 
 
 `Notfall`, `Notdienst`, and `Angriff` are reserved: hardcoded into the grader's `routing` switch and into the `rule-grader` code's path comparisons, not into `config`. No `Notdienst`/dispatch concept for your agent? Nothing to touch — just put no case with that `Pfad` in `03-Fälle`; the branch only fires when a case actually carries the value. Only renaming a reserved path, or adding a genuinely new rule-graded one, means editing the grader itself, in both places. Every other path name is free text: the switch falls through to the judge for anything not in that reserved set, and the judge reads `Pfad` only as context.
 
-Rule graders never read the ticket. On the three rule-graded paths, `Ticket erwartet` is a note for the human reviewer, not something the grader checks — on the liability path, only conversation behavior counts.
+Rule graders never read the ticket. On the three rule-graded paths, `Ticket erwartet` is a note for the human reviewer, not something the grader checks — on the liability paths, only conversation behavior counts.
 
 Two details that carry the rule grader:
 
@@ -96,7 +96,7 @@ Scoring is pure formula work over these two tables and reaches up to case 40 —
 
 What this setup **cannot** do — more important for judging the numbers than what it can:
 
-- **One call per case outside liability and attack.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only run three times where a failure is expensive. That's a cost decision, not a methodological one.
+- **One call per case outside the liability paths.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only run three times where a failure is expensive. That's a cost decision, not a methodological one.
 - **Small N.** A hand-run set sits at two to three dozen cases. It finds failure modes; it does not estimate failure rates.
 - **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
 - **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.
