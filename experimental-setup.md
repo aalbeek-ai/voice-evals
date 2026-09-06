@@ -64,7 +64,7 @@ The regression run goes by trigger, not by calendar. Exactly one before go-live:
 
 ## Procedure
 
-**Setup.** Create the spreadsheet, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. In the post-call workflow, hang the routing to the grader *after* ticket creation — otherwise the eval measures a call that left no ticket behind.
+**Setup.** Copy the spreadsheet template, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. In the post-call workflow, hang the routing to the grader *after* ticket creation — otherwise the eval measures a call that left no ticket behind.
 
 **Before the first run.** Test the chain end to end, not the behavior: two calls, one without a codeword (must land as `nicht zugeordnet`/unmatched), one with (must hit the right case, have the codeword stripped from the transcript, and show a filled ticket). Delete the rows afterward. Fix every problem found immediately — this isn't a measurement yet. Register every case's codeword as a domain term on the platform before calling, and delete all of them before go-live — otherwise the agent hears bird names in production where none were said.
 
