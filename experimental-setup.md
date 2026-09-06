@@ -56,7 +56,7 @@ Four rates, each over its own stack:
 | Regression | Regression | 100%, otherwise something broke |
 | Held-out | Held-out | only at the gate |
 
-A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial credit) doesn't feed into any rate — it's the second dimension alongside pass/fail, not a quarter-pass: a multi-part case that got the concern right but the ticket wrong scores better than a total miss, without softening `Bestanden wenn` itself.
+A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial credit) doesn't feed into any rate — it's the second dimension alongside pass/fail, not a quarter-pass: a multi-part case that got the concern right but the ticket wrong scores better than a total miss, without softening `Bestanden wenn` itself. It's there for the human review and as a guide for the skill: it says *how far* off a case was, where pass/fail only says *that* it was.
 
 **Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. The regression run isn't scheduled by calendar but by trigger: before go-live, and never otherwise until then — every pre-launch round already changes the prompt, so a trigger on every prompt change would loop forever. Only after go-live do a prompt change, platform update, or model switch each trigger it on their own.
 
