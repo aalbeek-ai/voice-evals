@@ -96,6 +96,6 @@ What this setup **cannot** do — more important for judging the numbers than wh
 ## Sources
 
 - Anthropic, <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Demystifying evals for AI agents</a> — two loops, reference solution, scoring outcome over process, `pass^k`, the twin rule
-- Anthropic, <a href="https://platform.claude.com/docs/en/test-and-evaluate/develop-tests" target="_blank" rel="noopener noreferrer">Create strong empirical evaluations</a> — success criterion, set size, edge cases, grader choice
-- Anthropic, <a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks" target="_blank" rel="noopener noreferrer">Mitigate jailbreaks and prompt injections</a> — attack cases, foreign content as tool output, red teaming before go-live
+- Anthropic, <a href="https://platform.claude.com/docs/en/test-and-evaluate/develop-tests" target="_blank" rel="noopener noreferrer">Define success criteria and build evaluations</a> — success criterion, set size, edge cases, grader choice
+- Anthropic, <a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks" target="_blank" rel="noopener noreferrer">Mitigate jailbreaks and prompt injections</a> — attack cases, untrusted content in tool results, red teaming before go-live
 - Panickssery et al., <a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">LLM Evaluators Recognize and Favor Their Own Generations</a> — why the judge can't be the agent's own model
