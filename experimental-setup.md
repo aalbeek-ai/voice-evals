@@ -80,7 +80,7 @@ A failed case gets laid against its reference solution and read at the **first d
 
 ## Data schema
 
-Two of the file's five tabs carry the data. The grader reads the first and writes the second; only the first is written by hand.
+Cases, runs, and everything set per customer live in one spreadsheet. Two of its tabs carry the data: the grader reads `03-Fälle` and writes `04-Läufe`, and only `03-Fälle` is filled in by hand.
 
 **Cases (`03-Fälle`)** — `Fall` (case) · `Codewort` (codeword) · `Pfad` (path) · `Zwilling zu` (twin of) · `Kontext` (context) · `Anrufer sagt` (caller says) · `Bestanden wenn` (pass if) · `Durchgefallen wenn` (fail if) · `Punkte 0-2` (points) · `Anrufe` (calls) · `Zweck` (purpose: `Capability`/`Regression`) · `Rückhalte` (held-out) · `Ticket erwartet` (ticket expected) · `Referenzlösung` (reference solution)
 
