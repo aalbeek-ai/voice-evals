@@ -70,9 +70,7 @@ The regression run goes by trigger, not by calendar. Exactly one before go-live:
 
 Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Bestanden wenn` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
 
-**Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, bundle findings, bump the version.
-
-The failure analysis runs through the `voice-evals` skill: it reads the runs, names the cause per finding, and writes one fix per cause.
+**Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, then run the `voice-evals` skill: it reads the runs, names the cause per finding, and writes one fix per cause. Then bump the version.
 
 A failed case gets laid against its reference solution and read at the **first diverging turn** — that's where the cause sits, not where the conversation visibly derails. Multiple cases with the same cause become *one* fix. If a case that was never reference-solved fails, first check whether the criterion is reachable at all: broken cases get corrected, the prompt doesn't get bent to fit them. The only exception is `Angriff` — there, a failure always changes the system prompt, never the case.
 
