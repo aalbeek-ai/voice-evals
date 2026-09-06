@@ -8,7 +8,7 @@ This repo is the eval harness I use for that — method, grader, spreadsheet tem
 
 ## How it works
 
-A test call carries a codeword. The grader matches it to a case, scores the call by path — liability paths through fixed rules, everything else through a judge model — and writes one row per call. The skill reads the failed rows, finds the root cause, and ships one fix per cause.
+A test call carries a codeword. The grader matches it to a case, scores the call by path — liability paths through fixed rules, everything else through a judge model — and writes one row per call. The skill reads the round, traces the failures to their cause, and ships one fix per cause.
 
 ![How voice-evals works: test call → call ends → grader matches codeword to case → path decides rule grader or judge or unmatched → runs → voice-evals skill → fix, looping back to the next test call](assets/flow.png)
 
