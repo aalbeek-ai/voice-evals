@@ -60,7 +60,7 @@ A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-
 
 **Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. That graduation is what keeps a hand-run set affordable long-term: round cost tracks the capability stack, not the size of the set — true at 30 cases and at 80.
 
-The regression run isn't scheduled by calendar but by trigger. Before go-live there is exactly one: the go-live itself. After it, every prompt change, platform update, and model switch gets its own run before it ships. Before go-live that same trigger would fire every round, because every round changes the prompt — and the graduated cases would never actually leave the round.
+The regression run isn't scheduled by calendar but by trigger. Before go-live there is exactly one: the go-live itself — it checks the graduated cases against the version that actually ships, several versions after the one they graduated on. After it, every prompt change, platform update, and model switch gets its own run before it ships. Before go-live that same trigger would fire every round, because every round changes the prompt — and the graduated cases would never actually leave the round.
 
 ## Procedure
 
