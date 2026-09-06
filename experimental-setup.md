@@ -58,9 +58,9 @@ Four rates, each over its own stack:
 
 A rate only counts once no case in its stack is still `offen` (open). `Punkte 0-2` (partial credit) doesn't feed into any rate — it's the second dimension alongside pass/fail, not a quarter-pass: a multi-part case that got the concern right but the ticket wrong scores better than a total miss, without softening `Bestanden wenn` itself. It exists for the human review and the skill: pass/fail says a case missed, `Punkte` says by how much.
 
-**Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. The regression run isn't scheduled by calendar but by trigger: before go-live, and never otherwise until then — every pre-launch round already changes the prompt, so a trigger on every prompt change would loop forever. Only after go-live do a prompt change, platform update, or model switch each trigger it on their own.
+**Two loops.** Every case starts on `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. That graduation is what keeps a hand-run set affordable long-term: round cost tracks the capability stack, not the size of the set — true at 30 cases and at 80.
 
-That's the rule that keeps a hand-run set affordable long-term: round cost tracks the capability stack, not the size of the set — true at 30 cases and at 80.
+The regression run isn't scheduled by calendar but by trigger. Before go-live there is exactly one: the go-live itself. After it, a prompt change, a platform update, or a model switch each trigger a run on their own — before it, every round changes the prompt, so that same trigger would fire every round and the graduated cases would never actually leave the round.
 
 ## Procedure
 
