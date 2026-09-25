@@ -67,7 +67,7 @@ The regression run goes by trigger, not by calendar. Exactly one before go-live:
 
 The template brings the tabs and their columns: `03-Cases` carries the cases, written by the skill; `04-Runs` one row per call, written by the grader; `05-Results` the four rates, computed from both.
 
-What the columns themselves don't say: `Held out` is a checkbox a human ticks before round one — the skill writes the row, not the flag. Roughly one case in eight is held out; the live set runs five of 39. `Turns` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up. And the formulas reach to case 40, so a longer set means dragging them down.
+What the columns themselves don't say: `Held out` is a checkbox a human ticks before round one — the skill writes the row, not the flag. Roughly one case in eight is held out; the live set runs five of 37. `Turns` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up. And the formulas reach to case 40, so a longer set means dragging them down.
 
 ## Procedure
 
@@ -90,7 +90,7 @@ A failed case gets laid against its reference solution and read at the **first d
 What this setup **cannot** do — more important for judging the numbers than what it can:
 
 - **One call per case outside the liability paths.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls across the whole set isn't affordable. So it's only run three times where a failure is expensive. That's a cost decision, not a methodological one.
-- **Small N.** A hand-run set stays in the dozens — the live one has 39 cases. It finds failure modes; it does not estimate failure rates.
+- **Small N.** A hand-run set stays in the dozens — the live one has 37 cases. It finds failure modes; it does not estimate failure rates.
 - **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
 - **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.
 - **The queue trusts the caller.** Call a different case than the one shown and the run lands on the wrong case without an error. The caller's first sentence in the run's rationale is the only check.
