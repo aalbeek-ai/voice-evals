@@ -8,9 +8,9 @@ This repo is the eval harness I use for that — method, grader, spreadsheet tem
 
 ## How it works
 
-A test call carries a codeword. The grader matches it to a case, scores the call by path — liability paths through fixed rules, everything else through a judge model — and writes one row per call. The skill reads the round, traces the failures to their cause, and ships one fix per cause.
+The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it by path — liability paths through fixed rules, everything else through a judge model — and writes one row per call. The skill reads the round, traces the failures to their cause, and ships one fix per cause.
 
-![How voice-evals works: test call → call ends → grader matches codeword to case → path decides rule grader or judge or unmatched → runs → voice-evals skill → fix, looping back to the next test call](assets/flow.png)
+![How voice-evals works: test call → call ends → grader assigns the next open case → path decides rule grader or judge or unmatched → runs → voice-evals skill → fix, looping back to the next test call](assets/flow.png)
 
 Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass" there would be a liability incident, not a measurement error.
 
@@ -40,13 +40,13 @@ It then triggers on its own in Claude Code whenever eval cases, an eval round, o
 
 For the skill to read and write that spreadsheet, Claude Code needs a Google Sheets MCP server, and the underlying Google Cloud project needs to be enrolled in the Workspace Developer Preview Program — without it, the MCP authenticates but returns no data.
 
-**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials. Per-customer values live exclusively in the `config` node. The post-call workflow needs to call the grader's `call-details` webhook *after* ticket creation — before it, the ticket isn't in the payload yet and nothing the post-call workflow produced enters the scoring.
+**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-setup`, `load-case` and `write-run` at your copy, set the Google Sheets and Anthropic credentials and a header-auth credential on the `call-details` webhook. Prompt version and the next case come from `01-Setup`, the grader thresholds from the `config` node. The post-call workflow needs to call the grader's `call-details` webhook *after* ticket creation, for test numbers only, with the ticket added as `ticket` — before it, the ticket isn't in the payload yet and nothing the post-call workflow produced enters the scoring.
 
 ## Status
 
 The harness runs against a real voice agent for a property management company. Numbers get published once a version clears the gate.
 
-Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is codeword matching, path-dependent scoring, and `pass^k`.
+Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is case assignment that doesn't depend on speech recognition, path-dependent scoring, and `pass^k`.
 
 ## What's next
 
@@ -54,7 +54,7 @@ Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fo
 
 - Measured pass rate and Δ per round, published once a version clears the gate.
 - The grader moves from n8n to a plain Python script — one dependency less, easier to audit.
-- The remaining German-only pieces (spreadsheet columns, path names, case codewords) get translated, so the whole repo runs in one language.
+- The remaining German-only pieces (spreadsheet columns, path names) get translated, so the whole repo runs in one language.
 
 ## Feedback
 

@@ -6,13 +6,15 @@ Built against a property management company — emergencies, damage reports, tra
 
 ## Measurement object
 
-What's measured is **one prompt version**, not "the agent." The version is set identically in three places: the system prompt's frontmatter, the grader's `config` node, and the voice agent platform. Scoring runs from two versions together measures nothing.
+What's measured is **one prompt version**, not "the agent." The version is set identically in two places: the system prompt's frontmatter and the voice agent platform. The grader reads it from `01-Setup`. Scoring runs from two versions together measures nothing.
 
 The measurement object includes the system prompt, knowledge base, variables, tool descriptions, and the platform's dashboard settings. All of it changes behavior, so all of it belongs under the same version number.
 
 ## Instrument
 
-A call is matched to its case via a **spoken codeword**, never via caller ID or time of day. After hangup, the post-call workflow sends the payload to the grader; it searches the normalized transcript for the codeword, attaches the case's criteria, strips the word out, and scores.
+A call is matched to its case **by queue, not by anything said in the call** — and never via caller ID or time of day. `01-Setup` shows the next open case: the first `Capability` case in `03-Fälle`, not held out, with fewer runs in the current prompt version than its `Anrufe`. You call that case. After hangup, the post-call workflow sends the payload to the grader; it reads the same cell — the run isn't written yet, so it still names the case just called — attaches that case's criteria, and scores. A botched call: delete its row, the case comes back.
+
+A spoken codeword came first and was dropped: speech recognition missed it often enough that single cases had to be called six times.
 
 **The path decides who scores.** Three of the four paths run without an LLM — these three are the **liability paths**, and a false "pass" there would be a liability incident, not a measurement error:
 
@@ -37,7 +39,6 @@ Two details that carry the rule grader:
 ## Controls
 
 - **A twin per trigger.** Every case where a behavior *should* happen has one where it should not — same number with `-Z-`. No twin, no case: "One-sided evals create one-sided optimization" (<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a>). The flip is a name check, nothing else: the rule grader tests the case name against `/-Z-/i` and, if it matches, requires the *absence* of the announcement/transfer instead of their presence — no separate `Pfad` value, no `config` entry.
-- **Codeword mid-conversation.** Each case gets a short German bird name as its codeword, one per case, in the `Codewort` column. Spoken mid-call, never right after the greeting or at the end — that's where recognition is weakest, so that's where a case could fail on the codeword instead of on the agent (registration mechanics: § Procedure).
 - **Held-out set.** A portion of cases is never called and never looked at until the gate is reached. Only this second number shows whether the prompt generalizes instead of overfitting to the set (which cases, and when they're picked: § Data schema).
 - **The instrument may change mid-round, the measurement object never.** Allowed to sharpen: `Bestanden wenn`, the `Punkte 0-2` partial-credit scale, judge prompt, grader thresholds. Untouched: system prompt, knowledge, variables, tools, dashboard. Fixing those mid-round describes two different agents under the same version.
 - **Re-scoring instead of re-calling.** A sharpened criterion re-scores the affected rows — the transcript is already there. The row gets marked `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` (manually adjusted afterward), otherwise the next round reads a grader verdict that no longer is one.
@@ -70,13 +71,13 @@ What the columns themselves don't say: `Rückhalte` is a checkbox a human ticks 
 
 ## Procedure
 
-**Setup.** Install the `voice-evals` skill, copy the spreadsheet template, import the grader, fill in prompt version, mandatory announcement, turn limit, and denylist in `config`. Fix the gate KPIs in `01-Setup` before the first round: binary, readable from the runs, and at least one of them measures whether the call reached its goal — otherwise the gate only shows that nothing broke. In the post-call workflow, the branch to the grader sits *after* ticket creation — before it, the payload carries no ticket and the eval scores what was said, not what the call left behind.
+**Setup.** Install the `voice-evals` skill, copy the spreadsheet template, import the grader, fill in the prompt version in `01-Setup` and mandatory announcement, turn limit, and denylist in `config`. Fix the gate KPIs in `01-Setup` before the first round: binary, readable from the runs, and at least one of them measures whether the call reached its goal — otherwise the gate only shows that nothing broke. In the post-call workflow, the branch to the grader sits *after* ticket creation — before it, the payload carries no ticket and the eval scores what was said, not what the call left behind.
 
-**Before the first run.** `02-Systemtests` gets written first: one row per path the chain has to survive — ticket written, mail out, transfer, outside business hours, withheld number, caller hangs up mid-sentence — with the expected outcome beside it. Make those calls chaotic. Mumbling and half-sentences break a chain that a clean, well-spoken call walks straight through. Two of the rows test the matching rather than the chain: a call without a codeword has to land as `nicht zugeordnet`/unmatched, one with it has to hit the right case, have the codeword stripped from the transcript, and show a filled ticket. Delete the run rows afterward. Fix every problem found immediately — this isn't a measurement yet. Register every case's codeword as a domain term on the platform before calling, and delete all of them before go-live — otherwise the agent hears bird names in production where none were said.
+**Before the first run.** `02-Systemtests` gets written first: one row per path the chain has to survive — ticket written, mail out, transfer, outside business hours, withheld number, caller hangs up mid-sentence — with the expected outcome beside it. Make those calls chaotic. Mumbling and half-sentences break a chain that a clean, well-spoken call walks straight through. One row tests the matching rather than the chain: a test call has to land on the case `01-Setup` showed, with a filled ticket. Delete the run rows afterward. Fix every problem found immediately — this isn't a measurement yet.
 
 Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Bestanden wenn` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
 
-**Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, then run the `voice-evals` skill: it reads the runs, names the cause per finding, and writes one fix per cause. Then bump the version.
+**Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. The queue walks `03-Fälle` top-down, so the row order is the call order. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, then run the `voice-evals` skill: it reads the runs, names the cause per finding, and writes one fix per cause. Then bump the version.
 
 A failed case gets laid against its reference solution and read at the **first diverging turn** — that's where the cause sits, not where the conversation visibly derails. Multiple cases with the same cause become *one* fix. If a case that was never reference-solved fails, first check whether the criterion is reachable at all: broken cases get corrected, the prompt doesn't get bent to fit them. The only exception is `Angriff` — there, a failure always changes the system prompt, never the case. The other direction fills the column: a case that passes for the first time with an empty `Referenzlösung` gets that transcript written in.
 
@@ -92,7 +93,7 @@ What this setup **cannot** do — more important for judging the numbers than wh
 - **Small N.** A hand-run set stays in the dozens — the live one has 39 cases. It finds failure modes; it does not estimate failure rates.
 - **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
 - **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.
-- **Speech recognition is part of the measurement.** A case can fail on the codeword instead of on the agent. Hence the system test upfront and the rule to say the word mid-conversation.
+- **The queue trusts the caller.** Call a different case than the one shown and the run lands on the wrong case without an error. The caller's first sentence in the run's rationale is the only check.
 
 ## Sources
 
