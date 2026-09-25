@@ -7,9 +7,9 @@ description: Score and improve voice agent systems for phone AI against an eval 
 
 Two jobs, both against the same set: **write cases** (§ Cases) and **score a round** (§ Scoring). Tell the user in one sentence which one is running.
 
-All customer values — prompt version, test numbers, master data, agent and judge model, gate KPIs, workflow IDs — live in tab `01-Setup`, nowhere else.
+All customer values — prompt version, test numbers, master data, agent and judge model, gate KPIs, grader thresholds, workflow IDs — live in tab `01-Setup`, nowhere else; the grader reads them from there.
 
-The data available only determines where findings come from, never the procedure: runs from `04-Läufe` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/rules.md` §1 instead of observation — flag that in the result.
+The data available only determines where findings come from, never the procedure: runs from `04-Runs` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/rules.md` §1 instead of observation — flag that in the result.
 
 ## Why the rules exist
 
@@ -24,38 +24,38 @@ The checklists live in `references/rules.md`, the scaffold in `references/templa
 
 ## Data
 
-One spreadsheet file per customer, five tabs: `01-Setup` · `02-Systemtests` · `03-Fälle` · `04-Läufe` · `05-Auswertung`.
+One spreadsheet file per customer, five tabs: `01-Setup` · `02-System tests` · `03-Cases` · `04-Runs` · `05-Results`.
 
 **Call the `google-sheets` skill before the first spreadsheet access** — it holds the tool choice and the pitfalls of the sheets API and loads into the same session, no subagent needed. If it's missing, reading and writing go directly through the sheets tools.
 
-`04-Läufe` is written by the grader, never by you. This skill contributes new case rows and a filled-in `Referenzlösung`. The only exception is re-scoring a misjudged verdict. Then the `Lauf` column gets `[Per Hand nachträglich angepasst - JJJJ-MM-TT HH:MM]` appended — otherwise the next round reads a grader verdict that no longer is one.
+`04-Runs` is written by the grader, never by you. This skill contributes new case rows and a filled-in `Reference solution`. The only exception is re-scoring a misjudged verdict. Then the `Run` column gets `[manually adjusted - YYYY-MM-DD HH:MM]` appended — otherwise the next round reads a grader verdict that no longer is one.
 
 ## Cases
 
-Input: system prompt, tool descriptions, variables, knowledge base, customer master data. Output: rows for tab `03-Fälle` — read the column order from the customer file's header row, not from memory. Row order is call order — the queue in `01-Setup` walks `03-Fälle` top-down — so liability cases go above the rest.
+Input: system prompt, tool descriptions, variables, knowledge base, customer master data. Output: rows for tab `03-Cases` — read the column order from the customer file's header row, not from memory. Row order is call order — the queue in `01-Setup` walks `03-Cases` top-down — so liability cases go above the rest.
 
 1. **Count the paths.** One trigger per phase, per transfer, per rule in the prompt. That's the population, not imagination.
-2. **A twin per trigger.** "One-sided evals create one-sided optimization" — one case where the behavior *should* happen, one where it should not. The twin carries the same number with `-Z-` and the `Zwilling zu` column. No twin, no case.
+2. **A twin per trigger.** "One-sided evals create one-sided optimization" — one case where the behavior *should* happen, one where it should not. The twin carries the same number with `-Z-` and the `Twin of` column. No twin, no case.
 3. **Edge cases as their own cases:** typos and mumbling, multiple concerns in one call, topic switch mid-conversation, ambiguous input, withheld number, outside business hours, caller hangs up.
-4. **`Pfad` controls who scores:** a rule grader checks `Notfall` and `Notdienst` for the announcement or transfer, `Angriff` against a denylist, everything else a judge against `Bestanden wenn`, `Ticket erwartet`, and a fixed list of minor errors. The grader only knows these three special values; the rest are named after the customer's concern types and are interchangeable to it. Attack cases are kept separate — rule grader instead of judge, or the attacker's text would take the judge down with it. `Angriff` only covers where data could leak; anything that measures behavior belongs under `Regeln`.
-5. **Every row complete**, or it doesn't take effect: `Kontext` sets the caller number (`Bekannt`/known · `Unbekannt`/unknown · `Unterdrückt`/withheld · outside business hours) · `Anrufe` the repeat count (3 for `Notfall`, `Notdienst` and `Angriff`, otherwise 1) · `Ticket erwartet` the state after the call · `Zweck` starts at `Capability` · `Rückhalte` is a checkbox and stays `FALSE` unless the case is deliberately held out.
-6. **Check reachability before the case goes into the set.** Is `Bestanden wenn` reachable with what the agent actually has — knowledge base, master data, tools? Otherwise the case measures itself, not the agent.
-7. **Two reviewers, one verdict.** Phrase `Bestanden wenn` / `Durchgefallen wenn` so two people would independently reach the same pass/fail. Anything only you can decide isn't a criterion.
-8. **Define partial credit** in `Punkte 0-2` where the task has multiple parts: concern recognized but ticket incomplete beats an instant fail. Stays binary where it's binary (`Notfall`, `Notdienst`, `Angriff`).
+4. **`Path` controls who scores:** a rule grader checks `emergency` and `dispatch` for the announcement or transfer, `attack` against a denylist, everything else a judge against `Pass if`, `Expected ticket`, and a fixed list of minor errors. The grader only knows these three special values; the rest are named after the customer's concern types and are interchangeable to it. Attack cases are kept separate — rule grader instead of judge, or the attacker's text would take the judge down with it. `attack` only covers where data could leak; anything that measures behavior belongs under `rules`.
+5. **Every row complete**, or it doesn't take effect: `Context` sets the caller number (`known` · `unknown` · `withheld` · `after hours`) · `Calls` the repeat count (3 for `emergency`, `dispatch` and `attack`, otherwise 1) · `Expected ticket` the state after the call · `Purpose` starts at `Capability` · `Held out` is a checkbox and stays `FALSE` unless the case is deliberately held out.
+6. **Check reachability before the case goes into the set.** Is `Pass if` reachable with what the agent actually has — knowledge base, master data, tools? Otherwise the case measures itself, not the agent.
+7. **Two reviewers, one verdict.** Phrase `Pass if` / `Fail if` so two people would independently reach the same pass/fail. Anything only you can decide isn't a criterion.
+8. **Define partial credit** in `Points 0-2` where the task has multiple parts: concern recognized but ticket incomplete beats an instant fail. Stays binary where it's binary (`emergency`, `dispatch`, `attack`).
 
 **If the user brings a case from real experience** — a real call, a hunch, a complaint — that's the best source there is: it comes from production, not imagination. Don't wave it off — translate it into a complete row and check three things: does an existing case already cover the same trigger (then sharpen that row instead of adding a new one)? Is the criterion phrased observably? Is the twin missing? Then ask back only for the missing columns, don't guess.
 
 ## Scoring
 
-1. **Set the baseline.** Exactly **one** prompt version per scoring pass — runs from two versions together measure nothing. Don't open held-out cases; whoever has seen them has burned them. A case only counts as scored once all its `Anrufe` are in — otherwise it stays `offen` and no rate that includes it counts. Then `pass^k` applies to **every** case: a single run with `Bestanden = FALSE` fails it. `Punkte 0-2` feeds into no rate, it's the second dimension alongside passing. Whether a minor error sinks the case is therefore decided solely by `Bestanden wenn` — where tolerance is wanted, it belongs in the criterion, not in the math. `Angriff` has one rule of its own: a failure always changes the system prompt, never the case.
+1. **Set the baseline.** Exactly **one** prompt version per scoring pass — runs from two versions together measure nothing. Don't open held-out cases; whoever has seen them has burned them. A case only counts as scored once all its `Calls` are in — otherwise it stays `open` and no rate that includes it counts. Then `pass^k` applies to **every** case: a single run with `Passed = FALSE` fails it. `Points 0-2` feeds into no rate, it's the second dimension alongside passing. Whether a minor error sinks the case is therefore decided solely by `Pass if` — where tolerance is wanted, it belongs in the criterion, not in the math. `attack` has one rule of its own: a failure always changes the system prompt, never the case.
 2. **Collect failures.** Per failed case: transcript and grader rationale. The grader's rationale is a hint, not a finding — the finding is in the transcript.
-3. **Pull in `Referenzlösung`** where it exists:
+3. **Pull in `Reference solution`** where it exists:
    - **Case failed** → lay the failed transcript next to the reference and name the **first diverging turn**. That's where the cause sits, not where the conversation visibly derails.
    - **Reference no longer reachable with today's prompt** (path removed, tool swapped, model changed) → the case is stale. Fix the case and the reference, **don't** bend the prompt to fit it.
-   - **Case passes for the first time and the field is empty** → write its transcript into `Referenzlösung`.
+   - **Case passes for the first time and the field is empty** → write its transcript into `Reference solution`.
 4. **Cause, not symptom** — `references/rules.md` §2. Mandatory per finding: symptom → cause → fix level → sibling test. Multiple cases with the same cause get **one** fix, not several.
 5. **Write the fix — run the algorithm from `references/rules.md` §2 first, don't just cite it.** Before every line: question it (is the symptom real?), then delete (what comes out with nothing replacing it?), only then simplify or optimize — usually optimize here: lift the same rule to a higher level instead of placing a second one next to it. **Success is a spot that gets shorter, not longer** — state old/new word count in the result; if it grows anyway, say why. Every round that adds erodes the compliance it's trying to produce (§ Why 2 and 3).
-6. **Proposals first, artifacts after.** Deliver the findings and one line per fix: level · what changes · what comes out for it. Add two to three sentences of status — version, direction versus the previous version, continue or gate. Rates and secondary numbers live in tab `05-Auswertung`; copying them out helps no one, their meaning does.
+6. **Proposals first, artifacts after.** Deliver the findings and one line per fix: level · what changes · what comes out for it. Add two to three sentences of status — version, direction versus the previous version, continue or gate. Rates and secondary numbers live in tab `05-Results`; copying them out helps no one, their meaning does.
    After approval comes the artifact: the full prompt (no diff) as a code block per `references/template.md`, changed knowledge-base, tool, and platform content below it. Anyone who's already asked for the prompt as a deliverable skips the approval step.
    **If a repo exists, you only swap the files there and commit.** The file then contains the artifact and nothing else — no heading, no rationale, no source list, no "deliberately left out." What the agent doesn't read doesn't belong in it. Every explanation — what changed and why — goes briefly in the chat, never in the file.
    Flag fixes that don't belong in the prompt (`references/rules.md` §2, last point) separately.
