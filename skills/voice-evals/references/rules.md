@@ -24,7 +24,7 @@ At most ~90 characters, with AI disclosure. Fixed text, never translated into th
 - Don't have it count digits. Phrase timeouts via turns instead ("transfer after three turns") — approximate, but the most reliable of all the variants
 - Caller name gets logged, not spoken aloud; the surname suffices — e.g. confirm with "Thanks, noted."
 - Language switching doesn't happen on its own, it must be explicitly allowed: "If the caller speaks another language, switch fully into that language for the rest of the conversation." Pair that with a neutral voice in the dashboard, otherwise the second language sounds accented
-- Injection and cold-calling get turned away; staying on topic yes, small talk stays allowed
+- Injection and sales calls get turned away; small talk is fine, as long as the call gets back on topic
 
 ### 1.3 Pronunciation
 Everything read aloud is written the way it should sound — in the prompt and in every knowledge-base entry alike. Examples below are in German because production runs in German; the pattern (spell out for TTS, digit-by-digit for numbers meant to be dictated) applies in any language.
@@ -36,13 +36,13 @@ Everything read aloud is written the way it should sound — in the prompt and i
 - If a single spot needs to sound a specific way in the moment (typically: reading out an email address), wrap it in `<speak>` tags: "Sie erreichen Herrn Gemeinhardt unter <speak>mg at Gemeinhardt punkt ag</speak>"
 
 ### 1.4 Knowledge base and tools
-- **What must sit reliably belongs in the system prompt** — retrieval doesn't grip reliably
-- Insert variables everywhere in the prompt via the platform's variable field, don't type them out: more robust, less error-prone.
+- **What the agent must always know belongs in the system prompt** — retrieval doesn't fire reliably
+- Insert variables through the platform's variable field instead of typing them out — fewer typos
 - **The knowledge-base mandate and the not-known sentence live in the prompt:** company-specific facts only from the knowledge base, and if nothing's there, a fixed sentence ("I don't have that information — a colleague will get back to you") instead of a guess. Without the sentence, the model fills the gap itself
 - Never volunteer personal data, property addresses, or staff contacts on its own — only on explicit request and only if they're in the knowledge base
 - Phone numbers and contacts belong in tools or the knowledge base, never in the prompt: there the AI reads them aloud and an injection can extract them
 - Detail info (FAQ, prices, catalogs) goes in the knowledge base, numbers in it follow §1.3
-- Nothing stored twice, not even prompt against dashboard field — two sources drift apart
+- Nothing stored twice, not even once in the prompt and once in a dashboard field — two copies drift apart
 - Every tool has a trigger in the tree: the branch in the prompt, the trigger detail in the tool
 
 ### 1.5 Anti-patterns
@@ -59,8 +59,8 @@ Everything read aloud is written the way it should sound — in the prompt and i
 A prompt that an LLM repairs round after round grows into a case directory and fails on the first case not in it. The only thing that helps is setting the fix one level higher than the finding.
 
 - **Algorithm before every fix:** question it (is the symptom real?) → delete (what comes out with nothing replacing it?) → simplify or optimize. Only extend once the need has repeated
-- **Pick the highest level that applies:** wording (sounds wrong) → rule (missing, duplicated, contradictory) → structure (path missing or not triggering) → principle (works the tree rigidly, fails on any deviation). Only at the principle level does the prompt get shorter while covering more
+- **Pick the highest level that applies:** wording (sounds wrong) → rule (missing, duplicated, contradictory) → structure (path missing or not triggering) → principle (follows the tree rigidly, fails on any deviation). Only at the principle level does the prompt get shorter while covering more
 - **Numbered steps only against a phase that derails** — applied everywhere, they make it rigid. Last step points to the next phase
 - **Sibling test:** name three situations with the same cause that aren't in the set. If the fix doesn't cover them, go one level higher
-- **Overfitting:** a fix that contains a case name or exact transcript wording, gets appended as a new bullet point, or describes a situation instead of a behavior, is burned
+- **Overfitting:** a fix that contains a case name or exact transcript wording, gets appended as a new bullet point, or describes a situation instead of a behavior, is overfitting
 - **Not every fix belongs in the prompt:** fact wrong → knowledge base · transfer into the void → tool · wrong ticket field → post-call workflow · interrupts or mishears numbers → dashboard · AI disclosure gets cut off → dashboard ("prevent interruption"). Nothing left over → it wasn't a prompt problem

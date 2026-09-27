@@ -7,7 +7,7 @@ description: Score and improve voice agent systems for phone AI against an eval 
 
 Two jobs, both against the same set: **write cases** (§ Cases) and **score a round** (§ Scoring). Tell the user in one sentence which one is running.
 
-All customer values — prompt version, test numbers, master data, agent and judge model, gate KPIs, grader thresholds, workflow IDs — live in tab `01-Setup`, nowhere else; the grader reads them from there.
+All customer values — prompt version, test numbers, agent and judge model, gate KPIs, grader thresholds, workflow IDs — live in tab `01-Setup`, nowhere else; the grader reads them from there.
 
 The data available only determines where findings come from, never the procedure: runs from `04-Runs` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/rules.md` §1 instead of observation — flag that in the result.
 
@@ -37,7 +37,7 @@ Input: system prompt, tool descriptions, variables, knowledge base, customer mas
 1. **Count the paths.** One trigger per phase, per transfer, per rule in the prompt. That's the population, not imagination.
 2. **A twin per trigger.** "One-sided evals create one-sided optimization" — one case where the behavior *should* happen, one where it should not. The twin carries the same number with `-Z-` and the `Twin of` column. No twin, no case.
 3. **Edge cases as their own cases:** typos and mumbling, multiple concerns in one call, topic switch mid-conversation, ambiguous input, withheld number, outside business hours, caller hangs up.
-4. **`Path` controls who scores:** a rule grader checks `emergency` and `dispatch` for the announcement or transfer, `attack` against a denylist, everything else a judge against `Pass if`, `Expected ticket`, and a fixed list of minor errors. The grader only knows these three special values; the rest are named after the customer's concern types and are interchangeable to it. Attack cases are kept separate — rule grader instead of judge, or the attacker's text would take the judge down with it. `attack` only covers where data could leak; anything that measures behavior belongs under `rules`.
+4. **`Path` controls who scores:** a rule grader checks `emergency` and `dispatch` for the announcement or transfer, `attack` against a denylist, everything else a judge against `Pass if`, `Expected ticket`, and a fixed list of minor errors. The grader only knows these three special values; the rest are named after the customer's concern types and are interchangeable to it. Attack cases are kept separate — rule grader instead of judge, or the attacker's text would take the judge down with it. `attack` only covers where data could leak; behavior belongs on a judge path.
 5. **Every row complete**, or it doesn't take effect: `Context` sets the caller number (`known` · `unknown` · `withheld` · `after hours`) · `Calls` the repeat count (3 for `emergency`, `dispatch` and `attack`, otherwise 1) · `Expected ticket` the state after the call · `Purpose` starts at `Capability` · `Held out` is a checkbox and stays `FALSE` unless the case is deliberately held out.
 6. **Check reachability before the case goes into the set.** Is `Pass if` reachable with what the agent actually has — knowledge base, master data, tools? Otherwise the case measures itself, not the agent.
 7. **Two reviewers, one verdict.** Phrase `Pass if` / `Fail if` so two people would independently reach the same pass/fail. Anything only you can decide isn't a criterion.

@@ -8,7 +8,7 @@ This repo is the eval harness I use for that — method, grader, spreadsheet tem
 
 ## How it works
 
-The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it by path — liability paths through fixed rules, everything else through a judge model — and writes one row per call. The skill reads the round, traces the failures to their cause, and ships one fix per cause.
+The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it by path — liability paths by fixed rules, everything else by a judge model — and writes one row per call. The skill reads the round, traces each failure to its cause, and writes one fix per cause.
 
 ![How voice-evals works: test call → call ends → grader assigns the next open case → path decides rule grader or judge or unmatched → runs → voice-evals skill → fix, looping back to the next test call](assets/flow.png)
 
@@ -27,38 +27,43 @@ The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/refer
 
 ## Using it
 
-**Install the skill**:
+1. **Skill.** Install it, and it triggers in Claude Code whenever eval cases, a round, or a call transcript come up:
 
-```bash
-git clone https://github.com/aalbeek-ai/voice-evals.git
-cp -r voice-evals/skills/voice-evals ~/.claude/skills/
-```
+   ```bash
+   git clone https://github.com/aalbeek-ai/voice-evals.git
+   cp -r voice-evals/skills/voice-evals ~/.claude/skills/
+   ```
 
-It then triggers on its own in Claude Code whenever eval cases, an eval round, or a call transcript come up.
+2. **Spreadsheet.** <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">Copy the template</a> and fill in the `Value` column of `01-Setup`; the `Note` column says who reads each value. The example rows in `02-System tests` and `03-Cases` show the format — overwrite them. `04-Runs` is written by the grader, `05-Results` computes itself.
 
-**The spreadsheet**: get your own copy via **<a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">copy template</a>**. Five tabs: `01-Setup` holds every customer value, `02-System tests` tests the full chain end to end before the first real run — `03-Cases` and `04-Runs` are the two data tables, `05-Results` pulls all of it together and computes itself — nothing in it gets filled in by hand. `02-System tests` and `03-Cases` each ship with two example rows — a case and its twin, two chain tests. They show the convention and get overwritten. The top of `01-Setup` shows which case to call next and what the caller says.
+3. **Grader.** Import [eval-grader.json](eval-grader.json) into n8n. In `load-setup`, `load-cases`, and `write-run`, replace `YOUR_SPREADSHEET_ID` with your copy's ID (the part of its URL between `/d/` and `/edit`). Add three credentials: Google Sheets, Anthropic, and header auth on `call-details` (any header name and secret). The judge runs on Claude Sonnet 5 — if your agent does too, pick another model in `judge`. Activate the workflow.
 
-For the skill to read and write that spreadsheet, Claude Code needs a Google Sheets MCP server, and the underlying Google Cloud project needs to be enrolled in the Workspace Developer Preview Program — without it, the MCP authenticates but returns no data.
+4. **Post-call workflow.** For test numbers only, and after the ticket is created, POST the call to the `call-details` webhook with the same header. Only `transcript` is required, as text with one `role: text` line per turn or as a list of `{role, content}`. Transfers go in as `tool` turns. The rest sharpens the grading:
 
-**The grader**: import [eval-grader.json](eval-grader.json) into n8n, point `load-setup`, `load-cases` and `write-run` at your copy, set the Google Sheets and Anthropic credentials and a header-auth credential on the `call-details` webhook. Everything customer-specific comes from `01-Setup`; the grader itself has no settings. The post-call workflow needs to call the grader's `call-details` webhook *after* ticket creation, for test numbers only, with the ticket added as `ticket` — before it, the ticket isn't in the payload yet and nothing the post-call workflow produced enters the scoring. The grader needs at least the transcript, as a list of turns or as plain text with one `role: text` line each; `disconnectReason`, `duration`, and a ticket make the grading sharper.
+   ```json
+   {
+     "transcript": "agent: Hello, ...\nuser: ...\ntool: [Transfer] ... succeeded!",
+     "ticket": { "request": "...", "callerNumber": "..." },
+     "disconnectReason": "call_transfer",
+     "duration": 94
+   }
+   ```
+
+5. **Call.** `01-Setup` shows the next case and what to say. Call, hang up, and the row appears in `04-Runs`. After a round, ask Claude Code to score it.
+
+For the skill to read the spreadsheet itself, Claude Code needs a Google Sheets MCP server, and its Google Cloud project must be enrolled in the Workspace Developer Preview Program — otherwise it authenticates but returns no data. Without one, paste the runs into the chat.
 
 ## Status
 
-The harness runs against a real voice agent for a property management company. Numbers get published once a version clears the gate.
+The harness runs against a real voice agent for a property management company. v2 is in its first round: calls are matched to cases through a queue in the spreadsheet instead of a spoken codeword, and every customer value lives in `01-Setup`.
 
-Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, n8n, and Google Sheets. The mechanics don't depend on any of them: what counts is case assignment that doesn't depend on speech recognition, path-dependent scoring, and `pass^k`.
+Built on <a href="https://fonio.ai" target="_blank" rel="noopener noreferrer">fonio</a>, n8n, and Google Sheets. The method doesn't depend on any of them: what counts is matching calls to cases without speech recognition, scoring by path, and `pass^k`.
 
 ## What's next
 
-**v2** is in its first round:
+**v3:** measured pass rate and Δ per round, published once a version clears the gate.
 
-- Cases are matched through a queue in the spreadsheet instead of a spoken codeword.
-- The grader shrank from twelve nodes to eight; every customer value moved into `01-Setup`.
-- Spreadsheet columns, tab names, and path names are in English, so the whole repo runs in one language. Case content stays in the agent's language.
-
-Still open: measured pass rate and Δ per round, published once a version clears the gate.
-
-A Python grader was considered and dropped: the voice platform only pushes calls via webhook and offers no API to fetch them afterward, so Python would need its own hosted endpoint — more to run than the n8n workflow it replaces.
+If there's demand, the repo becomes a product.
 
 ## Feedback
 
@@ -67,7 +72,7 @@ Explicitly wanted — especially from people who run voice agents in production 
 - Technical, with evidence: <a href="https://github.com/aalbeek-ai/voice-evals/issues" target="_blank" rel="noopener noreferrer">open an issue</a>
 - Anything else: **kresse@aalbeek.de**
 
-Where something isn't backed by evidence, it's marked as an assumption. If a number or a rule here is wrong, I want to know.
+If a number or a rule here is wrong, I want to know.
 
 ## License
 

@@ -2,9 +2,9 @@
 
 How a voice agent gets measured: what's being measured, what measures it, which controls keep measurement error small, and where the setup hits its limits.
 
-Built against a property management company — emergencies, damage reports, transfers. The mechanics are industry-independent; the path names are not.
+Built for a property management company — emergencies, damage reports, transfers. The method works for any industry; the example cases don't.
 
-## Measurement object
+## What's measured
 
 What's measured is **one prompt version**, not "the agent." The version is set identically in two places: the system prompt's frontmatter and the voice agent platform. The grader reads it from `01-Setup`. Scoring runs from two versions together measures nothing.
 
@@ -20,21 +20,21 @@ A spoken codeword came first and was dropped: speech recognition missed it often
 
 | Path | Grader | Checks |
 | --- | --- | --- |
-| `emergency` | Rule | Mandatory announcement, said the required number of times, no further talking after it |
-| `dispatch` | Rule | Transfer demonstrably succeeded (`succeeded` tool line or `disconnectReason: call_transfer`) and no announcement |
+| `emergency` | Rule | Mandatory announcement said the required number of times, within the turn limit |
+| `dispatch` | Rule | Transfer succeeded (`succeeded` tool line or `disconnectReason: call_transfer`), no announcement, within the turn limit |
 | `attack` | Rule | Denylist from `01-Setup` doesn't appear in the transcript |
 | everything else | Judge | `Pass if` / `Fail if`, ticket state, fixed list of minor errors |
 
 `emergency`, `dispatch`, and `attack` are reserved: hardcoded in the grader's `grade` node, not in `01-Setup`. No dispatch concept for your agent? Nothing to touch — just put no case with that `Path` in `03-Cases`; the branch only fires when a case actually carries the value. Only renaming a reserved path, or adding a genuinely new rule-graded one, means editing `grade`. Every other path name is free text: it goes to the judge, which reads `Path` only as context.
 
-Rule graders never read the ticket. On the three rule-graded paths, `Expected ticket` is a note for the human reviewer, not something the grader checks — on the liability paths, only conversation behavior counts.
+Rule graders read neither the criteria nor the ticket. On the three rule-graded paths, `Pass if`, `Fail if`, and `Expected ticket` are notes for the human reviewer; only the checks in the table count.
 
 Two details that carry the rule grader:
 
-- **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only success counts — every transfer has an attempt row in the transcript first, otherwise a failed attempt would read as a passed transfer.
+- **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only a `succeeded` row counts: every transfer, failed or not, first logs an attempt row.
 - **Transcript and check terms go through the same normalization before comparison** — lowercased, `ä/ö/ü/ß` folded to `ae/oe/ue/ss`, everything else collapsed to spaces. Speech-to-text doesn't reliably keep umlauts; fold only one side and a denylist word spelled with an `ö` can silently miss a transcript that came back with a plain `o`.
 
-**The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unclear` is a valid answer; if the API fails, the run ends as `unclear`, never as a silent fail.
+**The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, ticket, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unclear` is a valid answer; if the API fails, the run ends as `unclear`, never as a silent fail.
 
 ## Controls
 
