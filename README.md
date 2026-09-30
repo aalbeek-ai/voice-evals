@@ -18,12 +18,12 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 
 | File | What |
 | --- | --- |
-| [experimental-setup.md](experimental-setup.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
+| [experimental-setup.md](experimental-setup.md) | What's measured, instrument, controls, metrics, procedure, limits |
 | [eval-grader.json](eval-grader.json) | The grader as an importable n8n workflow |
 | [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, root-cause a graded round into one fix per cause |
+| [rules.md](skills/voice-evals/references/rules.md) | Skill reference: prompt checklist and root-cause analysis |
+| [template.md](skills/voice-evals/references/template.md) | Skill reference: system prompt scaffold |
 | <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Spreadsheet template</a> | Cases, runs, and a results tab that updates automatically (Google Sheets) |
-
-The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/references/rules.md) (checklist for voice agent systems and root-cause analysis) and [template.md](skills/voice-evals/references/template.md) (system prompt template, block by block). Both belong to it and travel with it on install.
 
 ## Using it
 
