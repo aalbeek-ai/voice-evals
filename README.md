@@ -21,7 +21,7 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 | [experimental-setup.md](experimental-setup.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
 | [eval-grader.json](eval-grader.json) | The grader as an importable n8n workflow |
 | [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, root-cause a graded round into one fix per cause |
-| <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Spreadsheet template</a> | Cases, runs, and pass rates that update themselves (Google Sheets) |
+| <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Spreadsheet template</a> | Cases, runs, and a results tab that fills itself in (Google Sheets) |
 
 The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/references/rules.md) (checklist for voice agent systems and root-cause analysis) and [template.md](skills/voice-evals/references/template.md) (system prompt template, block by block). Both belong to it and travel with it on install.
 
@@ -34,7 +34,7 @@ The skill is `SKILL.md` plus two references: [rules.md](skills/voice-evals/refer
    cp -r voice-evals/skills/voice-evals ~/.claude/skills/
    ```
 
-2. **Spreadsheet.** <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">Copy the template</a> and fill in the `Value` column of `01-Setup`; the `Note` column says who reads each value. The example rows in `02-System tests` and `03-Cases` show the format — overwrite them. `04-Runs` is written by the grader, `05-Results` calculates the rates.
+2. **Spreadsheet.** <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">Copy the template</a> and fill in the `Value` column of `01-Setup`; the `Note` column says who reads each value. The example rows in `02-System tests` and `03-Cases` show the format — overwrite them. `04-Runs` is written by the grader, `05-Results` fills itself in.
 
 3. **Grader.** Import [eval-grader.json](eval-grader.json) into n8n. In `load-setup`, `load-cases`, and `write-run`, replace `YOUR_SPREADSHEET_ID` with your copy's ID (the part of its URL between `/d/` and `/edit`). Add three credentials: Google Sheets, Anthropic, and header auth on `call-details` (any header name and secret). The judge runs on Claude Sonnet 5 — if your agent does too, pick another model in `judge`. Activate the workflow.
 
