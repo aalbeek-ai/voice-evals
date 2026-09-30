@@ -12,7 +12,7 @@ The measurement object includes the system prompt, knowledge base, variables, to
 
 ## Instrument
 
-A call is matched to its case **by queue, not by anything said in the call** — and never via caller ID or time of day. `01-Setup` shows the next open case: the first `Capability` case in `03-Cases`, not held out, with fewer runs in the current prompt version than its `Calls`. You call that case. After hangup, the post-call workflow sends the payload to the grader; it reads the same cell — the run isn't written yet, so it still names the case just called — attaches that case's criteria, and scores. A botched call: delete its row, the case comes back. Everything after the match is one code node — rules for the liability paths, a prompt for the judge — and one appended row in `04-Runs`.
+A call is matched to its case **by queue, not by anything said in the call** — and never via caller ID or time of day. `01-Setup` shows the next open case: the first `Capability` case in `03-Cases`, not held out, with fewer runs in the current prompt version than its `Calls`. You call that case. After hangup, the post-call workflow sends the payload to the grader; it reads the same cell — the run isn't written yet, so it still names the case just called — attaches that case's criteria, and scores. A botched call: delete its row, the case comes back. The `grade` node then scores the liability paths by rule and writes the judge prompt for all other paths; `judge` and `read-verdict` add the verdict, `write-run` appends one row to `04-Runs`.
 
 A spoken codeword came first and was dropped: speech recognition missed it often enough that single cases had to be called six times.
 

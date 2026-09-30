@@ -19,7 +19,7 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 | File | What |
 | --- | --- |
 | [experimental-setup.md](experimental-setup.md) | Measurement object, instrument, controls, metrics, procedure — and the limits |
-| [eval-grader.json](eval-grader.json) | The grader as an n8n workflow, importable — eight nodes, one of them code |
+| [eval-grader.json](eval-grader.json) | The grader as an importable n8n workflow |
 | [skills/voice-evals/](skills/voice-evals/) | The Claude Code skill: write cases, root-cause a graded round into one fix per cause |
 | <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Spreadsheet template</a> | Cases, runs, and the scoring that computes itself (Google Sheets) |
 
