@@ -38,7 +38,7 @@ The liability paths — emergency, dispatch, attack — are scored by fixed rule
 
 3. **Grader.** Import [eval-grader.json](eval-grader.json) into n8n. In `load-setup`, `load-cases`, and `write-run`, replace `YOUR_SPREADSHEET_ID` with your copy's ID (the part of its URL between `/d/` and `/edit`). Add three credentials: Google Sheets, Anthropic, and header auth on `call-details` (any header name and secret). The judge runs on Claude Sonnet 5 — if your agent does too, pick another model in `judge`. Activate the workflow.
 
-4. **Post-call workflow.** For test numbers only, POST to `call-details` after the ticket is created, with the header from step 3. Send `transcript`, `ticket`, and, if available, `disconnectReason`.
+4. **Post-call workflow.** For test numbers only, POST to `call-details` after the ticket is created, with the header from step 3. The grader reads `transcript` (required), `ticket`, `disconnectReason`, and `duration`; other fields are ignored.
 
 5. **Call.** `01-Setup` shows the next case and what to say. Call, hang up, and the row appears in `04-Runs`. When `01-Setup` shows `round done`, ask Claude Code to analyze the round: the skill finds the cause of each failure and writes the prompt fixes.
 
