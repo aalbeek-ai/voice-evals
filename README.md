@@ -19,10 +19,10 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 | File | What |
 | --- | --- |
 | [experimental-setup.md](experimental-setup.md) | The method: what gets measured, how, and where it falls short |
-| [SKILL.md](skills/voice-evals/SKILL.md) | The Claude Code skill: write cases, root-cause a graded round into one fix per cause |
+| [SKILL.md](skills/voice-evals/SKILL.md) | The Claude Code skill: writes cases and turns a scored round into prompt fixes |
 | [rules.md](skills/voice-evals/references/rules.md) | Skill reference: prompt checklist and root-cause analysis |
-| [template.md](skills/voice-evals/references/template.md) | Skill reference: system prompt scaffold |
-| <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Voice-Evals — Template</a> | Google Sheets: cases, runs, and a results tab that updates automatically |
+| [template.md](skills/voice-evals/references/template.md) | Skill reference: system prompt template, block by block |
+| <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Voice-Evals — Template</a> | Google Sheets: setup, system tests, cases, runs, and results |
 | [eval-grader.json](eval-grader.json) | The grader as an importable n8n workflow |
 
 ## Using it
