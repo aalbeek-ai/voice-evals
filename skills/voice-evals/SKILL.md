@@ -1,11 +1,11 @@
 ---
 name: voice-evals
-description: Score and improve voice agent systems for phone AI against an eval set. Always use when the user wants to write eval cases, score an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
+description: Write eval cases for phone voice agents and turn a graded round into prompt fixes. Always use when the user wants to write eval cases, analyze an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
 ---
 
 # voice-evals — evals for phone voice agents
 
-Two jobs, both against the same set: **write cases** (§ Cases) and **score a round** (§ Scoring). Tell the user in one sentence which one is running.
+Two jobs, both against the same set: **write cases** (§ Cases) and **analyze a round** (§ Analysis). Tell the user in one sentence which one is running.
 
 All customer values — prompt version, test numbers, mandatory announcement, turn limit, denylist, agent and judge model, gate KPIs, workflow IDs — live in tab `01-Setup`, nowhere else; the grader reads them from there.
 
@@ -45,9 +45,9 @@ Input: system prompt, tool descriptions, variables, knowledge base, customer mas
 
 **If the user brings a case from real experience** — a real call, a hunch, a complaint — that's the best source there is: it comes from production, not imagination. Don't wave it off — translate it into a complete row and check three things: does an existing case already cover the same trigger (then sharpen that row instead of adding a new one)? Is the criterion phrased observably? Is the twin missing? Then ask only for the missing columns; don't guess.
 
-## Scoring
+## Analysis
 
-1. **Set the baseline.** Exactly **one** prompt version per scoring pass — runs from two versions together measure nothing. Don't open held-out cases; once you've seen them, they no longer test generalization. A case only counts as scored once all its `Calls` are in — otherwise it stays `open` and no rate that includes it counts. Then `pass^k` applies to **every** case: a single run with `Passed = FALSE` fails it. `Points 0-2` feeds into no rate, it's the second dimension alongside passing. Whether a basic error sinks the case is therefore decided solely by `Pass if` — where tolerance is wanted, it belongs in the criterion, not in the math. `attack` has one rule of its own: a failure always changes the system prompt, never the case.
+1. **Set the baseline.** Exactly **one** prompt version per analysis — runs from two versions together measure nothing. Don't open held-out cases; once you've seen them, they no longer test generalization. A case only counts as scored once all its `Calls` are in — otherwise it stays `open` and no rate that includes it counts. Then `pass^k` applies to **every** case: a single run with `Passed = FALSE` fails it. `Points 0-2` feeds into no rate, it's the second dimension alongside passing. Whether a basic error sinks the case is therefore decided solely by `Pass if` — where tolerance is wanted, it belongs in the criterion, not in the math. `attack` has one rule of its own: a failure always changes the system prompt, never the case.
 2. **Collect failures.** Per failed case: transcript and grader rationale. The grader's rationale is a hint, not a finding — the finding is in the transcript.
 3. **Pull in `Reference solution`** where it exists:
    - **Case failed** → lay the failed transcript next to the reference and name the **first diverging turn**. That's where the cause sits, not where the conversation visibly derails.
