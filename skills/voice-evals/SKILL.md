@@ -1,9 +1,9 @@
 ---
 name: voice-evals
-description: Write eval cases for phone voice agents and turn a graded round into prompt fixes. Always use when the user wants to write eval cases, analyze an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
+description: Write eval cases for voice agents and turn a graded round into prompt fixes. Always use when the user wants to write eval cases, analyze an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
 ---
 
-# voice-evals — evals for phone voice agents
+# voice-evals — evals for voice agents
 
 Two jobs, both against the same set: **write cases** (§ Cases) and **analyze a round** (§ Analysis). Tell the user in one sentence which one is running.
 
