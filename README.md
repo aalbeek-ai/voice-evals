@@ -8,11 +8,11 @@ This repo is the eval harness I use for that: method, grader, spreadsheet templa
 
 ## How it works
 
-The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it, and writes one row per call. The skill reads the round and writes the prompt fixes.
+The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it, and writes one row per call. The skill reads all runs of a round, finds the cause of each failure, and writes the prompt fixes.
 
 ![How voice-evals works: test call → call ends → grader assigns the next open case → path decides rule grader or judge or unmatched → runs → voice-evals skill → fix, looping back to the next test call](assets/flow.png)
 
-The liability paths — emergency, dispatch, attack — are scored by fixed rules and never go to an LLM; everything else goes to a judge model. A false "pass" on a liability path would be a liability incident, not a measurement error.
+The liability paths — emergency, dispatch, attack — are scored by fixed rules and never go to an LLM; everything else goes to a judge model. A false "pass" on one of these three would cause real damage, not just a measurement error.
 
 ## What's inside
 

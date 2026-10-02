@@ -16,7 +16,7 @@ A call is matched to its case **by queue, not by anything said in the call** —
 
 A spoken codeword came first and was dropped: speech recognition missed it often enough that single cases had to be called six times.
 
-**The path decides who scores.** The three **liability paths** run without an LLM — a false "pass" there would be a liability incident, not a measurement error. Every other path goes to the judge:
+**The path decides who scores.** The three **liability paths** run without an LLM — a false "pass" there would cause real damage, not just a measurement error. Every other path goes to the judge:
 
 | Path | Grader | Checks |
 | --- | --- | --- |
