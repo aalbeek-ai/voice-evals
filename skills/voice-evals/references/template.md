@@ -1,8 +1,8 @@
-# Prompt scaffold
+# System prompt template
 
-Just the block sequence, no content. The blocks are placeholders — except "Gespräch beenden" (end conversation), which stands verbatim as written. The rules that belong in the other blocks live in `rules.md` §1.
+Just the block sequence, no content. The blocks are placeholders — except "Gespräch beenden" (end conversation), which is used word for word. The rules that belong in the other blocks live in `rules.md` §1.
 
-The scaffold is in German because it goes straight into German-language production prompts. For another language, translate it, but keep the end-conversation block's steps.
+The template is in German because it goes straight into German-language production prompts. For another language, translate it, but keep the end-conversation block's steps.
 
 Identity and pronunciation come first because the model needs them for reading out every line. The rules come last, because they're meant to override the flow, not replace it. As many phases as the business has concern types; ten is a sign that variants got modeled instead of behavior (rules.md §2).
 

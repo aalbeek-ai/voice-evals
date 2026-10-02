@@ -1,18 +1,18 @@
 # voice-evals
 
-**88% of AI pilots never reach production** — for every 33 proof-of-concepts started, four go live (<a href="https://www.cio.com/article/3850763/88-of-ai-pilots-fail-to-reach-production-but-thats-not-all-on-it.html" target="_blank" rel="noopener noreferrer">IDC/Lenovo, March 2025</a>). The breakage isn't the models — it's evaluation, governance, and integration.
+**88% of AI pilots never reach production** — for every 33 proof-of-concepts started, four go live (<a href="https://www.cio.com/article/3850763/88-of-ai-pilots-fail-to-reach-production-but-thats-not-all-on-it.html" target="_blank" rel="noopener noreferrer">IDC/Lenovo, March 2025</a>). The models aren't the problem; evaluation, governance, and integration are.
 
 For a voice agent the gap is wider than with text: background noise, dialects, latency, and one attempt per call with no retry. Without measurement, every prompt change is a guess.
 
-This repo is the eval harness I use for that — method, grader, spreadsheet template, and the Claude Code skill that writes cases and turns a graded round's failures into a fix at the root cause.
+This repo is the eval harness I use for that: method, grader, spreadsheet template, and a Claude Code skill.
 
 ## How it works
 
-The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it by path — liability paths by fixed rules, everything else by a judge model — and writes one row per call. The skill reads the round, traces each failure to its cause, and writes one fix per cause.
+The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it, and writes one row per call. The skill reads the round and writes the prompt fixes.
 
 ![How voice-evals works: test call → call ends → grader assigns the next open case → path decides rule grader or judge or unmatched → runs → voice-evals skill → fix, looping back to the next test call](assets/flow.png)
 
-Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass" there would be a liability incident, not a measurement error.
+The liability paths — emergency, dispatch, attack — are scored by fixed rules and never go to an LLM; everything else goes to a judge model. A false "pass" on a liability path would be a liability incident, not a measurement error.
 
 ## What's inside
 
@@ -67,7 +67,7 @@ If there's demand, the repo becomes a product.
 
 ## Feedback
 
-Explicitly wanted — especially from people who run voice agents in production themselves.
+Especially welcome from anyone running voice agents in production:
 
 - Technical, with evidence: <a href="https://github.com/aalbeek-ai/voice-evals/issues" target="_blank" rel="noopener noreferrer">open an issue</a>
 - Anything else: **kresse@aalbeek.de**
