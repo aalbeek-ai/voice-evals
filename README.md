@@ -18,7 +18,7 @@ Liability paths (emergency, dispatch, attack) never go to an LLM. A false "pass"
 
 | File | What |
 | --- | --- |
-| [experimental-setup.md](experimental-setup.md) | What's measured, instrument, controls, metrics, procedure, limits |
+| [experimental-setup.md](experimental-setup.md) | The method: what gets measured, how, and where it falls short |
 | [SKILL.md](skills/voice-evals/SKILL.md) | The Claude Code skill: write cases, root-cause a graded round into one fix per cause |
 | [rules.md](skills/voice-evals/references/rules.md) | Skill reference: prompt checklist and root-cause analysis |
 | [template.md](skills/voice-evals/references/template.md) | Skill reference: system prompt scaffold |
