@@ -34,21 +34,13 @@ The liability paths — emergency, dispatch, attack — are scored by fixed rule
    cp -r voice-evals/skills/voice-evals ~/.claude/skills/
    ```
 
-2. **Spreadsheet.** <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">Copy the template</a> and fill in the `Value` column of `01-Setup`; the `Note` column says who reads each value. The example rows in `02-System tests` and `03-Cases` show the format — overwrite them. To have the skill write your cases, give Claude Code your system prompt and ask for eval cases. `04-Runs` is written by the grader, `05-Results` updates automatically.
+2. **Spreadsheet.** <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/copy" target="_blank" rel="noopener noreferrer">Copy the template</a> and fill in the `Value` column of `01-Setup`; the `Note` column says who reads each value. The example rows in `02-System tests` and `03-Cases` show the format — overwrite them. To have the skill write your cases, give Claude Code your full agent setup — system prompt, knowledge base, variables, transfer rules, workflows — and ask for eval cases. `04-Runs` is written by the grader, `05-Results` updates automatically.
 
 3. **Grader.** Import [eval-grader.json](eval-grader.json) into n8n. In `load-setup`, `load-cases`, and `write-run`, replace `YOUR_SPREADSHEET_ID` with your copy's ID (the part of its URL between `/d/` and `/edit`). Add three credentials: Google Sheets, Anthropic, and header auth on `call-details` (any header name and secret). The judge runs on Claude Sonnet 5 — if your agent does too, pick another model in `judge`. Activate the workflow.
 
-4. **Post-call workflow.** For test numbers only, and after the ticket is created, POST the call to the `call-details` webhook with the same header. Only `transcript` is required, as text with one `role: text` line per turn or as a list of `{role, content}`. A transfer counts as successful if a `tool` line contains `succeeded` or `disconnectReason` is `call_transfer`. `ticket` and `disconnectReason` are optional:
+4. **Post-call workflow.** Send test calls to the grader's `call-details` webhook, after the ticket is created.
 
-   ```json
-   {
-     "transcript": "agent: Hello, ...\nuser: ...\ntool: transfer succeeded",
-     "ticket": { "request": "..." },
-     "disconnectReason": "call_transfer"
-   }
-   ```
-
-5. **Call.** `01-Setup` shows the next case and what to say. Call, hang up, and the row appears in `04-Runs`. Once `01-Setup` shows no next case, the round is complete: ask Claude Code to score it, and the skill takes over.
+5. **Call.** `01-Setup` shows the next case and what to say. Call, hang up, and the row appears in `04-Runs`. When `01-Setup` shows `round done`, ask Claude Code to analyze the round: the skill finds the cause of each failure and writes the prompt fixes.
 
 For the skill to read the spreadsheet itself, Claude Code needs a Google Sheets MCP server, and its Google Cloud project must be enrolled in the Workspace Developer Preview Program — otherwise it authenticates but returns no data. Without one, paste the runs into the chat.
 
