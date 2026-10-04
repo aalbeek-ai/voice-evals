@@ -46,7 +46,7 @@ For the skill to read the spreadsheet itself, Claude Code needs a Google Sheets 
 
 ## Status
 
-Running live at a property management company. Pass rates get published once there are solid numbers. If there's demand, it becomes a product.
+Running live at a property management company. The results get published once there are solid numbers. If there's demand, it becomes a product.
 
 ## Feedback
 
