@@ -1,22 +1,16 @@
 # Experimental Setup
 
-How a voice agent gets scored, which controls keep measurement error small, and where the setup hits its limits.
-
-Built for a property management company — emergencies, damage reports, transfers. The method works for any industry; the example cases don't.
+How a voice agent gets scored, which controls keep measurement error small, and where the setup hits its limits. Built for a property management company; the method works for any industry, the example cases don't.
 
 ## What's measured
 
-The measurement object is **one prompt version**, not "the agent." The version is set identically in two places: the system prompt's frontmatter and the voice agent platform. The grader reads it from `01-Setup`. Runs from two versions, scored together, measure nothing.
-
-A prompt version covers the system prompt, knowledge base, variables, tool descriptions, and the platform's dashboard settings. All of it changes behavior, so all of it belongs under the same version number.
+**One prompt version**, not "the agent." It covers everything that changes behavior: system prompt, knowledge base, variables, tool descriptions, and the platform's dashboard settings. The version is set identically in the prompt's frontmatter, on the platform, and in `01-Setup`. Runs from two versions, scored together, measure nothing.
 
 ## Instrument
 
-A call is matched to its case **by queue, not by anything said in the call** — and never via caller ID or time of day. `01-Setup` shows the next open case: the first `Capability` case in `03-Cases`, not held out, with fewer runs in the current prompt version than its `Calls`. You call that case. After hangup, the post-call workflow sends the call to the grader. The grader reads the same cell — the run isn't written yet, so it still names the case just called — and scores the call against that case: `grade` checks the liability paths by rule and builds the judge prompt for every other path, `judge` and `read-verdict` add the verdict, and `write-run` appends one row to `04-Runs`. After a botched call, delete its row and the case comes back.
+Calls are matched to cases **by queue, not by anything said in the call**, and not by caller ID or time of day. `01-Setup` shows the next open case: the first `Capability` case in `03-Cases`, not held out, with fewer runs in the current version than its `Calls`. The grader reads the same cell before writing the run, so it still names the case just called. After a botched call, delete its row and the case comes back. A spoken codeword came first and was dropped: speech recognition missed it so often that single cases had to be called six times.
 
-A spoken codeword came first and was dropped: speech recognition missed it often enough that single cases had to be called six times.
-
-**The path decides who scores.** The three **liability paths** run without an LLM — a false "pass" there would cause real damage, not just a measurement error. Every other path goes to the judge:
+**The path decides who scores.** The three **liability paths** run without an LLM — a false "pass" there would cause real damage, not just a measurement error:
 
 | Path | Grader | Checks |
 | --- | --- | --- |
@@ -25,30 +19,24 @@ A spoken codeword came first and was dropped: speech recognition missed it often
 | `attack` | Rule | Denylist from `01-Setup` doesn't appear in the transcript |
 | everything else | Judge | `Pass if` / `Fail if`, ticket, fixed list of basic errors |
 
-`emergency`, `dispatch`, and `attack` are reserved: hardcoded in the grader's `grade` node, not in `01-Setup`. No dispatch concept for your agent? Nothing to touch — just put no case with that `Path` in `03-Cases`; the branch only fires when a case actually carries the value. Only renaming a reserved path, or adding a genuinely new rule-graded one, means editing `grade`. Every other path name is free text: it goes to the judge, which reads `Path` only as context.
-
-Rule graders read neither the criteria nor the ticket. On the three rule-graded paths, `Pass if`, `Fail if`, and `Expected ticket` are notes for the human reviewer; only the checks in the table count.
-
-Two details the rule grader depends on:
+The three reserved names are hardcoded in the `grade` node. A path your agent doesn't have needs no change — just no case with that `Path`; only renaming a reserved path or adding a new rule-graded one means editing `grade`. Every other path name is free text for the judge. Rule graders read neither the criteria nor the ticket; on those paths, `Pass if`, `Fail if`, and `Expected ticket` are notes for the human reviewer.
 
 - **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only a `succeeded` row counts: every transfer, failed or not, first logs an attempt row.
-- **Transcript and check terms go through the same normalization before comparison** — lowercased, `ä/ö/ü/ß` folded to `ae/oe/ue/ss`, everything else collapsed to spaces. Speech-to-text doesn't reliably keep umlauts; fold only one side and a denylist word spelled with an `ö` can silently miss a transcript that came back with a plain `o`.
+- **Transcript and check terms are normalized the same way** — lowercased, `ä/ö/ü/ß` folded to `ae/oe/ue/ss`, everything else to spaces. Speech-to-text doesn't reliably keep umlauts; fold only one side and a denylist word can silently miss.
 
-**The judge is never the same model as the agent.** LLMs recognize their own outputs and rate them higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, ticket, `disconnectReason`, and tool calls — never the agent's system prompt, or it scores intent instead of outcome. `unclear` is a valid answer; if the API fails, the run ends as `unclear`, never as a silent fail.
+**The judge is never the agent's model** — LLMs rate their own outputs higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, ticket, `disconnectReason`, and tool calls, never the system prompt, or it scores intent instead of outcome. If the data isn't enough, it answers `unclear`; if the API fails, the run ends as `unclear` too, never as a silent fail.
 
 ## Controls
 
-- **A twin per trigger.** Every case where a behavior *should* happen has one where it should not — same number with `-Z-`. No twin, no case: "One-sided evals create one-sided optimization" (<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a>). The flip is a name check, nothing else: the rule grader tests the case ID against `/-Z-/i` and, if it matches, requires the *absence* of the announcement/transfer instead of their presence — no separate `Path` value, no `01-Setup` entry.
-- **Held-out set.** A portion of cases is never called and never looked at until the gate is reached. Only this second number shows whether the prompt generalizes instead of overfitting to the set (which cases, and when they're picked: § Data schema).
-- **The instrument may change mid-round, the measurement object never.** Allowed to sharpen: `Pass if`, the `Points 0-2` partial-credit scale, the judge prompt, the turn limit and denylist in `01-Setup`. Untouched: system prompt, knowledge, variables, tools, dashboard. Changing those mid-round describes two different agents under the same version.
-- **Re-scoring instead of re-calling.** A sharpened criterion re-scores the affected rows — the transcript is already there. The row gets marked `[manually adjusted - YYYY-MM-DD HH:MM]`, so the next round doesn't mistake a manual verdict for the grader's.
-- **Reference solution.** One known-working transcript per case, proof the task is solvable, and a check on the grader: change the grader, and the reference must still pass — if it doesn't, the grader is broken, not the agent. It isn't authored ahead of time: the first time a case passes with an empty `Reference solution`, that transcript becomes the reference (§ Procedure).
+- **A twin per trigger.** Every case where a behavior *should* happen has one where it should not: same ID with `-Z-`. "One-sided evals create one-sided optimization" (<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a>). For the rule grader, `-Z-` in the case ID flips the check: announcement and transfer must be absent.
+- **Held-out set.** About one case in eight — in the live set, five of 37 — is never called or looked at until the gate. Only this number shows whether the prompt generalizes instead of overfitting. `Held out` is a checkbox a human ticks before round one.
+- **The instrument may change mid-round, the prompt version never.** Allowed to sharpen: `Pass if`, `Points 0-2`, the judge prompt, the turn limit and denylist. Untouched: system prompt, knowledge, variables, tools, dashboard — changing those describes two agents under one version.
+- **Re-scoring instead of re-calling.** A sharpened criterion re-scores the affected rows; the transcript is already there. Mark the row `[manually adjusted - YYYY-MM-DD HH:MM]`.
+- **Reference solution.** One known-working transcript per case: proof the task is solvable, and a check on the grader — after a grader change the reference must still pass. The first passing transcript of a case becomes its reference.
 
 ## Metrics
 
-**`pass^k`, not `pass@k`.** A case only counts as passed if *all* its calls pass — a single failure sinks it. The two diverge fast: in <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic's own example</a>, the same agent over three trials hits 97% `pass@3` (at least one of three succeeds) against 39% `pass^3` (all three succeed) — `pass@k` climbs toward 100% as k grows, `pass^k` drops toward 0%. For an agent that answers the phone, `pass^k` is the only honest one: the agent gets one attempt per call, and a failed one is a failed call.
-
-Four rates, each over its own stack:
+**`pass^k`, not `pass@k`.** A case passes only if *all* its calls pass. In <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic's example</a>, the same agent hits 97% `pass@3` but 39% `pass^3`. An agent on the phone gets one attempt per call, so `pass^k` is the honest one.
 
 | Rate | Stack | Expectation |
 | --- | --- | --- |
@@ -57,43 +45,28 @@ Four rates, each over its own stack:
 | Regression | Regression | 100%, otherwise something broke |
 | Held-out | Held-out | only at the gate |
 
-A rate only counts once no case in its stack is still `open`. `Points 0-2` (partial credit) doesn't feed into any rate — it's a second dimension alongside pass/fail: a multi-part case that got the concern right but the ticket wrong scores better than a total miss, without softening `Pass if` itself. It exists for the human review and the skill: pass/fail says a case missed, `Points` says by how much.
+A rate counts only once no case in its stack is `open`. `Points 0-2` feeds no rate: it shows how far a failed case missed, for the human review and the skill. `Turns` counts conversation turns only, so a transfer's tool rows don't trip the turn limit. The `05-Results` formulas reach case 40; a longer set means dragging them down.
 
-**Two loops.** Every case starts as `Capability` — unproven isn't passed. A case that passes all its calls two rounds in a row becomes `Regression` and drops out of the round; a regression case that fails goes back to `Capability`. That graduation is what keeps a hand-run set affordable long-term: round cost tracks the capability stack, not the size of the set — true at 30 cases and at 80.
-
-The regression run goes by trigger, not by calendar. Exactly one before go-live: the graduated cases were proven on an older prompt version and get checked against the one that ships. After go-live, a run gates every prompt change, platform update, and model switch.
-
-## Data schema
-
-The template brings the tabs and their columns: `03-Cases` carries the cases, written by the skill; `04-Runs` one row per call, written by the grader; `05-Results` the four rates and each case's verdict, computed from both.
-
-What the columns themselves don't say: `Held out` is a checkbox a human ticks before round one — the skill writes the row, not the flag. Roughly one case in eight is held out; the live set runs five of 37. `Turns` counts only conversation turns; tool-call rows stay out, otherwise every transfer looks two turns longer and the turn limit trips where no one actually asked a follow-up. And the formulas reach to case 40, so a longer set means dragging them down.
+**Two loops.** Every case starts as `Capability`. A case that passes all its calls two rounds in a row becomes `Regression` and leaves the round; a regression case that fails goes back. Round cost tracks the capability stack, not the size of the set. Regression runs go by trigger: once before go-live, then after every prompt change, platform update, and model switch.
 
 ## Procedure
 
-**Setup.** As in the README, plus two decisions before the first round. Set the gate KPIs in `01-Setup`: yes/no, readable from the runs, and at least one of them measures whether the call reached its goal — otherwise the gate only shows that nothing broke. And send calls to the grader *after* the post-call workflow creates the ticket — before that, the payload has no ticket and the eval scores what was said, not what the call left behind.
+Setup is in the README; the analysis after each round is in the skill. What neither covers:
 
-**Before the first run.** `02-System tests` gets written first: one row per path the chain has to survive — ticket written, mail out, transfer, outside business hours, withheld number, caller hangs up mid-sentence — with the expected outcome beside it. Make those calls chaotic. Mumbling and half-sentences break a chain that a clean, well-spoken call walks straight through. Delete the run rows afterward. Fix every problem found immediately — this isn't a measurement yet.
-
-Then calibrate the judge: review the first five verdicts. If one diverges from your own, the two-person test decides — would a second person who only sees `Pass if` and the transcript reach the same verdict? Yes → sharpen the criterion. No → leave the row, the agent really was bad.
-
-**Per round.** The full capability stack, in this order: liability first, then one representative per path, then the rest. The queue walks `03-Cases` top-down, so the row order is the call order. Run it fully or abort it. Take notes on paper while calling — the grader sees the transcript, not the sound: pauses, tone, the moment a real caller would have hung up. Afterward, delete test tickets, then run the `voice-evals` skill: it reads the runs, names the cause per finding, and writes one fix per cause. Then bump the version.
-
-A failed case is compared with its reference solution and read at the **first diverging turn** — that's where the cause sits, not where the conversation visibly derails. Multiple cases with the same cause become *one* fix. If a case that was never reference-solved fails, first check whether the criterion is reachable at all: broken cases get corrected, the prompt doesn't get bent to fit them. The only exception is `attack` — there, a failure always changes the system prompt, never the case. A case that passes for the first time with an empty `Reference solution` gets that transcript as its reference.
-
-**Gate.** Stop when a round stops moving the needle and every gate KPI from `01-Setup` holds, realistically after three to four rounds. Then measure twice: working stack, then held-out. After that, the prompt doesn't get touched again. If held-out cases fail, the transcript decides — an ambiguous case gets corrected, a fair case moves into the working stack and another round follows with fresh held-out cases.
-
-**After go-live.** Every real call that went wrong becomes a capability case, one per cause, not one per call. Triggered by the failure, not the calendar: at double-digit call volumes per week, any weekly rate is noise. One watch metric suffices — the share of callers who hang up themselves, with a threshold locked in from the baseline at go-live.
+- **Gate KPIs** go into `01-Setup` before round one: yes/no, readable from the runs, and at least one measures whether the call reached its goal — otherwise the gate only shows that nothing broke.
+- **System tests first.** One row in `02-System tests` per path the chain must survive — ticket, mail, transfer, after hours, withheld number, caller hangs up mid-sentence. Make those calls chaotic: mumbling breaks chains that clean calls pass. Fix everything, then delete the runs.
+- **Calibrate the judge** on the first five verdicts. If one differs from yours, ask whether a second person seeing only `Pass if` and the transcript would agree with you. Yes → sharpen the criterion. No → the agent really was bad.
+- **Per round:** liability cases first, then one per path, then the rest — row order is call order. Run it fully or abort it. Take notes on paper: the grader doesn't hear pauses, tone, or the moment a real caller would hang up. Delete test tickets, run the skill, bump the version.
+- **Gate:** stop when Δ flattens and every gate KPI holds, usually after three to four rounds. Measure the working stack, then held-out; after that the prompt is frozen. A failed held-out case is corrected if ambiguous, or moves into the working stack with a fresh held-out set and one more round.
+- **After go-live:** every real call that went wrong becomes a capability case, one per cause. At double-digit calls per week any weekly rate is noise; watch one number instead — the share of callers who hang up themselves, against a threshold set at go-live.
 
 ## Limits
 
-What this setup **cannot** do — more important for judging the numbers than what it can:
-
-- **One call per case outside the liability paths.** Best practice calls for multiple runs per case, because a single trial isn't a result. Here, calls are made by hand; three calls for every case isn't affordable. So it's only run three times where a failure is expensive. That's a cost decision, not a methodological one.
-- **Small N.** A hand-run set stays in the dozens — the live one has 37 cases. It finds failure modes; it does not estimate failure rates.
-- **The grader doesn't listen.** It reads a transcript. Prosody, pauses, pacing, and the moment a real caller hangs up in frustration only enter the scoring through handwritten notes.
-- **The judge is calibrated against five verdicts**, not against a gold-standard dataset with an agreement metric.
-- **The queue trusts the caller.** Call a different case than the one shown and the run lands on the wrong case without an error. The caller's first sentence in the run's rationale is the only check.
+- **One call per case outside the liability paths.** Calls are made by hand, so only expensive failures get three calls. A cost decision, not a methodological one.
+- **Small N.** 37 cases find failure modes; they don't estimate failure rates.
+- **The grader doesn't listen.** Prosody and pacing enter only through handwritten notes.
+- **The judge is calibrated against five verdicts**, not a gold-standard dataset.
+- **The queue trusts the caller.** Calling a different case than the one shown files the run under the wrong case without an error; the caller's first sentence in the rationale is the only check.
 
 ## Sources
 
