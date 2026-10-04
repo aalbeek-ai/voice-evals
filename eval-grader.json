@@ -17,7 +17,7 @@
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "PLATZHALTER",
+          "id": "YOUR_CREDENTIAL_ID",
           "name": "Header Auth"
         }
       }
@@ -47,7 +47,7 @@
       "waitBetweenTries": 1000,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "PLATZHALTER",
+          "id": "YOUR_CREDENTIAL_ID",
           "name": "Google Sheets"
         }
       }
@@ -78,7 +78,7 @@
       "executeOnce": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "PLATZHALTER",
+          "id": "YOUR_CREDENTIAL_ID",
           "name": "Google Sheets"
         }
       }
@@ -161,7 +161,7 @@
       "waitBetweenTries": 2000,
       "credentials": {
         "anthropicApi": {
-          "id": "PLATZHALTER",
+          "id": "YOUR_CREDENTIAL_ID",
           "name": "Anthropic"
         }
       }
@@ -313,7 +313,7 @@
       "waitBetweenTries": 1000,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "PLATZHALTER",
+          "id": "YOUR_CREDENTIAL_ID",
           "name": "Google Sheets"
         }
       }
