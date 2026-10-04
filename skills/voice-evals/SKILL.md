@@ -20,7 +20,7 @@ The checklists live in `references/rules.md`, the prompt template in `references
 3. **The prompt describes behavior, not a catalog of cases.** An eval set covers two dozen cases, the agent experiences thousands. A rule that only hits the tested case makes the agent more rigid everywhere else and burns the instruction budget from point 2. §2
 4. **Reason instead of emphasis.** "NEVER use ellipses" only works on ellipses; "your responses are read aloud by a TTS engine that can't …" generalizes to every similar character. §1.5
 5. **Positive instructions.** "If X → say Y" instead of "never say Z" — LLMs follow negations unreliably.
-6. **An exit needs its own block.** End-conversation instructions hung off individual branches don't work — a single "end conversation" block with a fixed step sequence does; wording in `references/template.md`. The check: does the transcript end with the agent's goodbye, or does the caller hang up first?
+6. **An exit needs its own block.** End-conversation instructions hung off individual branches don't work — a single "end conversation" block with a fixed step sequence does; wording in `references/template.md`. The check signal is the disconnect reason: did the agent hang up, or the caller?
 
 ## Data
 
