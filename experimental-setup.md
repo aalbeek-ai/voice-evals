@@ -4,7 +4,7 @@ How a voice agent gets scored, which controls keep measurement error small, and 
 
 ## What's measured
 
-**One prompt version**, not "the agent." It covers everything that changes behavior: system prompt, knowledge base, variables, tool descriptions, and the platform's dashboard settings. The version is set identically in the prompt's frontmatter, on the platform, and in `01-Setup`. Runs from two versions, scored together, measure nothing.
+**The whole agent system at one version.** Everything that changes behavior belongs to it: system prompt, knowledge base, variables, tool descriptions, workflows, and the platform's dashboard settings. They share one version number, set identically in the prompt's frontmatter, on the platform, and as `Prompt version` in `01-Setup`. Runs from two versions, scored together, measure nothing.
 
 ## Instrument
 
@@ -29,8 +29,8 @@ The three reserved names are hardcoded in the `grade` node. A path your agent do
 ## Controls
 
 - **A twin per trigger.** Every case where a behavior *should* happen has one where it should not: same ID with `-Z-`. "One-sided evals create one-sided optimization" (<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a>). For the rule grader, `-Z-` in the case ID flips the check: announcement and transfer must be absent.
-- **Held-out set.** About one case in eight — in the live set, five of 37 — is never called or looked at until the gate. Only this number shows whether the prompt generalizes instead of overfitting. `Held out` is a checkbox a human ticks before round one.
-- **The instrument may change mid-round, the prompt version never.** Allowed to sharpen: `Pass if`, `Points 0-2`, the judge prompt, the turn limit and denylist. Untouched: system prompt, knowledge, variables, tools, dashboard — changing those describes two agents under one version.
+- **Held-out set.** About one case in eight — in the live set, five of 37 — is never called or looked at until the gate. Only this number shows whether the agent generalizes instead of overfitting to the set. `Held out` is a checkbox a human ticks before round one.
+- **The instrument may change mid-round, the agent system never.** Allowed to sharpen: `Pass if`, `Points 0-2`, the judge prompt, the turn limit and denylist. Untouched: system prompt, knowledge, variables, tools, workflows, dashboard — changing those describes two agents under one version.
 - **Re-scoring instead of re-calling.** A sharpened criterion re-scores the affected rows; the transcript is already there. Mark the row `[manually adjusted - YYYY-MM-DD HH:MM]`.
 - **Reference solution.** One known-working transcript per case: proof the task is solvable, and a check on the grader — after a grader change the reference must still pass. The first passing transcript of a case becomes its reference.
 
@@ -47,7 +47,7 @@ The three reserved names are hardcoded in the `grade` node. A path your agent do
 
 A rate counts only once no case in its stack is `open`. `Points 0-2` feeds no rate: it shows how far a failed case missed, for the human review and the skill. `Turns` counts conversation turns only, so a transfer's tool rows don't trip the turn limit. The `05-Results` formulas reach case 40; a longer set means dragging them down.
 
-**Two loops.** Every case starts as `Capability`. A case that passes all its calls two rounds in a row becomes `Regression` and leaves the round; a regression case that fails goes back. Round cost tracks the capability stack, not the size of the set. Regression runs go by trigger: once before go-live, then after every prompt change, platform update, and model switch.
+**Two loops.** Every case starts as `Capability`. A case that passes all its calls two rounds in a row becomes `Regression` and leaves the round; a regression case that fails goes back. Round cost tracks the capability stack, not the size of the set. Regression runs go by trigger: once before go-live, then after every change to the system, every platform update, and every model switch.
 
 ## Procedure
 
@@ -57,7 +57,7 @@ Setup is in the README; the analysis after each round is in the skill. What neit
 - **System tests first.** One row in `02-System tests` per path the chain must survive — ticket, mail, transfer, after hours, withheld number, caller hangs up mid-sentence. Make those calls chaotic: mumbling breaks chains that clean calls pass. Fix everything, then delete the runs.
 - **Calibrate the judge** on the first five verdicts. If one differs from yours, ask whether a second person seeing only `Pass if` and the transcript would agree with you. Yes → sharpen the criterion. No → the agent really was bad.
 - **Per round:** liability cases first, then one per path, then the rest — row order is call order. Run it fully or abort it. Take notes on paper: the grader doesn't hear pauses, tone, or the moment a real caller would hang up. Delete test tickets, run the skill, bump the version.
-- **Gate:** stop when Δ flattens and every gate KPI holds, usually after three to four rounds. Measure the working stack, then held-out; after that the prompt is frozen. A failed held-out case is corrected if ambiguous, or moves into the working stack with a fresh held-out set and one more round.
+- **Gate:** stop when Δ flattens and every gate KPI holds, usually after three to four rounds. Measure the working stack, then held-out; after that the system is frozen. A failed held-out case is corrected if ambiguous, or moves into the working stack with a fresh held-out set and one more round.
 - **After go-live:** every real call that went wrong becomes a capability case, one per cause. At double-digit calls per week any weekly rate is noise; watch one number instead — the share of callers who hang up themselves, against a threshold set at go-live.
 
 ## Limits
