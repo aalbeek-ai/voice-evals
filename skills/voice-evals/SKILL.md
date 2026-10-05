@@ -30,7 +30,7 @@ The grader writes `04-Runs`; you write case rows and `Reference solution`. Only 
 
 ## Cases
 
-Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`. Columns follow the header row of the customer's sheet. Liability cases go on top, because the queue calls the rows top-down.
+Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`. Read row 1 of `03-Cases` first (`Case`, `Path`, `Twin of`, …) and write each value under its column. Liability cases go on top, because the queue calls the rows top-down.
 
 1. **List the triggers:** every phase, transfer, and rule in the prompt, and every branch in the workflows.
 2. **A twin per trigger:** one case where the behavior should happen, one where it shouldn't — same ID with `-Z-`, linked in `Twin of`. No twin, no case.
