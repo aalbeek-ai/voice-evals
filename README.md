@@ -8,9 +8,9 @@ This repo is the eval harness I use for that: method, grader, spreadsheet templa
 
 ## How it works
 
-The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it, and writes one row per call. The skill reads all runs of a round, finds the cause of each failure, and writes the prompt fixes.
+The spreadsheet shows which case to call next. The grader assigns the call to that case, scores it, and writes one row per call. The skill reads all runs of a round, finds the cause of each failure, and writes the fixes.
 
-![How voice-evals works: test call → call ends → grader assigns the next open case → the path decides between rule grader, judge, or unmatched → 04-Runs → voice-evals skill → prompt fix and new version, then the next test call](assets/flow.png)
+![How voice-evals works: test call → call ends → grader assigns the next open case → the path decides between rule grader, judge, or unmatched → 04-Runs → voice-evals skill → fix and new version, then the next test call](assets/flow.png)
 
 The liability paths — emergency, dispatch, attack — are scored by fixed rules and never go to an LLM; everything else goes to a judge model. A false "pass" on one of these three would cause real damage, not just a measurement error.
 
@@ -19,7 +19,7 @@ The liability paths — emergency, dispatch, attack — are scored by fixed rule
 | File | What |
 | --- | --- |
 | [experimental-setup.md](experimental-setup.md) | The method: what gets measured, how, and where it falls short |
-| [SKILL.md](skills/voice-evals/SKILL.md) | The Claude Code skill: writes cases and turns a scored round into prompt fixes |
+| [SKILL.md](skills/voice-evals/SKILL.md) | The Claude Code skill: writes cases and turns a scored round into fixes for the agent setup |
 | [rules.md](skills/voice-evals/references/rules.md) | Skill reference: prompt checklist and root-cause analysis |
 | [template.md](skills/voice-evals/references/template.md) | Skill reference: system prompt template, block by block |
 | <a href="https://docs.google.com/spreadsheets/d/19SLbwL9aN61PI7MN0dhFoHuvjAXGuYoy4i9WfgAsJXg/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Voice-Evals — Template</a> | Google Sheets: setup, system tests, cases, runs, and results |
@@ -40,7 +40,7 @@ The liability paths — emergency, dispatch, attack — are scored by fixed rule
 
 4. **Post-call workflow.** For test numbers only, POST to `call-details` after the ticket is created, with the header from step 3. The grader reads `transcript` (one `role: text` line per turn), `requestShort`, and `fromNumber`, the fields of our demo setup; if your platform sends more, such as `duration` or `disconnectReason`, extend the `grade` node.
 
-5. **Call.** `01-Setup` shows the next case and what to say. Call, hang up, and the row appears in `04-Runs`. When `01-Setup` shows `round done`, ask Claude Code to analyze the round: the skill finds the cause of each failure and writes the prompt fixes.
+5. **Call.** `01-Setup` shows the next case and what to say. Call, hang up, and the row appears in `04-Runs`. When `01-Setup` shows `round done`, ask Claude Code to analyze the round: the skill finds the cause of each failure and writes the fixes.
 
 For the skill to read the spreadsheet itself, Claude Code needs a Google Sheets MCP server, and its Google Cloud project must be enrolled in the Workspace Developer Preview Program — otherwise it authenticates but returns no data. Without one, paste the runs into the chat.
 

@@ -1,6 +1,6 @@
 ---
 name: voice-evals
-description: Write eval cases for voice agents (AI on the phone) and turn a graded round into prompt fixes. Use when the user wants to write voice-agent eval cases, analyze a voice-agent eval round, review call transcripts, trace a call failure to its root cause, or audit a voice agent system — even when "eval" isn't said. Not for evals of chatbots, text agents, or other LLM apps.
+description: Write eval cases for voice agents (AI on the phone) and turn a graded round into fixes for the agent setup. Use when the user wants to write voice-agent eval cases, analyze a voice-agent eval round, review call transcripts, trace a call failure to its root cause, or audit a voice agent system — even when "eval" isn't said. Not for evals of chatbots, text agents, or other LLM apps.
 ---
 
 # voice-evals

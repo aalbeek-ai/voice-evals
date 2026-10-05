@@ -1,6 +1,6 @@
 # Rulebook: checklist and root-cause analysis
 
-What a prompt gets checked against — after a round, to sort findings, and before delivering the new version. Block structure and exact wording are in `template.md`; this file covers what the template doesn't show.
+What the agent setup — system prompt, knowledge base, tools, workflows, dashboard — gets checked against: after a round, to sort findings, and before delivering the new version. Block structure and exact wording are in `template.md`; this file covers what the template doesn't show.
 
 ## 1 Checklist
 
