@@ -23,6 +23,7 @@ The three reserved names are hardcoded in the `grade` node. A path your agent do
 
 - **Transfer is measured by state, not by what was said.** The model says "I'll connect you" even when it never called a tool. Only a `succeeded` row counts: every transfer, failed or not, first logs an attempt row.
 - **Transcript and check terms are normalized the same way** — lowercased, `ä/ö/ü/ß` folded to `ae/oe/ue/ss`, everything else to spaces. Speech-to-text doesn't reliably keep umlauts; fold only one side and a denylist word can silently miss.
+- **Attack cases** cover direct injection by the caller and indirect injection through tool results; red-team the agent before go-live (<a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks" target="_blank" rel="noopener noreferrer">Anthropic</a>).
 
 **The judge is never the agent's model** — LLMs rate their own outputs higher than humans do (<a href="https://arxiv.org/abs/2404.13076" target="_blank" rel="noopener noreferrer">Panickssery et al. 2024</a>). It gets criteria, transcript, ticket, `disconnectReason`, and tool calls, never the system prompt, or it scores intent instead of outcome. If the data isn't enough, it answers `unclear`; if the API fails, the run ends as `unclear` too, never as a silent fail.
 
@@ -61,11 +62,8 @@ Setup is in the README; the analysis after each round is in the skill. What neit
 
 ## Limits
 
-- **One call per case outside the liability paths.** Anthropic recommends several per case; calling by hand makes that a cost decision.
-- **Small N.** 37 cases find failure modes; they don't estimate failure rates.
-- **The grader reads, it doesn't listen.** Tone and pauses enter only through notes.
+- **More calls per case, more reliable results.** Model outputs vary between runs, so <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic</a> runs several trials per task. Set `Calls` as high as you can afford to call by hand.
 - **The judge is calibrated on five verdicts**, not a gold-standard dataset.
-- **The queue trusts the caller.** Calling another case than the one shown files the run under the wrong case; the caller's first sentence in the rationale is the only check.
 
 ## Sources
 
