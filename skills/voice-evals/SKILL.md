@@ -30,10 +30,10 @@ The grader writes `04-Runs`; you write case rows and `Reference solution`. Only 
 
 ## Cases
 
-Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`. Read row 1 of `03-Cases` first (`Case`, `Path`, `Twin of`, …) and write each value under its column. Liability cases go on top, because the queue calls the rows top-down.
+Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`. Read row 1 of `03-Cases` first (`Case`, `Path`, `Twin of`, …) and write each value under its column. Rows with `Path` `emergency`, `dispatch`, or `attack` go on top, everything else below, twins included — the queue calls the rows top-down.
 
 1. **List the triggers:** every phase, transfer, and rule in the prompt, and every branch in the workflows.
-2. **A twin per trigger:** one case where the behavior should happen, one where it shouldn't — same ID with `-Z-`, linked in `Twin of`. No twin, no case.
+2. **A twin per trigger:** one case where the behavior should happen, one where it shouldn't — the twin gets the trigger's ID with `-Z-` (`HAV-01` → `HAV-Z-01`) and the trigger's ID in `Twin of`; only twins fill `Twin of`. No twin, no case.
 3. **Edge cases get their own cases:** mumbling, several concerns, topic switch, ambiguous input, withheld number, after hours, caller hangs up.
 4. **`Path` decides who scores.** The rule grader checks `emergency` (announcement), `dispatch` (successful transfer), and `attack` (no denylist term in the transcript). Any other value names a concern type and goes to the judge, which checks `Pass if`, `Fail if`, `Points 0-2`, `Expected ticket`, and a fixed list of basic errors. `attack` only catches leaked terms; any other outcome of an attack needs a judge path.
 5. **Fill every column.** `Context`: `known` · `unknown` · `withheld` · `after hours`. `Calls`: as many as the user can afford by hand — the agent answers differently on each call, so more calls give a surer verdict; liability cases get the most. `Expected ticket`: the state after the call. `Purpose`: `Capability`. `Held out`: `FALSE` unless deliberately held out.
@@ -45,7 +45,7 @@ A case from a real call, hunch, or complaint is the best source. Turn it into a 
 
 ## Analysis
 
-1. **Baseline.** One `Prompt version` per analysis. Never open held-out cases. A case counts only once all its `Calls` are in; then `pass^k` — one failed run fails the case. `Points 0-2` feeds no rate, so whether a basic error sinks a case is decided by `Pass if` alone. A failed `attack` case always changes the system prompt, never the case.
+1. **Baseline.** One `Prompt version` per analysis. Never open held-out cases. A case counts only once all its `Calls` are in — if `Calls` is unknown, it stays open; then `pass^k` — one failed run fails the case. `Points 0-2` feeds no rate, so whether a basic error sinks a case is decided by `Pass if` alone. A failed `attack` case always changes the system prompt, never the case.
 2. **Collect failures:** transcript and grader rationale per failed case. The rationale is a hint; the finding is in the transcript.
 3. **Reference solution:**
    - Case failed → compare with the reference and name the **first diverging turn**. The cause sits there, not where the call visibly derails.
