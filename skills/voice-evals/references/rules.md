@@ -1,6 +1,6 @@
 # Rulebook: checklist and root-cause analysis
 
-What the agent setup — system prompt, knowledge base, tools, workflows, dashboard — gets checked against: after a round, to sort findings, and before delivering the new version. Block structure and exact wording are in `template.md`; this file covers what the template doesn't show.
+What the agent setup — system prompt, knowledge base, tools, workflows, dashboard — gets checked against: after a round, to sort findings, and before delivering the new version. Block structure and exact wording are in `template.md`; this file covers what the template doesn't show. Platform features — pronunciation dictionary, markup, dashboard settings — differ by provider and voice model: check your platform's docs and test every such rule with a real call.
 
 ## 1 Checklist
 
@@ -29,9 +29,8 @@ Everything read aloud is written the way it should sound — in the prompt and i
 - Times, dates, prices, and abbreviations as words: "nine o'clock", "March thirteenth", "eighty-nine euros", "around the clock"
 - Phone numbers, postal codes, and emergency numbers digit by digit, comma-separated: "zero, four, five, five, one" · "one, one, two"
 - House, apartment, and floor numbers as whole numbers: "Harbor Street one hundred fifty-six", "third floor"
-- Difficult company and proper names spelled the way the TTS should say them: "Aalbeek" → "Aal-Beek"
+- Names that must always sound the same go into the platform's pronunciation dictionary if it has one (fonio: IPA in slashes, `/foːnio/`); otherwise spell them in the prompt as they should sound: "Aalbeek" → "Aal-Beek"
 - Email and web addresses in parts, symbols as words: "info at aalbeek dot de"
-- A single spot that must sound a specific way goes in `<speak>` tags: "You can reach Mr. Gemeinhardt at <speak>mg at gemeinhardt dot ag</speak>"
 
 ### 1.4 Knowledge base and tools
 - **What the agent must always know belongs in the system prompt** — retrieval doesn't fire reliably
