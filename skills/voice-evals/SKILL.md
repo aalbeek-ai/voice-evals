@@ -1,6 +1,6 @@
 ---
 name: voice-evals
-description: Write eval cases for voice agents and turn a graded round into prompt fixes. Always use when the user wants to write eval cases, analyze an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
+description: Write eval cases for voice agents (AI on the phone) and turn a graded round into prompt fixes. Use when the user wants to write voice-agent eval cases, analyze a voice-agent eval round, review call transcripts, trace a call failure to its root cause, or audit a voice agent system — even when "eval" isn't said. Not for evals of chatbots, text agents, or other LLM apps.
 ---
 
 # voice-evals
@@ -30,18 +30,18 @@ The grader writes `04-Runs`; you write case rows and `Reference solution`. Only 
 
 ## Cases
 
-Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`, in the column order of the customer file's header row. Row order is call order, so liability cases go on top.
+Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`. Columns follow the header row of the customer's sheet. Liability cases go on top, because the queue calls the rows top-down.
 
-1. **Count the paths:** one trigger per phase, transfer, and prompt rule.
+1. **List the triggers:** every phase, transfer, and rule in the prompt, and every branch in the workflows.
 2. **A twin per trigger:** one case where the behavior should happen, one where it shouldn't — same ID with `-Z-`, linked in `Twin of`. No twin, no case.
 3. **Edge cases get their own cases:** mumbling, several concerns, topic switch, ambiguous input, withheld number, after hours, caller hangs up.
-4. **`Path` decides who scores.** `emergency`, `dispatch`, `attack` go to the rule grader; every other value names a concern type and goes to the judge, which checks `Pass if`, `Expected ticket`, and a fixed list of basic errors. Attack cases skip the judge because the attacker's text could manipulate it. `attack` covers data leaks only; other behavior under attack goes on a judge path.
-5. **Fill every column.** `Context`: `known` · `unknown` · `withheld` · `after hours`. `Calls`: as many as the user can afford by hand — outputs vary between runs; liability paths get the most. `Expected ticket`: the state after the call. `Purpose`: `Capability`. `Held out`: `FALSE` unless deliberately held out.
+4. **`Path` decides who scores.** The rule grader checks `emergency` (announcement), `dispatch` (successful transfer), and `attack` (no denylist term in the transcript). Any other value names a concern type and goes to the judge, which checks `Pass if`, `Fail if`, `Points 0-2`, `Expected ticket`, and a fixed list of basic errors. `attack` only catches leaked terms; any other outcome of an attack needs a judge path.
+5. **Fill every column.** `Context`: `known` · `unknown` · `withheld` · `after hours`. `Calls`: as many as the user can afford by hand — the agent answers differently on each call, so more calls give a surer verdict; liability cases get the most. `Expected ticket`: the state after the call. `Purpose`: `Capability`. `Held out`: `FALSE` unless deliberately held out.
 6. **Reachable:** `Pass if` must be achievable with the agent's knowledge, data, and tools — otherwise the case measures itself.
 7. **Two reviewers, one verdict:** phrase `Pass if` / `Fail if` so two people would reach the same verdict independently.
 8. **Partial credit** in `Points 0-2` for multi-part tasks; liability paths stay binary.
 
-A case from a real call, hunch, or complaint is the best source. Turn it into a row; if an existing case covers the trigger, sharpen that one instead. Check that the criterion is observable and the twin exists. Ask only for missing columns.
+A case from a real call, hunch, or complaint is the best source. Turn it into a row; if an existing case covers the trigger, sharpen that one instead. Check that the criterion is observable and the twin exists. Ask the user only for what you can't fill in yourself.
 
 ## Analysis
 
