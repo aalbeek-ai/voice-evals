@@ -3,60 +3,58 @@ name: voice-evals
 description: Write eval cases for voice agents and turn a graded round into prompt fixes. Always use when the user wants to write eval cases, analyze an eval round, review call transcripts, trace a failure to its root cause, or audit a voice agent system — even when "eval" isn't said explicitly.
 ---
 
-# voice-evals — evals for voice agents
+# voice-evals
 
-Two jobs, both against the same set: **write cases** (§ Cases) and **analyze a round** (§ Analysis). Tell the user in one sentence which one is running.
+Two jobs on the same set: **write cases** and **analyze a round**. Say in one sentence which one is running.
 
-All customer values — prompt version, test numbers, mandatory announcement, turn limit, denylist, agent and judge model, gate KPIs, workflow IDs — live in tab `01-Setup`, nowhere else; the grader reads them from there.
+Every customer value — prompt version, test numbers, mandatory announcement, turn limit, denylist, agent and judge model, gate KPIs, workflow IDs — lives in `01-Setup` and nowhere else.
 
-The data available only determines where findings come from, never the procedure: runs from `04-Runs` › pasted-in transcripts › audit checklist alone. The thinner the data, the more findings come from `references/rules.md` §1 instead of observation — flag that in the result.
+Findings come from runs in `04-Runs`, else pasted transcripts, else the checklist in `references/rules.md` §1 alone. The thinner the data, the more findings are checklist, not observation — say so.
 
 ## Why the rules exist
 
-The checklists live in `references/rules.md`, the prompt template in `references/template.md`. Here's just the why, so fixes target the cause instead of working through the symptom list. The § references point into `references/rules.md`.
+Checklists: `references/rules.md`. Prompt template: `references/template.md`. Fix the cause, not the symptom:
 
-1. **STT and TTS have separate failure modes → mirrored rules.** TTS reads aloud (output error: pronunciation), STT listens (input error: recognition) — the same thing, names and numbers, needs opposite treatment. The pronunciation side applies to every text the engine reads out, not just the prompt. §1.3
-2. **Instruction density lowers compliance.** Every rule exactly once, details in the knowledge base instead of the prompt. §1.4, §1.5
-3. **The prompt describes behavior, not a catalog of cases.** An eval set covers two dozen cases, the agent experiences thousands. A rule that only hits the tested case makes the agent more rigid everywhere else and burns the instruction budget from point 2. §2
-4. **Reason instead of emphasis.** "NEVER use ellipses" only works on ellipses; "your responses are read aloud by a TTS engine that can't …" generalizes to every similar character. §1.5
-5. **Positive instructions.** "If X → say Y" instead of "never say Z" — LLMs follow negations unreliably.
-6. **An exit needs its own block.** End-conversation instructions hung off individual branches don't work — a single "end conversation" block with a fixed step sequence does; wording in `references/template.md`. The check signal is the disconnect reason: did the agent hang up, or the caller?
+1. **TTS and STT fail in opposite directions.** TTS mispronounces, STT mishears — names and numbers need different handling on each side. Pronunciation rules apply to every text read aloud, not just the prompt. §1.3
+2. **Instruction density lowers compliance.** Every rule once; details go to the knowledge base. §1.4, §1.5
+3. **The prompt describes behavior, not cases.** The set has dozens of cases, the agent meets thousands. A rule for one tested case makes the agent rigid everywhere else. §2
+4. **Reasons, not emphasis.** "NEVER use ellipses" covers ellipses; "a TTS engine reads your replies aloud and can't …" covers every similar character. §1.5
+5. **Positive instructions.** "If X, say Y" beats "never say Z" — models follow negations unreliably.
+6. **One exit block.** End-conversation rules hung off single branches fail; one block with fixed steps works (`references/template.md`). Check who hung up: agent or caller.
 
 ## Data
 
-One spreadsheet file per customer, five tabs: `01-Setup` · `02-System tests` · `03-Cases` · `04-Runs` · `05-Results`.
+Tabs: `01-Setup` · `02-System tests` · `03-Cases` · `04-Runs` · `05-Results`. Load the `google-sheets` skill before the first access, if installed.
 
-**Call the `google-sheets` skill before the first spreadsheet access** — it holds the tool choice and the pitfalls of the sheets API and loads into the same session, no subagent needed. If it's missing, reading and writing go directly through the sheets tools.
-
-`04-Runs` is written by the grader, never by you. This skill contributes new case rows and a filled-in `Reference solution`. The only exception is re-scoring a misjudged verdict. Then the `Run` column gets `[manually adjusted - YYYY-MM-DD HH:MM]` appended, so the next round doesn't mistake a manual verdict for the grader's.
+The grader writes `04-Runs`; you write case rows and `Reference solution`. Only exception: correcting a misjudged verdict — then append `[manually adjusted - YYYY-MM-DD HH:MM]` to `Run`, so it doesn't read as the grader's.
 
 ## Cases
 
-Input: system prompt, tool descriptions, variables, knowledge base, customer master data. Output: rows for tab `03-Cases` — read the column order from the customer file's header row, not from memory. Row order is call order — the queue in `01-Setup` walks `03-Cases` top-down — so liability cases go above the rest.
+Input: the full agent setup — system prompt, tool descriptions, variables, knowledge base, workflows, master data. Output: rows for `03-Cases`, in the column order of the customer file's header row. Row order is call order, so liability cases go on top.
 
-1. **Count the paths.** One trigger per phase, per transfer, per rule in the prompt. That's the population, not imagination.
-2. **A twin per trigger.** "One-sided evals create one-sided optimization" — one case where the behavior *should* happen, one where it should not. The twin carries the same number with `-Z-` and the `Twin of` column. No twin, no case.
-3. **Edge cases as their own cases:** typos and mumbling, multiple concerns in one call, topic switch mid-conversation, ambiguous input, withheld number, outside business hours, caller hangs up.
-4. **`Path` controls who scores:** a rule grader checks `emergency` and `dispatch` for the announcement or transfer, `attack` against a denylist, everything else a judge against `Pass if`, `Expected ticket`, and a fixed list of basic errors. The grader only knows these three special values; the rest are named after the customer's concern types and are interchangeable to it. Attack cases are kept separate — rule grader instead of judge, or the attacker's text could manipulate the judge as well. `attack` only covers where data could leak; behavior belongs on a judge path.
-5. **Every row complete**, or it doesn't take effect: `Context` sets the caller number (`known` · `unknown` · `withheld` · `after hours`) · `Calls` the repeat count: as many as the user can afford to call by hand, since outputs vary between runs; the liability paths (`emergency`, `dispatch`, `attack`) get the most · `Expected ticket` the state after the call · `Purpose` starts as `Capability` · `Held out` is a checkbox and stays `FALSE` unless the case is deliberately held out.
-6. **Check reachability before the case goes into the set.** Is `Pass if` reachable with what the agent actually has — knowledge base, master data, tools? Otherwise the case measures itself, not the agent.
-7. **Two reviewers, one verdict.** Phrase `Pass if` / `Fail if` so two people would independently reach the same pass/fail. Anything only you can decide isn't a criterion.
-8. **Define partial credit** in `Points 0-2` where the task has multiple parts: concern recognized but ticket incomplete beats an instant fail. Stays binary where it's binary (`emergency`, `dispatch`, `attack`).
+1. **Count the paths:** one trigger per phase, transfer, and prompt rule.
+2. **A twin per trigger:** one case where the behavior should happen, one where it shouldn't — same ID with `-Z-`, linked in `Twin of`. No twin, no case.
+3. **Edge cases get their own cases:** mumbling, several concerns, topic switch, ambiguous input, withheld number, after hours, caller hangs up.
+4. **`Path` decides who scores.** `emergency`, `dispatch`, `attack` go to the rule grader; every other value names a concern type and goes to the judge, which checks `Pass if`, `Expected ticket`, and a fixed list of basic errors. Attack cases skip the judge because the attacker's text could manipulate it. `attack` covers data leaks only; other behavior under attack goes on a judge path.
+5. **Fill every column.** `Context`: `known` · `unknown` · `withheld` · `after hours`. `Calls`: as many as the user can afford by hand — outputs vary between runs; liability paths get the most. `Expected ticket`: the state after the call. `Purpose`: `Capability`. `Held out`: `FALSE` unless deliberately held out.
+6. **Reachable:** `Pass if` must be achievable with the agent's knowledge, data, and tools — otherwise the case measures itself.
+7. **Two reviewers, one verdict:** phrase `Pass if` / `Fail if` so two people would reach the same verdict independently.
+8. **Partial credit** in `Points 0-2` for multi-part tasks; liability paths stay binary.
 
-**If the user brings a case from real experience** — a real call, a hunch, a complaint — that's the best source there is: it comes from production, not imagination. Don't wave it off — translate it into a complete row and check three things: does an existing case already cover the same trigger (then sharpen that row instead of adding a new one)? Is the criterion phrased observably? Is the twin missing? Then ask only for the missing columns; don't guess.
+A case from a real call, hunch, or complaint is the best source. Turn it into a row; if an existing case covers the trigger, sharpen that one instead. Check that the criterion is observable and the twin exists. Ask only for missing columns.
 
 ## Analysis
 
-1. **Set the baseline.** Exactly **one** prompt version per analysis — runs from two versions together measure nothing. Don't open held-out cases; once you've seen them, they no longer test generalization. A case only counts as scored once all its `Calls` are in — otherwise it stays `open` and no rate that includes it counts. Then `pass^k` applies to **every** case: a single run with `Passed = FALSE` fails it. `Points 0-2` feeds into no rate, it's the second dimension alongside passing. Whether a basic error sinks the case is therefore decided solely by `Pass if` — where tolerance is wanted, it belongs in the criterion, not in the math. `attack` has one rule of its own: a failure always changes the system prompt, never the case.
-2. **Collect failures.** Per failed case: transcript and grader rationale. The grader's rationale is a hint, not a finding — the finding is in the transcript.
-3. **Pull in `Reference solution`** where it exists:
-   - **Case failed** → lay the failed transcript next to the reference and name the **first diverging turn**. That's where the cause sits, not where the conversation visibly derails.
-   - **Reference no longer reachable with today's prompt** (path removed, tool swapped, model changed) → the case is stale. Fix the case and the reference, **don't** bend the prompt to fit it.
-   - **Case passes for the first time and the field is empty** → write its transcript into `Reference solution`.
-4. **Cause, not symptom** — `references/rules.md` §2. Mandatory per finding: symptom → cause → fix level → sibling test. Multiple cases with the same cause get **one** fix, not several.
-5. **Write the fix — run the algorithm from `references/rules.md` §2 first, don't just cite it.** Before every line: question it (is the symptom real?), then delete (what comes out with nothing replacing it?), only then simplify or optimize — usually optimize here: lift the same rule to a higher level instead of placing a second one next to it. **Success is a spot that gets shorter, not longer** — state old/new word count in the result; if it grows anyway, say why. Every round that adds erodes the compliance it's trying to produce (§ Why the rules exist, points 2 and 3).
-6. **Proposals first, artifacts after.** Deliver the findings and one line per fix: level · what changes · what comes out for it. Add two to three sentences of status — version, direction versus the previous version, continue or gate. Gate means both: the direction has flattened and every gate KPI in `01-Setup` holds in `04-Runs`. Rates and secondary numbers live in tab `05-Results`; copying them out helps no one, their meaning does.
-   After approval comes the artifact: the full prompt (no diff) as a code block per `references/template.md`, changed knowledge-base, tool, and platform content below it. Anyone who's already asked for the prompt as a deliverable skips the approval step.
-   **If a repo exists, you only swap the files there and commit.** The file then contains the artifact and nothing else — no heading, no rationale, no source list, no "deliberately left out." What the agent doesn't read doesn't belong in it. Every explanation — what changed and why — goes briefly in the chat, never in the file.
-   Flag fixes that don't belong in the prompt (`references/rules.md` §2, last point) separately.
-7. **Follow-up questions**, max 5 — never ask something that's already in the prompt, transcripts, or runs.
+1. **Baseline.** One `Prompt version` per analysis. Never open held-out cases. A case counts only once all its `Calls` are in; then `pass^k` — one failed run fails the case. `Points 0-2` feeds no rate, so whether a basic error sinks a case is decided by `Pass if` alone. A failed `attack` case always changes the system prompt, never the case.
+2. **Collect failures:** transcript and grader rationale per failed case. The rationale is a hint; the finding is in the transcript.
+3. **Reference solution:**
+   - Case failed → compare with the reference and name the **first diverging turn**. The cause sits there, not where the call visibly derails.
+   - Reference no longer reachable (path removed, tool swapped, model changed) → the case is stale: fix case and reference, not the prompt.
+   - First pass with an empty field → write the transcript in.
+4. **Cause, not symptom** (`references/rules.md` §2): symptom → cause → fix level → sibling test. One cause, one fix.
+5. **Write the fix** with the algorithm from §2: question it, delete, then simplify — lift a rule one level rather than add one beside it. The spot should get shorter; state old/new word count and justify any growth.
+6. **Proposals first.** Findings, then one line per fix: level · change · what comes out. Status in two or three sentences: version, direction vs. the previous version, continue or gate. Gate = Δ has flattened and every gate KPI in `01-Setup` holds. Don't copy numbers from `05-Results`; explain them.
+   After approval: the full prompt (no diff) per `references/template.md`, then changed knowledge-base, tool, and platform content. Skip approval if the user asked for the prompt directly.
+   In a repo: replace the files and commit. The file holds the artifact only — no heading, rationale, or sources; explanations go in the chat.
+   List fixes outside the prompt (§2, last point) separately.
+7. **Follow-up questions:** at most 5, never about what's in the prompt, transcripts, or runs.
