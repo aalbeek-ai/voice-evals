@@ -49,12 +49,9 @@ A case from a real call, hunch, or complaint is the best source. Turn it into a 
 2. **Collect failures:** transcript and grader rationale per failed case. The rationale is a hint; the finding is in the transcript.
 3. **Reference solution:**
    - Case failed → compare with the reference and name the **first diverging turn**. The cause sits there, not where the call visibly derails.
-   - Reference no longer reachable (path removed, tool swapped, model changed) → the case is stale: fix case and reference, not the prompt.
+   - Reference no longer possible because the system was changed on purpose (path removed, tool swapped) → the case is outdated: update case and reference instead of bending the system back.
    - First pass with an empty field → write the transcript in.
 4. **Cause, not symptom** (`references/rules.md` §2): symptom → cause → fix level → sibling test. One cause, one fix.
-5. **Write the fix** with the algorithm from §2: question it, delete, then simplify — lift a rule one level rather than add one beside it. The spot should get shorter; state old/new word count and justify any growth.
-6. **Proposals first.** Findings, then one line per fix: level · change · what comes out. Status in two or three sentences: version, direction vs. the previous version, continue or gate. Gate = Δ has flattened and every gate KPI in `01-Setup` holds. Don't copy numbers from `05-Results`; explain them.
-   After approval: the full prompt (no diff) per `references/template.md`, then changed knowledge-base, tool, and platform content. Skip approval if the user asked for the prompt directly.
-   In a repo: replace the files and commit. The file holds the artifact only — no heading, rationale, or sources; explanations go in the chat.
-   List fixes outside the prompt (§2, last point) separately.
-7. **Follow-up questions:** at most 5, never about what's in the prompt, transcripts, or runs.
+5. **Write the fix** with the algorithm from §2: question it, delete, then simplify or optimize — lift a rule one level rather than add one beside it. The spot should get shorter; state old/new word count and justify any growth.
+6. **Proposals first.** Findings, one line per fix (level · change · what goes), and two or three sentences of status: version, Δ, continue or gate (Δ flat and every gate KPI holds). Fixes outside the prompt (§2, last point) in a separate list. After approval: the full prompt per `references/template.md`, plus changed knowledge-base, tool, and platform content. In a repo, replace the files and commit — artifact only, explanations in the chat.
+7. **Follow-up questions:** at most 5, and only about what you can't read yourself in the prompt, transcripts, or runs.
