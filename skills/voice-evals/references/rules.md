@@ -58,5 +58,5 @@ A prompt that an LLM repairs round after round grows into a catalog of cases and
 - **Pick the highest level that applies:** wording (sounds wrong) → rule (missing, duplicated, contradictory) → structure (path missing or not triggering) → principle (follows the tree rigidly, fails on any deviation). Only at the principle level does the prompt get shorter while covering more
 - **Numbered steps only for a phase that derails** — everywhere else they make the agent rigid. The last step points to the next phase
 - **Sibling test:** name three situations with the same cause that aren't in the set. If the fix doesn't cover them, go one level higher
-- **Overfitting:** a fix that names a case, quotes a transcript, is appended as a new bullet, or describes a situation instead of a behavior
+- **No overfitting:** a fix that names a case, quotes a transcript, is appended as a new bullet, or describes a situation instead of a behavior doesn't ship — go one level higher
 - **Not every fix belongs in the prompt:** wrong fact → knowledge base · transfer into the void → tool · wrong ticket field → post-call workflow · interrupts or mishears numbers → dashboard · AI disclosure gets cut off → dashboard ("prevent interruption"). Nothing left → it wasn't a prompt problem
