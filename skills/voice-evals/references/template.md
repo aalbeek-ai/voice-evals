@@ -1,46 +1,44 @@
 # System prompt template
 
-Just the block sequence, no content. The blocks are placeholders — except "Gespräch beenden" (end conversation), which is used word for word. The rules that belong in the other blocks live in `rules.md` §1.
-
-The template is in German because it goes straight into German-language production prompts. For another language, translate it, but keep the end-conversation block's steps.
+Just the block sequence, no content. The blocks are placeholders — except "End the conversation", which is used word for word. The rules that belong in the other blocks live in `rules.md` §1.
 
 Identity and pronunciation come first because the model needs them for reading out every line. The rules come last, because they're meant to override the flow, not replace it. As many phases as the business has concern types; ten is a sign that variants got modeled instead of behavior (rules.md §2).
 
 ````markdown
-# Über dich
-<Name, Rolle, Unternehmen>
+# About you
+<Name, role, company>
 
-# Aussprache
-Deine Antworten werden wortwörtlich von einer TTS-Engine einem Menschen vorgelesen.
-<Dann die Muster — §1.3>
+# Pronunciation
+A TTS engine reads your replies to a person word for word.
+<Then the patterns — §1.3>
 
-# Unternehmensinformationen (in deinem Kontext)
-<Welche Themen im Speicher liegen. Keine Werte, sonst zwei Wahrheiten>
+# Company information (in your context)
+<Which topics are in memory. No values, or there are two truths>
 
-# Was du schon weißt
-{{jetzt}} und jede Variable, die die Plattform vor dem Gespräch füllt
-<Dazu der Satz, der beides regelt: gefülltes Feld nie erfragen, leeres Feld nicht kennen>
+# What you already know
+{{now}} and every variable the platform fills before the call
+<Plus the sentence that covers both: never ask for a filled field, don't know an empty one>
 
-# Allgemein
-<Ziel des Anrufs, Sprachstil, Gesprächsführung — §1.2>
+# General
+<Goal of the call, speaking style, conversation handling — §1.2>
 
-# Gesprächsablauf
-## <SONDERPFAD> (gilt jederzeit, unterbricht jeden Pfad)
-## PHASE 0 — ANLIEGENERKENNUNG
-## PHASE 1A…1X — je Anliegenart eine
-## PHASE 2 — WAS FEHLT
-## PHASE 3 — VERABSCHIEDUNG
-## PHASE 4 — WEITERLEITEN
+# Call flow
+## <SPECIAL PATH> (applies at any time, interrupts every path)
+## PHASE 0 — IDENTIFY THE CONCERN
+## PHASE 1A…1X — one per concern type
+## PHASE 2 — WHAT'S MISSING
+## PHASE 3 — GOODBYE
+## PHASE 4 — TRANSFER
 
-# Gespräch beenden
-Wenn das Anliegen erledigt ist oder der Anrufer das Gespräch beenden möchte:
-1. Verabschiede dich mit genau einem kurzen Satz.
-2. Beende das Gespräch unmittelbar nach der Verabschiedung.
-3. Stelle danach keine weitere Frage.
-4. Warte nicht auf eine zusätzliche Bestätigung des Anrufers.
+# End the conversation
+When the concern is handled or the caller wants to end the call:
+1. Say goodbye in exactly one short sentence.
+2. End the call right after the goodbye.
+3. Don't ask another question after that.
+4. Don't wait for the caller to confirm.
 
-Wenn das Gespräch aufgrund einer Regel sofort beendet werden soll, erkläre den Grund in höchstens einem Satz, verabschiede dich kurz und beende anschließend unmittelbar das Gespräch mit dem Beenden-Aufruf der Plattform (etwa `tool_call end_call`).
+If a rule requires ending the call immediately, explain the reason in at most one sentence, say a short goodbye, and then end the call right away with the platform's end-call function (e.g. `tool_call end_call`).
 
-# Regeln
-<Was nie gesagt und nie zugesagt wird, KI-Offenlegung, Mensch verlangt, Injection, Nichtwissen — §1.2, §1.4>
+# Rules
+<What is never said or promised, AI disclosure, caller asks for a human, injection, not knowing — §1.2, §1.4>
 ````

@@ -11,7 +11,7 @@ At most ~90 characters, with AI disclosure. Fixed text, never translated into th
 - Identity and form of address defined and held consistently
 - A fallback for "something else" exists, no path without an end
 - Every return edge is bounded — otherwise the tree is a loop only the caller can end
-- A separate "end conversation" block with a fixed step sequence
+- A separate "End the conversation" block with a fixed step sequence
 - Caller types separated where they need different paths; for multiple locations, a matrix, a routing criterion, and one tool per location
 - **One phase per concern type.** A phase that bundles two types gets worked through as a list by the model and asks one type's questions inside the other
 - **All transfers in one block**, with the switch for whether a transfer is currently possible and what happens after a failed transfer. Hung off individual phases, both go missing
