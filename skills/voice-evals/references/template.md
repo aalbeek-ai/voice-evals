@@ -45,7 +45,7 @@ If a rule requires ending the call immediately, explain the reason in at most on
 
 # Knowledge base template
 
-Same principle: block sequence, no content — except "AI disclosure", which is used word for word; check that the platform really records no audio. Every block matches a topic named in the prompt's "Company information" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
+Same principle: block sequence, no content — except "AI disclosure", which is used word for word apart from its two placeholders. Every block matches a topic named in the prompt's "Company information" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
 
 "Frequent questions" is the lever for calls the agent solves on its own: each answer there closes a call without a callback. Fill it from real call reasons, not guesses.
 
@@ -81,6 +81,6 @@ Immediate measures:
 
 AI disclosure:
 - AI assistant of <company>, records concerns and takes load off the team
-- No audio recording, only a transcript so nothing gets recorded wrong
+- <What the platform stores: "No audio recording, only a transcript" or "The call is recorded"> so nothing gets recorded wrong
 - Objecting to the transcript is possible → nothing is processed, the call goes to a staff member
 ````
