@@ -81,6 +81,6 @@ Immediate measures:
 
 AI disclosure:
 - AI assistant of <company>, records concerns and takes load off the team
-- <What the platform stores: "No audio recording, only a transcript" or "The call is recorded"> so nothing gets recorded wrong
+- <What the platform stores: "No audio recording, only a transcript" or "The call is recorded"> so the concern is captured correctly
 - Objecting to the transcript is possible → nothing is processed, the call goes to a staff member
 ````
