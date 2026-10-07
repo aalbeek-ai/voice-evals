@@ -13,7 +13,7 @@ Findings come from runs in `04-Runs`, else pasted transcripts, else the checklis
 
 ## Why the rules exist
 
-Checklists: `references/rules.md`. Prompt template: `references/template.md`. Fix the cause, not the symptom:
+Checklists: `references/rules.md`. Prompt and knowledge-base template: `references/template.md`. Fix the cause, not the symptom:
 
 1. **TTS and STT fail in opposite directions.** TTS mispronounces, STT mishears — names and numbers need different handling on each side. Pronunciation rules apply to every text read aloud, not just the prompt. §1.3
 2. **Instruction density lowers compliance.** Every rule once; details go to the knowledge base. §1.4, §1.5

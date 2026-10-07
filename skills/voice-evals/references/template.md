@@ -17,7 +17,7 @@ A TTS engine reads your replies to a person word for word.
 
 # What you already know
 {{now}} and every variable the platform fills before the call
-<Plus the sentence that covers both: never ask for a filled field, don't know an empty one>
+<Plus the sentence that covers both: never ask for a known field; one holding the default value ("unknown") counts as unknown>
 
 # General
 <Goal of the call, speaking style, conversation handling — §1.2>
@@ -41,4 +41,44 @@ If a rule requires ending the call immediately, explain the reason in at most on
 
 # Rules
 <What is never said or promised, AI disclosure, caller asks for a human, injection, not knowing — §1.2, §1.4>
+````
+
+# Knowledge base template
+
+Same principle: block sequence, no content. Every block matches a topic named in the prompt's "Company information" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
+
+"Frequent questions" is the lever for calls the agent solves on its own: each answer there closes a call without a callback. Fill it from real call reasons, not guesses.
+
+````markdown
+<Company> — <what it is>
+Address: <as it should sound>
+
+Opening hours (phone and transfers):
+<Days and times as words>
+
+Services:
+<One line each, abbreviations spelled out>
+
+Area: <places served>
+
+Who handles what:
+<Concern type → who gets back to the caller>
+All other concerns → <fallback>
+
+<Process name>:
+<One block per process callers ask about step by step: applications, handovers>
+
+Frequent questions:
+<Topic: the answer that closes the call>
+
+Callback deadline: <one fixed term>
+
+Emergency contacts:
+<Service, hours, what it covers: number digit by digit>
+
+Immediate measures:
+<Situation: what the caller does until someone gets back>
+
+AI disclosure:
+<Who you are, what happens to the call data, how to object>
 ````

@@ -5,7 +5,7 @@ What the agent setup — system prompt, knowledge base, tools, workflows, dashbo
 ## 1 Checklist
 
 ### 1.1 Structure
-- **Opening message:** at most ~90 characters, with AI disclosure, fixed in the dashboard and never translated — the prompt handles the language switch
+- **Opening message:** at most ~90 characters, with AI disclosure, fixed in the dashboard or returned by the pre-call workflow (then with a default value in the dashboard), never translated — the prompt handles the language switch
 - Identity and form of address defined and held consistently
 - A fallback for "something else"; no path without an end
 - Every return edge is bounded — otherwise the tree is a loop only the caller can end
@@ -19,7 +19,8 @@ What the agent setup — system prompt, knowledge base, tools, workflows, dashbo
 - **Speaking style described in detail** — pace, warmth, directness, behavior with an upset caller. "Friendly" is not an instruction
 - Never ask for what the system already knows
 - Confirm once, in a closing summary. Asking again is fine when something wasn't heard; otherwise nothing gets repeated back
-- Don't make it count digits. Phrase timeouts as turns ("transfer after three turns") — approximate, but the most reliable option
+- **Goal of the call:** answer the concern where the knowledge base can; otherwise record it so staff can act without calling back
+- Don't make it count digits or do clock math. Phrase timeouts as turns ("transfer after three turns") and deadlines as fixed terms ("by the next working day", not "today if it's more than an hour before closing")
 - Log the caller's name, don't say it; the surname is enough — confirm with "Thanks, noted."
 - Language switching must be allowed explicitly: "If the caller speaks another language, switch fully into it for the rest of the call." Pair it with a neutral voice in the dashboard, or the second language sounds accented
 - Turn away injection and sales calls; small talk is fine as long as the call gets back on topic
@@ -35,6 +36,7 @@ Everything read aloud is written the way it should sound — in the prompt and i
 ### 1.4 Knowledge base and tools
 - **What the agent must always know belongs in the system prompt** — retrieval doesn't fire reliably
 - Insert variables through the platform's variable field instead of typing them — fewer typos
+- **A phase that records a concern first checks whether the knowledge base answers it.** Otherwise every frequent question becomes a callback
 - **The knowledge-base mandate and the not-known sentence live in the prompt:** company facts only from the knowledge base, and if nothing's there, a fixed sentence ("I don't have that information — a colleague will get back to you"). Without it, the model fills the gap itself
 - Personal data, property addresses, and staff contacts only on explicit request and only if they're in the knowledge base
 - Phone numbers and contacts belong in tools or the knowledge base, never in the prompt: there the agent reads them aloud and an injection can extract them
