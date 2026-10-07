@@ -5,7 +5,7 @@ What the agent setup — system prompt, knowledge base, tools, workflows, dashbo
 ## 1 Checklist
 
 ### 1.1 Structure
-- **Opening message:** at most ~90 characters, with AI disclosure, fixed in the dashboard or returned by the pre-call workflow (then with a default value in the dashboard), never translated — the prompt handles the language switch
+- **Opening message:** at most ~90 characters, with AI disclosure, fixed in the dashboard and never translated — the prompt handles the language switch
 - Identity and form of address defined and held consistently
 - A fallback for "something else"; no path without an end
 - Every return edge is bounded — otherwise the tree is a loop only the caller can end

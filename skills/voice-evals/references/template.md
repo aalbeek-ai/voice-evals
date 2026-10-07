@@ -17,7 +17,7 @@ A TTS engine reads your replies to a person word for word.
 
 # What you already know
 {{now}} and every variable the platform fills before the call
-<Plus the sentence that covers both: never ask for a known field; one holding the default value ("unknown") counts as unknown>
+<Plus the sentence that covers both: never ask for a known field; whatever a field holds when it couldn't be filled (empty, a default value) counts as unknown>
 
 # General
 <Goal of the call, speaking style, conversation handling — §1.2>
@@ -45,7 +45,7 @@ If a rule requires ending the call immediately, explain the reason in at most on
 
 # Knowledge base template
 
-Same principle: block sequence, no content. Every block matches a topic named in the prompt's "Company information" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
+Same principle: block sequence, no content — except "AI disclosure", which is used word for word; check that the platform really records no audio. Every block matches a topic named in the prompt's "Company information" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
 
 "Frequent questions" is the lever for calls the agent solves on its own: each answer there closes a call without a callback. Fill it from real call reasons, not guesses.
 
@@ -80,5 +80,7 @@ Immediate measures:
 <Situation: what the caller does until someone gets back>
 
 AI disclosure:
-<Who you are, what happens to the call data, how to object>
+- AI assistant of <company>, records concerns and takes load off the team
+- No audio recording, only a transcript so nothing gets recorded wrong
+- Objecting to the transcript is possible → nothing is processed, the call goes to a staff member
 ````
