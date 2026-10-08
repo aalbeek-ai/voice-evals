@@ -49,7 +49,7 @@ A case from a real call, hunch, or complaint is the best source. Turn it into a 
 2. **Collect failures:** transcript and grader rationale per failed case. The rationale is a hint; the finding is in the transcript.
 3. **Reference solution:**
    - Case failed → compare with the reference and name the **first diverging turn**. The cause sits there, not where the call visibly derails.
-   - Reference no longer possible because the system was changed on purpose (path removed, tool swapped) → the case is outdated: update case and reference instead of bending the system back.
+   - Reference no longer possible because the system was changed on purpose (path removed, tool swapped) → the case is outdated: update case and reference instead of bending the system back. If `Caller says` or the behavior under test changes, give the row a new ID (`INT-Z-01` → `INT-Z-01b`) so Δ doesn't compare two different tests; sharpening `Pass if` keeps the ID.
    - First pass with an empty field → write the transcript in.
 4. **Cause, not symptom** (`references/rules.md` §2): symptom → cause → fix level → sibling test. One cause, one fix.
 5. **Write the fix** with the algorithm from §2: question it, delete, then simplify or optimize — lift a rule one level rather than add one beside it. The spot should get shorter; state old/new word count and justify any growth.
