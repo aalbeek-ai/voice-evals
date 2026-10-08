@@ -49,6 +49,8 @@ Everything read aloud is written the way it should sound — in the prompt and i
 - The same rule twice, or two rules that contradict
 - "NEVER!!!" instead of a reason
 - A prohibition where a sequence was meant
+- Middle dots and dashes (·, –, —) in prompt, knowledge base, or tool descriptions. The model copies them into its replies and the TTS has to guess how to read them. Plain punctuation only: period, comma, colon, parentheses, hyphen, arrow
+- A negation as the reason ("112 doesn't help here"). Say what the right path does ("the emergency plumber stops the damage")
 - Example data in the prompt ("e.g. Mr. Miller, zero three zero …") — whatever is in quotes eventually gets spoken and treated as real. Remove old names, numbers, and prices everywhere, including in examples and old knowledge-base entries
 
 ## 2 Root-cause analysis
