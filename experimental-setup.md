@@ -45,7 +45,7 @@ The three reserved names are hardcoded in the `grade` node. A path your agent do
 | Regression | Regression | 100%, otherwise something broke |
 | Held-out | Held-out | only at the gate |
 
-A rate counts only once no case in its stack is `open`. `Points 0-2` feeds no rate: it shows how far a failed case missed, for the human review and the skill. `Turns` counts conversation turns only, so a transfer's tool rows don't trip the turn limit. The `05-Results` formulas reach case 40; a longer set means dragging them down.
+A rate counts only once no case in its stack is `open`. `Points 0-2` feeds no rate: it shows how far a failed case missed, for the human review and the skill. `Turns` counts conversation turns only, so a transfer's tool rows don't trip the turn limit. Δ compares only cases with a result in both versions, so a case added between rounds doesn't count as failed in the previous one. `05-Results` grows with `03-Cases` and reads the previous version from `04-Runs`.
 
 **Two loops.** Every case starts as `Capability`. A case that passes all its calls two rounds in a row becomes `Regression` and leaves the round; a regression case that fails goes back. Round cost tracks the capability stack, not the size of the set. Regression runs go by trigger: once before go-live, then after every change to the system, every platform update, and every model switch.
 
