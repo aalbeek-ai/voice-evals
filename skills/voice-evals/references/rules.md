@@ -46,8 +46,8 @@ Everything read aloud is written the way it should sound — in the prompt and i
 
 ### 1.5 Anti-patterns
 - Double greeting
-- The same rule twice, or two rules that contradict: every extra instruction lowers compliance with the rest
-- "NEVER!!!" instead of a reason, "never say Z" instead of "if X, say Y": models follow negations unreliably
+- The same rule twice, or two rules that contradict
+- "NEVER!!!" instead of a reason
 - A prohibition where a sequence was meant
 - Middle dots and dashes (·, –, —) in prompt, knowledge base, or tool descriptions. The model copies them into its replies and the TTS has to guess how to read them. Plain punctuation only: period, comma, colon, parentheses, hyphen, arrow
 - A negation as the reason ("112 doesn't help here"). Say what the right path does ("the emergency plumber stops the damage")
