@@ -12,8 +12,9 @@ Identity and pronunciation come first because the model needs them for reading o
 A TTS engine reads your replies to a person word for word.
 <Then the patterns, §1.3>
 
-# Company information (in your context)
-<Which topics are in memory. No values, or there are two truths>
+# Your knowledge
+Check the company information first.
+<Which topics it holds. No values, or there are two truths>
 
 # What you already know
 {{now}} and every variable the platform fills before the call
@@ -23,7 +24,10 @@ A TTS engine reads your replies to a person word for word.
 <Goal of the call, speaking style, conversation handling, §1.2>
 
 # Call flow
+The caller has already been greeted. Don't greet them again.
+
 ## <SPECIAL PATH> (applies at any time, interrupts every path)
+<Judged by what the caller describes, not by what could happen. Each situation ends in a fixed sentence and end-call, or → PHASE 4. Everything else → PHASE 0>
 ## PHASE 0: IDENTIFY THE CONCERN
 ## PHASE 1A…1X: one per concern type
 ## PHASE 2: WHAT'S MISSING
@@ -41,7 +45,7 @@ When the concern is handled, the caller wants to end the call, or a rule require
 
 # Knowledge base template
 
-Same principle: block sequence, no content, except "AI disclosure", which is used word for word apart from its two placeholders. Every block matches a topic named in the prompt's "Company information" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
+Same principle: block sequence, no content, except "AI disclosure", which is used word for word apart from its two placeholders. Every block matches a topic named in the prompt's "Your knowledge" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
 
 "Frequent questions" is the lever for calls the agent solves on its own: each answer there closes a call without a callback. Fill it from real call reasons, not guesses.
 
