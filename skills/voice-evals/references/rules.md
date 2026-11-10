@@ -1,4 +1,4 @@
-# Rules: checklist and root-cause analysis
+# Rules: checklist
 
 What the system prompt, tools, workflows and platform settings are checked against after a round. Platform features differ by provider: test every such rule with a real call.
 
@@ -25,10 +25,3 @@ What the system prompt, tools, workflows and platform settings are checked again
 - Middle dots and dashes; the model copies them and the TTS stumbles. Plain punctuation only
 - Example data in quotes; it gets spoken as if real
 - Phone numbers and contacts in the prompt; the agent reads them out and an injection can extract them
-
-## 2 Root-cause analysis
-
-- **Before every fix:** question it, delete what can go, then simplify. Add only once the need repeats
-- **Levels:** wording (sounds wrong), rule (missing, duplicated, contradictory), structure (path missing or not triggering), principle (follows the tree rigidly). Only at the principle level does the prompt get shorter while covering more
-- **Numbered steps** only for a phase that derails; elsewhere they make the agent rigid
-- **Not every fix is a prompt fix:** transfer into the void, tool; wrong ticket field, post-call workflow; interruptions or misheard numbers, platform settings
