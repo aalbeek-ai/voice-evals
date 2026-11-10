@@ -8,7 +8,7 @@ Block order of a tested system prompt. Fill the placeholders per customer; "End 
 
 # Pronunciation
 A TTS engine reads your replies to a person word for word.
-<Patterns, rules.md §1.3>
+<Patterns, see rules.md, Pronunciation>
 
 # Your knowledge
 Check the company information first.

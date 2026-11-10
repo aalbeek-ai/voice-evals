@@ -1,8 +1,6 @@
 # Rules: checklist
 
-What the system prompt, tools, workflows and platform settings are checked against after a round. Platform features differ by provider: test every such rule with a real call.
-
-## 1 Checklist
+What the system prompt, knowledge base, variables, workflows and platform settings are checked against after a round. Platform features differ by provider: test every such rule with a real call.
 
 **Structure**
 - Opening message short, with AI disclosure, fixed in the platform settings
@@ -17,7 +15,7 @@ What the system prompt, tools, workflows and platform settings are checked again
 - No counting or clock math: timeouts as turns, deadlines as fixed terms
 - Language switch allowed explicitly if callers may speak another language
 
-**Pronunciation:** everything read aloud is written as it should sound. Times, dates and prices as words; phone numbers digit by digit with commas; house numbers as whole numbers; names via the platform's pronunciation dictionary, else spelled as spoken.
+**Pronunciation:** everything read aloud is written as it should sound. Times, dates and prices as words; Phone numbers as well, but one number at a time, separated by commas; house numbers as whole numbers; difficult names are written exactly as they are pronounced.
 
 **Anti-patterns**
 - The same rule twice, or two rules that contradict

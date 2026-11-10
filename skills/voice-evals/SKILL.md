@@ -33,11 +33,11 @@ When `Next case` shows `round done`. Inputs: all `Cases` except `Held out`, all 
 
 1. **Read every run, passes included.** Failures alone lead to patches for single cases; passes show what already works and catch passes that got lucky or found a loophole.
 2. **Check the grading first.** A verdict that looks wrong, or a case no run passes, is reported as a case finding. Never change a case yourself: the case changes only through the user, otherwise the fixer moves the target.
-3. **Cause in the whole system:** knowledge base, tool, workflow, platform settings, system prompt, across all runs at once (`references/rules.md` §2).
+3. **Cause in the whole system:** knowledge base, tool, workflow, platform settings, system prompt, across all runs at once; check the setup against `references/rules.md`.
 4. **Fix at the highest level that covers the cause** (principle, structure, rule, wording); the changed spot gets shorter. The fix must also cover three similar situations not in the set; a fix that names a case or quotes a transcript is rejected.
 5. **Report, then apply:** version, metrics against gates, continue or gate; one line per proposed change (place, change, what goes); case findings separately. Apply only after approval: setup in a repo, edit and commit there; otherwise deliver the full system prompt per `references/template.md` and the changed knowledge base entries. Keep no notes for the next round.
 
 ## References
 
-- `references/rules.md`: checklist for the agent setup (§1) and root-cause analysis (§2)
+- `references/rules.md`: checklist for the agent setup
 - `references/template.md`: block order of the system prompt
