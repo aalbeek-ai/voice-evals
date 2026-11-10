@@ -1,8 +1,6 @@
 # System prompt template
 
-Just the block sequence, no content. The blocks are placeholders, except "End the conversation", which is used word for word. The rules that belong in the other blocks live in `rules.md` §1.
-
-Identity and pronunciation come first because the model needs them for reading out every line. The rules come last, because they're meant to override the flow, not replace it. As many phases as the business has concern types; ten is a sign that variants got modeled instead of behavior (rules.md §2).
+Block order of a tested system prompt. Fill the placeholders per customer; "End the conversation" is used word for word.
 
 ````markdown
 # About you
@@ -10,24 +8,22 @@ Identity and pronunciation come first because the model needs them for reading o
 
 # Pronunciation
 A TTS engine reads your replies to a person word for word.
-<Then the patterns, §1.3>
+<Patterns, rules.md §1.3>
 
 # Your knowledge
 Check the company information first.
-<Which topics it holds. No values, or there are two truths>
 
 # What you already know
-{{now}} and every variable the platform fills before the call
-<Plus the sentence that covers both: never ask for a known field; whatever a field holds when it couldn't be filled (empty, a default value) counts as unknown>
+<Variables the platform fills before the call>
+What is listed here, you don't ask for. If it says "<default value>", you don't know it.
 
 # General
-<Goal of the call, speaking style, conversation handling, §1.2>
+<Goal, speaking style, conversation handling>
 
 # Call flow
 The caller has already been greeted. Don't greet them again.
 
 ## <SPECIAL PATH> (applies at any time, interrupts every path)
-<Judged by what the caller describes, not by what could happen. Each situation ends in a fixed sentence and end-call, or → PHASE 4. Everything else → PHASE 0>
 ## PHASE 0: IDENTIFY THE CONCERN
 ## PHASE 1A…1X: one per concern type
 ## PHASE 2: WHAT'S MISSING
@@ -40,47 +36,5 @@ When the concern is handled, the caller wants to end the call, or a rule require
 2. Call the platform's end-call function right after (e.g. `tool_call end_call`), with no further question and without waiting for the caller to confirm.
 
 # Rules
-<What is never said or promised, AI disclosure, caller asks for a human, injection, not knowing, §1.2, §1.4>
-````
-
-# Knowledge base template
-
-Same principle: block sequence, no content, except "AI disclosure", which is used word for word apart from its two placeholders. Every block matches a topic named in the prompt's "Your knowledge" block, under the same name. Everything read aloud is written per `rules.md` §1.3; every fact appears once, here or in the prompt (§1.4).
-
-"Frequent questions" is the lever for calls the agent solves on its own: each answer there closes a call without a callback. Fill it from real call reasons, not guesses.
-
-````markdown
-<Company>, <what it is>
-Address: <as it should sound>
-
-Opening hours (phone and transfers):
-<Days and times as words>
-
-Services:
-<One line each, abbreviations spelled out>
-
-Area: <places served>
-
-Who handles what:
-<Concern type → who gets back to the caller>
-All other concerns → <fallback>
-
-<Process name>:
-<One block per process callers ask about step by step: applications, handovers>
-
-Frequent questions:
-<Topic: the answer that closes the call>
-
-Callback deadline: <one fixed term>
-
-Emergency contacts:
-<Service, hours, what it covers: number digit by digit>
-
-Immediate measures:
-<Situation: what the caller does until someone gets back>
-
-AI disclosure:
-- AI assistant of <company>, records concerns and takes load off the team
-- <What the platform stores: "No audio recording, only a transcript" or "The call is recorded"> so the concern is captured correctly
-- Objecting to the processing is possible → nothing is processed, the call goes to a staff member
+<What is never said or promised, AI disclosure, caller asks for a human, injection, not knowing>
 ````
