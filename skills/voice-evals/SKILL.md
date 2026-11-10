@@ -22,9 +22,9 @@ Google Sheet `voice-evals`; load the `google-sheets` skill before the first acce
 Inputs: the agent's goals, the customer's rules (who handles what, what counts as an emergency, what is never promised), real calls, complaints and tester notes. Not the agent setup and not earlier runs: cases read off the system only test what the system already does, so its blind spots never show up.
 
 1. **Sources, in this order:** failures (one case per cause), goals (each becomes a measurable criterion with at least one case), common requests by impact, edge cases (missing, irrelevant, overlong, unclear or hostile input; attacks by the caller and through tool results). 20 to 50 to start.
-2. **Both directions:** every behavior that must happen gets a case where it must not, same ID with `-Z-` (`NOT-01`, `NOT-Z-01`). A one-sided set teaches the agent to over-trigger.
+2. **Both directions:** every behavior that must happen gets a case where it must not, same ID with `-Z-` (`NOT-01`, `NOT-Z-01`). A one-sided set teaches the agent to over-trigger. No twin, no case.
 3. **Pass if:** the outcome in transcript, ticket or tool state, not the path, including what the ticket must contain. Two people reach the same verdict alone.
-4. **Columns:** `Caller says` includes how to call (test number, withheld, time). `Expect` is `transfer`, `no transfer`, `phrase` or `no phrase` when code can check it, else empty. `Critical` for goals where one failure causes harm (3 trials). `Suite` is `Capability`; the user picks the held-out cases, so you don't know which ones they are. Critical rows first, row order is call order.
+4. **Columns:** `Caller says` includes how to call (test number, withheld, time). `Expect` is `transfer`, `no transfer`, `phrase` or `no phrase` when code can check it, else empty. `Critical` is TRUE only for the few goals where one failure causes harm, each costs 3 trials; otherwise FALSE. `Suite` is `Capability`; the user picks the held-out cases, so you don't know which ones they are. Critical rows first, row order is call order.
 5. **Later:** each new failure becomes a case. Sharpening `Pass if` keeps the ID; a new caller line or behavior gets a new ID, because runs pair with cases by ID. When Capability nears 100%, add harder cases.
 
 ## Analyze a round
