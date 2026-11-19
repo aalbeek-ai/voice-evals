@@ -1,6 +1,6 @@
 # Rules: checklist
 
-What the whole agent setup is checked against after a round. Platform features differ by provider: test every such rule with a real call.
+What each cause found in a round is checked against. Platform features differ by provider: test every such rule with a real call.
 
 **Structure**
 - Opening message short, with AI disclosure, fixed in the platform settings
