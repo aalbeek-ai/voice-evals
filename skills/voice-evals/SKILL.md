@@ -33,7 +33,7 @@ When `Next case` shows `round done`. Inputs: all `Cases` except `Held out`, all 
 
 1. **Read every run, passes included.** Failures alone breed single-case patches; passes show what works and catch lucky or loophole passes.
 2. **Check the grading first.** A verdict that looks wrong, or a case no run passes, is reported as a case finding. Never change a case yourself, or the fixer moves the target.
-3. **Cause in the whole setup,** across all runs at once; check it against `references/rules.md`.
+3. **Cause in the whole setup,** across all runs at once; check each found cause against `references/rules.md`.
 4. **Fix in the software first** (platform settings, tools, workflows), **then at the highest level of the instructions** that covers the cause. A minor slip that leaves the outcome intact stays: it sounds human and keeps the setup lean. The fix must also cover three similar situations not in the set; a fix that names a case or quotes a transcript is rejected.
 5. **Report, then apply:** version, metrics against gates, continue or gate; one line per proposed change (place, change, what goes); case findings separately. Apply only after approval: setup in a repo, edit and commit there; otherwise deliver the full system prompt per `references/template.md` and the changed knowledge base entries. Keep no notes for the next round.
 
