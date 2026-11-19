@@ -14,7 +14,7 @@ Part of the eval harness in the Notion SOP "Voice evals": testers call the agent
 Google Sheet `voice-evals`; load the `google-sheets` skill before the first access.
 
 - `Results`: version, `Next case`, metrics with gates. Read only.
-- `Cases`: `ID`, `Caller says`, `Pass if`, `Expect`, `Critical`, `Suite`, `Verdict` (formula). Read row 1 and write each value under its header.
+- `Cases`: `ID`, `Context`, `Caller says`, `Pass if`, `Expect`, `Critical`, `Suite`, `Verdict` (formula). Read row 1 and write each value under its header.
 - `Runs`: one row per call, written by the grader: time, version, case, verdict, reason, transcript, ticket.
 
 ## Write cases
@@ -23,8 +23,8 @@ Inputs, all from the user: the agent's goals with the critical ones marked, the 
 
 1. **Sources, in this order:** failures (one case per cause), goals (each becomes a measurable criterion with at least one case), common requests by impact, edge cases (missing, irrelevant, overlong, unclear or hostile input; attacks by the caller and through tool results). 20 to 50 to start.
 2. **Both directions:** every behavior that must happen gets a case where it must not, same ID with `-Z-` (`NOT-01`, `NOT-Z-01`). A one-sided set teaches the agent to over-trigger. No twin, no case.
-3. **Pass if:** the outcome in transcript, ticket or tool state, not the path, including what the ticket must contain. Two people reach the same verdict alone.
-4. **Columns:** `Caller says` includes how to call (test number, withheld, time). `Expect` is `transfer`, `no transfer`, `phrase` or `no phrase` when code can check it, else empty. `Critical` is TRUE for cases of the goals the user marked critical, each costs 3 trials; otherwise FALSE. No goal marked: ask. `Suite` is `Capability`; the user picks the held-out cases, so you don't know which ones they are. Critical rows first, row order is call order.
+3. **Pass if:** the outcome in transcript, ticket or tool state, not the path, including what the ticket must contain and every customer fact the agent must state (the grader knows no other customer rules). Two people reach the same verdict alone.
+4. **Columns:** `Context` is how to call (test number or withheld, a time condition like "outside opening hours" instead of a clock time so the setup can simulate it, setup such as an unreachable line); `Caller says` is only what to say and how to behave. `Expect` is `transfer`, `no transfer`, `phrase` or `no phrase` when code can check it, else empty. `Critical` is TRUE for cases of the goals the user marked critical, each costs 3 trials; otherwise FALSE. No goal marked: ask. `Suite` is `Capability`; the user picks the held-out cases, so you don't know which ones they are. Critical rows first, row order is call order.
 5. **Later:** each new failure becomes a case. Sharpening `Pass if` keeps the ID; a new caller line or behavior gets a new ID, because runs pair with cases by ID. When Capability nears 100%, add harder cases.
 
 ## Analyze a round
