@@ -25,16 +25,16 @@ Inputs, all from the user: the agent's goals with the critical ones marked, the 
 2. **Both directions:** every behavior that must happen gets a case where it must not, same ID with `-Z-` (`NOT-01`, `NOT-Z-01`). A one-sided set teaches the agent to over-trigger. No twin, no case.
 3. **Pass if:** the outcome in transcript, ticket or tool state, not the path, including what the ticket must contain and every customer fact the agent must state (the grader knows no other customer rules). Two people reach the same verdict alone.
 4. **Columns:** `Context` is how to call (test number or withheld, a time condition like "outside opening hours" instead of a clock time so the setup can simulate it, setup such as an unreachable line); `Caller says` is only what to say and how to behave. `Expect` is `transfer`, `no transfer`, `phrase` or `no phrase` when code can check it, else empty. `Critical` is TRUE for cases of the goals the user marked critical, each costs 3 trials; otherwise FALSE. No goal marked: ask. `Suite` is `Capability`; the user picks the held-out cases, so you don't know which ones they are. Critical rows first, row order is call order.
-5. **Later:** each new failure becomes a case. Sharpening `Pass if` keeps the ID; a new caller line or behavior gets a new ID, because runs pair with cases by ID. When Capability nears 100%, add harder cases.
+5. **Later:** each failure that changes the outcome becomes a case. Sharpening `Pass if` keeps the ID; a new caller line or behavior gets a new ID, because runs pair with cases by ID. When Capability nears 100%, add harder cases to push the automation rate.
 
 ## Analyze a round
 
-When `Next case` shows `round done`. Inputs: all `Cases` except `Held out`, all `Runs` of the current version, the tester's notes, the agent setup. Not earlier analyses or runs of older versions.
+When `Next case` shows `round done`. Inputs: all `Cases` except `Held out`, all `Runs` of the current version, the tester's notes, the agent setup.
 
-1. **Read every run, passes included.** Failures alone lead to patches for single cases; passes show what already works and catch passes that got lucky or found a loophole.
-2. **Check the grading first.** A verdict that looks wrong, or a case no run passes, is reported as a case finding. Never change a case yourself: the case changes only through the user, otherwise the fixer moves the target.
-3. **Cause in the whole system:** knowledge base, tool, workflow, platform settings, system prompt, across all runs at once; check the setup against `references/rules.md`.
-4. **Fix at the highest level that covers the cause** (principle, structure, rule, wording); the changed spot gets shorter. The fix must also cover three similar situations not in the set; a fix that names a case or quotes a transcript is rejected.
+1. **Read every run, passes included.** Failures alone breed single-case patches; passes show what works and catch lucky or loophole passes.
+2. **Check the grading first.** A verdict that looks wrong, or a case no run passes, is reported as a case finding. Never change a case yourself, or the fixer moves the target.
+3. **Cause in the whole setup,** across all runs at once; check it against `references/rules.md`.
+4. **Fix only at the highest level that covers the cause;** the changed spot gets shorter. A minor slip that leaves the outcome intact stays: it sounds human and keeps the setup lean. The fix must also cover three similar situations not in the set; a fix that names a case or quotes a transcript is rejected.
 5. **Report, then apply:** version, metrics against gates, continue or gate; one line per proposed change (place, change, what goes); case findings separately. Apply only after approval: setup in a repo, edit and commit there; otherwise deliver the full system prompt per `references/template.md` and the changed knowledge base entries. Keep no notes for the next round.
 
 ## References

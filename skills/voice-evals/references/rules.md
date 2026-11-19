@@ -1,11 +1,12 @@
 # Rules: checklist
 
-What the system prompt, knowledge base, variables, workflows and platform settings are checked against after a round. Platform features differ by provider: test every such rule with a real call.
+What the whole agent setup is checked against after a round. Platform features differ by provider: test every such rule with a real call.
 
 **Structure**
 - Opening message short, with AI disclosure, fixed in the platform settings
-- A fallback for "something else", every path has an end, every return edge is bounded
-- One phase per concern type; all transfers in one block, including what happens when one fails
+- Flexible rules that let the agent answer intelligently
+- Fallbacks catch errors the way an office worker would, a failed transfer and "something else" included; every path has an end, every return edge is bounded
+- One phase per concern type; all transfers in one block
 - One "End the conversation" block with fixed steps
 
 **Conversation**
@@ -15,7 +16,7 @@ What the system prompt, knowledge base, variables, workflows and platform settin
 - No counting or clock math: timeouts as turns, deadlines as fixed terms
 - Language switch allowed explicitly if callers may speak another language
 
-**Pronunciation:** everything read aloud is written as it should sound. Times, dates and prices as words; Phone numbers as well, but one number at a time, separated by commas; house numbers as whole numbers; difficult names are written exactly as they are pronounced.
+**Pronunciation:** everything read aloud is written as it should sound. Times, dates and prices as words; phone numbers as well, but one number at a time, separated by commas; house numbers as whole numbers; difficult names are written exactly as they are pronounced.
 
 **Anti-patterns**
 - The same rule twice, or two rules that contradict
