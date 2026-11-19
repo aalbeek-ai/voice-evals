@@ -14,7 +14,7 @@ What the whole agent setup is checked against after a round. Platform features d
 - Speaking style described concretely (pace, warmth, upset callers); "friendly" is not an instruction
 - Never ask for what the system already knows; confirm once, in the closing summary
 - No counting or clock math: timeouts as turns, deadlines as fixed terms
-- Language switch allowed explicitly if callers may speak another language
+- One agent per language; it refers callers to the number of the other language
 
 **Pronunciation:** everything read aloud is written as it should sound. Times, dates and prices as words; phone numbers as well, but one number at a time, separated by commas; house numbers as whole numbers; difficult names are written exactly as they are pronounced.
 
